@@ -171,9 +171,11 @@ public class DatelineModel implements Parcelable {
     //junyong - get image's "photo_index" to be displayed on the screen
     public ArrayList<String> getDisplayPhotoIds() {
         ArrayList<String> result = new ArrayList<String>();
-        ArrayList<String> ids = new ArrayList<String>(Arrays.asList(mPhotoIds.split(",")));
+
         if(mPhotoGroup != null) {
+
             ArrayList<String> temp = new ArrayList<String>(Arrays.asList(mPhotoGroup.split(",")));
+            ArrayList<String> ids = new ArrayList<String>(Arrays.asList(mPhotoIds.split(",")));
             for(int i=0;i<temp.size() ; i++){
                 if(!temp.get(i).contains("http://") && !temp.get(i).contains("https://")) {
                     File file = new File(temp.get(i));
