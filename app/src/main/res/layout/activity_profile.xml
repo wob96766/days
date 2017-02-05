@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimary"
+            app:contentInsetLeft="0dp"
+            app:contentInsetStart="0dp"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <TextView
+                    style="@style/font_white_20sp"
+                    android:id="@+id/toolbar_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:layout_gravity="center"
+                    android:text="@string/title_profile"/>
+
+            </FrameLayout>
+        </android.support.v7.widget.Toolbar>
+    </android.support.design.widget.AppBarLayout>
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <ImageView
+                android:id="@+id/image_photo"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginTop="60dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/bg_round_blue_80dp"
+                android:src="@mipmap/ic_person"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:paddingLeft="50dp"
+                android:paddingRight="50dp"
+                android:orientation="vertical">
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        style="@style/font_black_14sp"
+                        android:theme="@style/AppTheme.TextInputEditText"
+                        android:id="@+id/edit_email"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/height_middle"
+                        android:hint="@string/text_email"
+                        android:maxLines="1"
+                        android:enabled="false"
+                        android:inputType="textEmailAddress"
+                        android:imeOptions="actionNext"/>
+
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        style="@style/font_black_14sp"
+                        android:theme="@style/AppTheme.TextInputEditText"
+                        android:id="@+id/edit_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/height_middle"
+                        android:hint="@string/hint_profile_name"
+                        android:maxLines="1"
+                        android:inputType="text"
+                        android:imeOptions="actionNext"/>
+
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        style="@style/font_black_14sp"
+                        android:theme="@style/AppTheme.TextInputEditText"
+                        android:id="@+id/edit_birthday"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/height_middle"
+                        android:hint="@string/hint_profile_birthday"
+                        android:maxLines="1"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:inputType="text"
+                        android:imeOptions="actionNext"/>
+
+                </android.support.design.widget.TextInputLayout>
+
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        style="@style/font_black_14sp"
+                        android:theme="@style/AppTheme.TextInputEditText"
+                        android:id="@+id/edit_gender"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/height_middle"
+                        android:hint="@string/hint_profile_gender"
+                        android:maxLines="1"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:inputType="text"
+                        android:imeOptions="actionNext"/>
+
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        style="@style/font_black_14sp"
+                        android:theme="@style/AppTheme.TextInputEditText"
+                        android:id="@+id/edit_address1"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/height_middle"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:hint="@string/hint_profile_address1"
+                        android:maxLines="1"
+                        android:inputType="text"
+                        android:imeOptions="actionNext"/>
+
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        style="@style/font_black_14sp"
+                        android:theme="@style/AppTheme.TextInputEditText"
+                        android:id="@+id/edit_address2"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/height_middle"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:hint="@string/hint_profile_address2"
+                        android:maxLines="1"
+                        android:inputType="text"
+                        android:imeOptions="actionNext"/>
+
+                </android.support.design.widget.TextInputLayout>
+
+
+                <Button
+                    style="@style/font_white_16sp"
+                    android:id="@+id/btn_save"
+                    android:layout_below="@id/edit_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/height_large"
+                    android:layout_marginTop="@dimen/height_small"
+                    android:layout_marginBottom="@dimen/height_small"
+                    android:textStyle="bold"
+                    android:text="@string/text_save"
+                    android:layout_gravity="center"
+                    android:background="@color/colorPrimary" />
+
+
+            </LinearLayout>
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+</android.support.design.widget.CoordinatorLayout>

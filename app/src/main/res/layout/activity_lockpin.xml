@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_grey">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:orientation="vertical">
+
+            <EditText
+                style="@style/font_black_20sp"
+                android:id="@+id/edit_password"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/height_large"
+                android:padding="@dimen/small"
+                android:hint="@string/hint_login_password_pin"
+                android:gravity="center"
+                android:maxLines="1"
+                android:maxLength="4"
+                android:background="@color/white"
+                android:inputType="numberPassword"
+                android:imeOptions="actionSend" />
+
+            <TextView
+                style="@style/font_pink_12sp"
+                android:id="@+id/text_message"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/height_large"
+                android:padding="@dimen/small"
+                android:text="@string/hint_pin_pattern"
+                android:maxLines="1"
+                android:imeOptions="actionSend" />
+
+
+        </LinearLayout>
+</RelativeLayout>

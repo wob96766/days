@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_grey"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/small"
+            android:gravity="left"
+            android:orientation="horizontal">
+            <TextView
+                style="@style/font_black_12sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/xsmall"
+                android:drawableTop="@mipmap/ic_happy_2x"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:text="@string/text_emoji_happy"/>
+            <TextView
+                style="@style/font_black_12sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/xsmall"
+                android:drawableTop="@mipmap/ic_angry_2x"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:text="@string/text_emoji_angry"/>
+            <TextView
+                style="@style/font_black_12sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/xsmall"
+                android:drawableTop="@mipmap/ic_sad_2x"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:text="@string/text_emoji_sad"/>
+            <TextView
+                style="@style/font_black_12sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/xsmall"
+                android:drawableTop="@mipmap/ic_busy_2x"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:text="@string/text_emoji_busy"/>
+            <TextView
+                style="@style/font_black_12sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/xsmall"
+                android:drawableTop="@mipmap/bg_default_2x"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:text="@string/text_emoji_default"/>
+        </LinearLayout>
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/view_refresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.squareup.timessquare.CalendarPickerView
+                android:id="@+id/view_calendar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbarStyle="outsideOverlay"
+                android:clipToPadding="false"
+                android:background="@color/white"
+                app:tsquare_dayBackground="@drawable/color_calendar_cell"
+                app:tsquare_headerTextColor="@color/light_black"
+                app:tsquare_titleTextColor="@color/light_black"
+                app:tsquare_dividerColor="@color/light_grey"
+                app:tsquare_dayTextColor="@color/color_calendar_text"
+                />
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+    </LinearLayout>
+
+
+
+</android.support.design.widget.CoordinatorLayout>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <TextView
+                    style="@style/font_white_16sp"
+                    android:id="@+id/toolbar_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:layout_gravity="center"
+                    android:text="@string/title_traceconfig" />
+
+            </FrameLayout>
+        </android.support.v7.widget.Toolbar>
+    </android.support.design.widget.AppBarLayout>
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="74dp"
+                android:paddingLeft="50dp"
+                android:paddingRight="50dp"
+                android:orientation="vertical">
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        style="@style/font_black_14sp"
+                        android:theme="@style/AppTheme.TextInputEditText"
+                        android:id="@+id/edit_distance"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/height_middle"
+                        android:hint="@string/hint_trace_distance"
+                        android:maxLines="1"
+                        android:inputType="numberDecimal"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:imeOptions="actionNext"/>
+
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        style="@style/font_black_14sp"
+                        android:theme="@style/AppTheme.TextInputEditText"
+                        android:id="@+id/edit_duration"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/height_middle"
+                        android:hint="@string/hint_trace_duration"
+                        android:maxLines="1"
+                        android:inputType="numberDecimal"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:imeOptions="actionSend"/>
+
+                </android.support.design.widget.TextInputLayout>
+
+
+
+                <Button
+                    style="@style/font_white_14sp"
+                    android:id="@+id/btn_save"
+                    android:layout_below="@id/edit_duration"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/height_large"
+                    android:layout_marginTop="@dimen/height_middle"
+                    android:textStyle="bold"
+                    android:text="@string/text_save"
+                    android:layout_gravity="center"
+                    android:background="@color/colorPrimary" />
+
+
+            </LinearLayout>
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+</android.support.design.widget.CoordinatorLayout>

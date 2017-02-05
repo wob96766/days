@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#84c2fd</color>
+    <!--<color name="colorPrimary">#3399ff</color>-->
+    <color name="colorPrimaryDark">#135b94</color>
+    <color name="colorAccent">#3399ff</color>
+
+    <color name="textColorPrimary">#FFFFFF</color>
+    <color name="windowBackground">#FFFFFF</color>
+    <color name="navigationBarColor">#000000</color>
+
+
+
+    <color name="black_100">#F5F5F5</color>
+    <color name="black_400">#BDBDBD</color>
+    <color name="black_600">#757575</color>
+    <color name="black_900">#212121</color>
+    <color name="black">#000000</color>
+
+    <color name="red">#EF5350</color>
+    <color name="pink">#EC407A</color>
+    <color name="pink_600">#D81B60</color>
+    <color name="green_600">#69F0AE</color>
+
+    <color name="yellow">#FFEE58</color>
+    <color name="dialog_bg_trans">#8c000000</color>
+    <color name="dashboard_text_back">#757575</color>
+
+    <color name="dark_blue">#EE2a7cb0</color>
+    <color name="footer_color">#2F4F4F</color>
+
+    <color name="white">#ffffff</color>
+
+    <drawable name="light_black">#545353</drawable>
+    <drawable name="light_grey_extra">#f3f3f3</drawable>
+
+    <color name="light_black">#545353</color>
+
+    <color name="light_grey_extra">#f3f3f3</color>
+    <color name="light_grey">#e5e5e5</color>
+    <color name="dark_grey">#888888</color>
+
+    <color name="light_blue">#48afff</color>
+
+    <color name="color_dummy">#3399ff</color>
+
+    <color name="color_transparent">#00ffffff</color>
+    <color name="color_transparent_black">#30000000</color>
+</resources>

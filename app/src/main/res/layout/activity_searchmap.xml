@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_grey">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:theme="@style/AppTheme.AppBarOverlay">
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimary"
+            app:contentInsetLeft="0dp"
+            app:contentInsetStart="0dp"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingRight="@dimen/small"
+                android:focusableInTouchMode="true">
+                <com.mindspree.days.view.ActualEditText
+                    style="@style/font_black_14sp"
+                    android:id="@+id/edit_searchtext"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@mipmap/ic_edit_search"
+                    android:drawablePadding="5dp"
+                    android:padding="7dp"
+                    android:gravity="center_vertical"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:hint="@string/hint_search_text"
+                    android:imeOptions="actionSearch"
+                    android:textColorHint="@color/dark_grey"
+                    android:background="@color/white" />
+
+                <ImageView
+                    android:id="@+id/image_deletetext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    android:src="@mipmap/ic_edit_delete"/>
+
+            </RelativeLayout>
+
+
+        </android.support.v7.widget.Toolbar>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <RelativeLayout
+            android:id="@+id/map_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <ListView
+            android:id="@+id/list_autocomplete"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@null"
+            android:overScrollMode="never"
+            android:background="@color/white"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/text_locationpick"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_middle"
+            android:layout_alignParentBottom="true"
+            android:text="@string/text_select_location"
+            android:background="@color/white"
+            android:gravity="center"
+            android:visibility="gone"/>
+
+
+    </RelativeLayout>
+
+</android.support.design.widget.CoordinatorLayout>

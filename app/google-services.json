@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "454846596422",
+    "firebase_url": "https://days-bdb6b.firebaseio.com",
+    "project_id": "days-bdb6b",
+    "storage_bucket": "days-bdb6b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:454846596422:android:2f87416cf7b39b13",
+        "android_client_info": {
+          "package_name": "com.mindspree.days"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "454846596422-g8na3os2vvpgamh8n87i4nu8kqjkm1ir.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAHSVy3ci-G3reDpWKR7Eb3mqQOh2tSvjI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
