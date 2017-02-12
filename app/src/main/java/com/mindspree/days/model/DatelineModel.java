@@ -108,6 +108,7 @@ public class DatelineModel implements Parcelable {
     public String getSummarize() {
         if(mSentence == null || mSentence.equals("")) {
             return String.format("%d군데의 장소에서 찍은 %d개의 사진이 있습니다.", mLocationCount, mPhotoCount);
+            // return String.format("In %d 'th number of places, there are %d photos.", mLocationCount, mPhotoCount);
         } else {
             return mSentence;
         }

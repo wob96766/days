@@ -27,6 +27,7 @@ import android.view.View;
 import com.androidquery.AQuery;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.vision.face.FaceDetector;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.mindspree.days.R;
@@ -53,6 +54,9 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import cz.msebera.android.httpclient.Header;
+
+import com.google.android.gms.vision.face.Face;
+import com.google.android.gms.vision.face.Landmark;
 
 /**
  * Created by Admin on 21-10-2015.
@@ -87,6 +91,8 @@ public class MainActivity extends BaseActivity {
     private DBWrapper mDBWrapper;
     private boolean mLockScreenLoaded = false;
 
+
+    public FaceDetector fdetector;
 
     public static void startActivity(Context context) {
         final Intent intent = new Intent(context, MainActivity.class);
@@ -163,6 +169,12 @@ public class MainActivity extends BaseActivity {
             }
         }
 
+        fdetector = new FaceDetector.Builder(getApplicationContext())
+                .setTrackingEnabled(false)
+                .setLandmarkType(FaceDetector.ALL_LANDMARKS)
+                .setClassificationType(FaceDetector.ALL_CLASSIFICATIONS)
+                .build();
+
         mExecuteEnginesAgain = new ExecuteEnginesAgain();
         mExecuteEnginesAgain.execute();
     }
@@ -192,6 +204,13 @@ public class MainActivity extends BaseActivity {
     private void initData() {
         mAuth = FirebaseAuth.getInstance();
         mDBWrapper = new DBWrapper(mPreference.getUserUid());
+
+        fdetector = new FaceDetector.Builder(getApplicationContext())
+                .setTrackingEnabled(false)
+                .setLandmarkType(FaceDetector.ALL_LANDMARKS)
+                .setClassificationType(FaceDetector.ALL_CLASSIFICATIONS)
+                .build();
+
 
         if (!mPreference.getLaunchHistory().equals(mPreference.getUserUid())) {
             TutorialActivity.startActivity(getContext());
@@ -486,7 +505,7 @@ public class MainActivity extends BaseActivity {
 
                     cnt ++;
 
-                    cluster = ClusterEngine.runClusterEngine(this, null, engineDBInterface, fileArrayList, cluster_input, c, myM2, i);
+                    cluster = ClusterEngine.runClusterEngine(this, null, engineDBInterface, fileArrayList, cluster_input, c, myM2, i, fdetector);
                     Integer Cnt_class= new Integer (cnt);
                     Integer Cluster_class = new Integer(cluster);
 
@@ -594,7 +613,7 @@ public class MainActivity extends BaseActivity {
                 for (int i=0; i < fileArrayList.size(); i++) {
 
                     cnt ++;
-                    cluster = ClusterEngine.runClusterEngine(null, this, engineDBInterface, fileArrayList, cluster_input, c, myM2, i);
+                    cluster = ClusterEngine.runClusterEngine(null, this, engineDBInterface, fileArrayList, cluster_input, c, myM2, i, fdetector);
                     Integer Cnt_class= new Integer (cnt);
                     Integer Cluster_class = new Integer(cluster);
 

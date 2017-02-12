@@ -5,10 +5,15 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
+import android.util.Log;
+import android.util.SparseArray;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
+import com.google.android.gms.vision.Frame;
+import com.google.android.gms.vision.face.Face;
+import com.google.android.gms.vision.face.FaceDetector;
 import com.mindspree.days.model.Cluster_input;
 import com.mindspree.days.ui.MainActivity.ExecuteEngines;
 import com.mindspree.days.ui.MainActivity.ExecuteEnginesAgain;
@@ -20,7 +25,7 @@ import com.mindspree.days.model.PhotosTableModel;
 public class ClusterEngine {
     /** Called when the activity is first created. */
 
-    public static int runClusterEngine(ExecuteEngines task, ExecuteEnginesAgain againTask, EngineDBInterface engineDBInterface, ArrayList fileArrayList, Cluster_input cluster_input, double c, ClusterEngine myM, int i) {
+    public static int runClusterEngine(ExecuteEngines task, ExecuteEnginesAgain againTask, EngineDBInterface engineDBInterface, ArrayList fileArrayList, Cluster_input cluster_input, double c, ClusterEngine myM, int i, FaceDetector fdetector) {
 
 
 
@@ -41,7 +46,7 @@ public class ClusterEngine {
         double[][] garray_row =null;
         double[][] garray_row_prev =null;
 
-        garray_row = impreprocess_for_cluster(fname);
+        garray_row = impreprocess_for_cluster(fname, fdetector);
 
         cluster_input.edge_level[0] = garray_row[0][0];
         cluster_input.LUenergy_level[0] = garray_row[0][5];
@@ -82,7 +87,7 @@ public class ClusterEngine {
                 cluster_input.PrevClusterLastfile=(PhotosTableModel)cluster_input.PrevfileArrayList.get(cluster_input.size_PrevfileArrayList-1);
 
                 String Prevfname =(String)cluster_input.PrevClusterLastfile.getFile_location();
-                garray_row_prev = impreprocess_for_cluster(Prevfname);
+                garray_row_prev = impreprocess_for_cluster(Prevfname, fdetector);
 
                 double temp =0;
                 // temp is not used but b will be used.So do not delete this line.
@@ -429,7 +434,7 @@ public class ClusterEngine {
 
 
 
-    public static double[][] impreprocess_for_cluster(String fname) {
+    public static double[][] impreprocess_for_cluster(String fname, FaceDetector fdetector) {
 
         EngineDBInterface engineDBInterface = new EngineDBInterface();
         double Blurry_th = 55;
@@ -456,14 +461,13 @@ public class ClusterEngine {
 
 
 
-
         BitmapFactory.Options bitmap_options = new BitmapFactory.Options();
         bitmap_options.inPreferredConfig = Bitmap.Config.RGB_565;
         bitmap_options.inSampleSize = sample_size;
         Bitmap bMap_temp = BitmapFactory.decodeFile(fname, bitmap_options);
 
-        Bitmap bMap = Bitmap.createBitmap(bMap_temp, bMap_temp.getWidth() / 6, bMap_temp.getHeight() / 6,
-                bMap_temp.getWidth() / 6 * 5, bMap_temp.getHeight() / 6*5);
+        //Bitmap bMap = BitmapFactory.decodeFile(fname, bitmap_options);
+        Bitmap bMap = Bitmap.createBitmap(bMap_temp, bMap_temp.getWidth() / 6, bMap_temp.getHeight() / 6, bMap_temp.getWidth() / 6 * 5, bMap_temp.getHeight() / 6*5);
 
         /////////////////////////////////////////////////////////
         /*          Get image orientation and rerotation       */
@@ -519,12 +523,57 @@ public class ClusterEngine {
             for (int y = imgW / 4; y < imgW - 1 - imgW / 4; y++)  //Height
                 var_sobel_out = var_sobel_out + (sobel_out[x][y] - sum_sobel_out) * (sobel_out[x][y] - sum_sobel_out);
 
-        var_sobel_out = var_sobel_out / (imgH * imgW / 4);
+        var_sobel_out = (var_sobel_out / (imgH * imgW / 4) )/10000;
 
 
         /////////////////////////////////////////////////////////
         /*          FAce detection                             */
         /////////////////////////////////////////////////////////
+        Frame frame = new Frame.Builder().setBitmap(bmRotated).build();
+        SparseArray<Face> faces = fdetector.detect(frame);
+
+        double avg_face_weight =0;
+        double avg_dist_from_center = 0;
+        double max_dist = Math.sqrt((imgW - imgW / 2.0) * (imgW - imgW / 2.0) + (imgH - imgH / 2.0) * (imgH - imgH / 2.0));
+
+        for (int i = 0; i < faces.size(); ++i) {
+            Face face = faces.valueAt(i);
+
+            float face_weight1= face.getIsLeftEyeOpenProbability();
+            float face_weight2 = face.getIsLeftEyeOpenProbability();
+            float face_weight3= face.getIsSmilingProbability();
+
+            float x= face.getPosition().x;
+            float y = face.getPosition().y;
+
+            double dist_from_center = Math.sqrt((x - imgW / 2.0) * (x - imgW / 2.0) + (y - imgH / 2.0) * (y - imgH / 2.0));
+
+
+            avg_face_weight = avg_face_weight +face_weight1+ face_weight2+face_weight3 ;
+
+
+            avg_dist_from_center = avg_dist_from_center + dist_from_center;
+
+        }
+
+
+
+        double face_dist_score =0;
+
+        if (faces.size() == 0) {
+            face_dist_score = 0.001 ;
+            avg_face_weight =0;
+        } else {
+            face_dist_score = 1 - (avg_dist_from_center / (double) faces.size()) / max_dist ;  //Normalized and averaged face loaction with respec to the image center
+            avg_face_weight =avg_face_weight/(double) faces.size();
+
+            if(face_dist_score <0 )
+                face_dist_score=0;
+        }
+
+
+
+        Log.d("Avg_dist_from_center", ":: " + String.valueOf(avg_dist_from_center));
 
 /*
         int MAX_FACES = 5;
@@ -570,7 +619,15 @@ public class ClusterEngine {
         double score_quality = avg_dist_from_center + sum_sobel_out + face_count * (30*30) / (Math.sqrt((imgW - imgW / 2.0) * (imgW - imgW / 2.0) + (imgH - imgH / 2.0) * (imgH - imgH / 2.0))) ;
         */
         //
-        double score_quality = var_sobel_out;
+        //double score_quality = var_sobel_out;
+        double score_quality = face_dist_score + avg_face_weight + var_sobel_out + faces.size() * (30*30) / (Math.sqrt((imgW - imgW / 2.0) * (imgW - imgW / 2.0) + (imgH - imgH / 2.0) * (imgH - imgH / 2.0))) ;
+
+
+        System.out.printf("#face_dist_score# : %s, %f%n", fname, face_dist_score);
+        System.out.printf("#avg_face_weight# : %s, %f%n", fname, avg_face_weight);
+        System.out.printf("#var_sobel_out# : %s, %f%n", fname, var_sobel_out);
+
+
         System.out.printf("#score_quality score# : %s, %f%n", fname, score_quality);
 //        //////////////////////////////////////////////////////////////////
 //        /*                          DB update for score                 */
