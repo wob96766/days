@@ -150,9 +150,9 @@ public class SignupActivity extends BaseActivity {
                             } catch(FirebaseAuthInvalidCredentialsException e) {
                                 showToast(getAppText(R.string.message_error_invalid_email));
                             }  catch(FirebaseAuthInvalidUserException e) {
-                                showToast(getAppText(R.string.message_error_user_exists));
+                                showToast(getAppText(R.string.message_error_user_exist));
                             } catch(FirebaseAuthUserCollisionException e) {
-                                showToast(getAppText(R.string.message_error_user_exists));
+                                showToast(getAppText(R.string.message_error_user_exist));
                             } catch(Exception e) {
                                 showToast(task.getException().toString());
                             }
