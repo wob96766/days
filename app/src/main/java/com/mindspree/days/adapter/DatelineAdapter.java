@@ -48,12 +48,12 @@ public class DatelineAdapter extends RecyclerView.Adapter<DatelineAdapter.MyView
         if(mDataSource.get(position).getPhotoList().size() > 0) {
 
             for(int i=0 ; i<files.size() ; i++){
-                if(i == 1) {
+                if(i == 0){
+                    Glide.with(mContext).load(files.get(i)).centerCrop().into(holder.mThumnail1);
+                }else if(i == 1) {
                     Glide.with(mContext).load(files.get(i)).centerCrop().into(holder.mThumnail2);
                 } else if(i == 2){
                     Glide.with(mContext).load(files.get(i)).centerCrop().into(holder.mThumnail3);
-                } else {
-                    Glide.with(mContext).load(files.get(i)).centerCrop().into(holder.mThumnail1);
                 }
             }
 
