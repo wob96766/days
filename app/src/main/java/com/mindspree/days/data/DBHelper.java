@@ -795,11 +795,11 @@ public class DBHelper extends SQLiteOpenHelper {
                     int locationId = cursor.getInt(cursor.getColumnIndex(COLUMN_LOCATION_INDEX));
                     String name = cursor.getString(cursor.getColumnIndex(COLUMN_NAME));
                     double latitude = cursor.getDouble(cursor.getColumnIndex(COLUMN_LATITUDE));
-                    double logitude = cursor.getDouble(cursor.getColumnIndex(COLUMN_LONGITUDE));
+                    double longitude = cursor.getDouble(cursor.getColumnIndex(COLUMN_LONGITUDE));
                     String create_date = cursor.getString(cursor.getColumnIndex(COLUMN_CREATE_DATE));
                     String files = cursor.getString(cursor.getColumnIndex("files"));
                     String images = cursor.getString(cursor.getColumnIndex("images"));
-                    list.add(new TimelineModel(locationId, name, latitude, logitude, create_date, files, images));
+                    list.add(new TimelineModel(locationId, name, latitude, longitude, create_date, files, images));
                 } while (cursor.moveToNext());
             }
             if (cursor != null)
