@@ -96,7 +96,7 @@
     <string name="hint_edit_content">수정할 내용을 작성해주세요.</string>
 
     <!-- title texts for actionbar-->
-    <string name="title_main">픽스앤픽스</string>
+    <string name="title_main">데이즈</string>
     <string name="title_imagepick">이미지 선택</string>
     <string name="title_profile">프로필</string>
     <string name="title_traceconfig">트레이스설정</string>
@@ -128,9 +128,9 @@
     <string name="message_invalid_duration">체류시간은 숫자로만 입력가능합니다.</string>
     <string name="message_invalid_picking">이미지는 세장까지 선택가능합니다.</string>
     <string name="message_googleplayservice_title">구글플레이서비스 설치안내</string>
-    <string name="message_googleplayservice">픽스앤픽스를 이용하시려면 구글플레이서비스를 설치하셔야 합니다.</string>
+    <string name="message_googleplayservice">데이즈를 이용하시려면 구글플레이서비스를 설치하셔야 합니다.</string>
     <string name="message_locationservice_title">위치 서비스 사용설정</string>
-    <string name="message_locationservice">픽스앤픽스에서 위치 정보를 사용하려면 위치 서비스 권한을 허용해주세요.</string>
+    <string name="message_locationservice">데이즈에서 위치 정보를 사용하려면 위치 서비스 권한을 허용해주세요.</string>
     <string name="message_findpassword">이메일로 비밀번호를 변경할수 있는 링크를 전달드립니다</string>
     <string name="message_memory_warning">사용가능한 메모리가 10%이하입니다.</string>
     <string name="message_journal_created">오늘의 다이어리가 작성되었습니다.</string>
@@ -149,6 +149,7 @@
     <string name="message_error_weak_password">비밀번호는 숫자,영문,특수문자 조합으로 설정해주세요.</string>
     <string name="message_error_invalid_email">올바르지 않은 이메일입니다</string>
     <string name="message_error_user_exists">존재하지 않는 사용자 입니다.</string>
+    <string name="message_error_user_exist">이미 가입한 계정입니다.</string>
     <string name="message_fail_login">로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.</string>
     <string name="message_install_googleplayservice">구글플레이서비스를 설치해주세요.</string>
     <string name="message_complete_save">저장이 완료되었습니다.</string>
