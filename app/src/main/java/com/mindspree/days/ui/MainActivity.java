@@ -153,9 +153,7 @@ public class MainActivity extends BaseActivity {
             isShowLocation = true;
             showLocationDialog(this);
         }
-        if(!isGooglePlayServicesAvailable()){
-            showGoogleplayserviceDialog(this);
-        }
+
         asynctask_flag = false;
         asynctask_again_flag =false;
 
@@ -283,24 +281,7 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    public static void showGoogleplayserviceDialog(final Context context) {
-        final AlertDialog.Builder dialog = new AlertDialog.Builder(context);
-        dialog.setTitle(AppUtils.getAppText(R.string.message_googleplayservice_title))
-                .setMessage(AppUtils.getAppText(R.string.message_googleplayservice))
-                .setPositiveButton(AppUtils.getAppText(R.string.text_install), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                        final String appPackageName = "com.google.android.gms";//context.getPackageName();
-                        context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=" + appPackageName)));
-                    }
-                })
-                .setNegativeButton(AppUtils.getAppText(R.string.text_cancel), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                    }
-                });
-        dialog.show();
-    }
+
 
 
     public static void showLocationDialog(final Context context) {
@@ -441,17 +422,7 @@ public class MainActivity extends BaseActivity {
 
     }
 
-    public boolean isGooglePlayServicesAvailable() {
-        GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
-        int status = googleApiAvailability.isGooglePlayServicesAvailable(this);
-        if(status != ConnectionResult.SUCCESS) {
-            if(googleApiAvailability.isUserResolvableError(status)) {
-                googleApiAvailability.getErrorDialog(this, status, 2404).show();
-            }
-            return false;
-        }
-        return true;
-    }
+
 
     // Async Task Class
     public class ExecuteEngines extends AsyncTask<String, String, String> {
