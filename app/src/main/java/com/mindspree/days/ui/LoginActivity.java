@@ -1,13 +1,18 @@
 package com.mindspree.days.ui;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
 import com.androidquery.AQuery;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -72,6 +77,9 @@ public class LoginActivity extends BaseActivity {
     public  void onStart(){
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
+        if(!isGooglePlayServicesAvailable()){
+            showGoogleplayserviceDialog(this);
+        }
     }
 
     @Override
@@ -92,6 +100,37 @@ public class LoginActivity extends BaseActivity {
             this.finish();
         }
         super.onBackPressed();
+    }
+
+    public boolean isGooglePlayServicesAvailable() {
+        GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
+        int status = googleApiAvailability.isGooglePlayServicesAvailable(this);
+        if(status != ConnectionResult.SUCCESS) {
+            if(googleApiAvailability.isUserResolvableError(status)) {
+                googleApiAvailability.getErrorDialog(this, status, 2404).show();
+            }
+            return false;
+        }
+        return true;
+    }
+
+    public static void showGoogleplayserviceDialog(final Context context) {
+        final AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+        dialog.setTitle(AppUtils.getAppText(R.string.message_googleplayservice_title))
+                .setMessage(AppUtils.getAppText(R.string.message_googleplayservice))
+                .setPositiveButton(AppUtils.getAppText(R.string.text_install), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                        final String appPackageName = "com.google.android.gms";//context.getPackageName();
+                        context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=" + appPackageName)));
+                    }
+                })
+                .setNegativeButton(AppUtils.getAppText(R.string.text_cancel), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                    }
+                });
+        dialog.show();
     }
 
     private boolean validateData() {
@@ -129,7 +168,7 @@ public class LoginActivity extends BaseActivity {
         hideSoftKeyboard(mEditEmail);
         hideSoftKeyboard(mEditPassword);
 
-        mAuth.signInWithEmailAndPassword(email, password)
+        mAuth.signInWithEmailAndPassword(email.trim(), password.trim())
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(Task<AuthResult> task) {
