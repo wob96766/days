@@ -241,7 +241,7 @@ public class SettingFragment extends BaseFragment{
         @Override
         public void onCancelled(DatabaseError databaseError) {
             // Getting Post failed, log a message
-            showToast(getAppText(R.string.message_network_error));
+            //showToast(getAppText(R.string.message_network_error));
         }
     };
 
