@@ -2,6 +2,8 @@
 <resources>
     <string name="app_name">데이즈</string>
     <string name="app_name_en">Days</string>
+    <string name="app_catchpraise">마인드스프리-Days</string>
+
     <!-- DATA Base-->
     <string name="db_name">PicnpicsDB.db</string>
 
