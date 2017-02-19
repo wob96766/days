@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.hardware.camera2.CameraManager;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -208,6 +209,9 @@ public class MainActivity extends BaseActivity {
                 .setLandmarkType(FaceDetector.ALL_LANDMARKS)
                 .setClassificationType(FaceDetector.ALL_CLASSIFICATIONS)
                 .build();
+
+
+
 
 
         if (!mPreference.getLaunchHistory().equals(mPreference.getUserUid())) {

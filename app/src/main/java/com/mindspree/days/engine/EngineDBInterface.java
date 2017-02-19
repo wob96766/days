@@ -83,7 +83,7 @@ public class EngineDBInterface {
     }
 
 
-    public ArrayList getsvmPhotoList(int class_svm){
+    public ArrayList getExtraFeatPhotoList(int ExtraFeat){
         DBHelper dbHelper = AppApplication.getDbHelper();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
@@ -92,7 +92,7 @@ public class EngineDBInterface {
         ArrayList photoArrayList = new ArrayList();
         Cursor c = db.rawQuery("SELECT file_location, update_date " +
                 " FROM photos " +
-                " WHERE extra_feat = " + class_svm +
+                " WHERE extra_feat = " + ExtraFeat +
                 " ORDER BY update_date DESC; ", null);
 
 
@@ -116,23 +116,7 @@ public class EngineDBInterface {
         return photoArrayList;
     }
 
-    public ArrayList getPhotoListwithoutSVMclass(int svm_class){
-
-        int psvm_class=0;
-        int nsvm_class=0;
-
-        if(svm_class ==0){
-            psvm_class =10;
-        } else if(svm_class ==1){
-            psvm_class =20;
-        } else if(svm_class ==2) {
-            psvm_class =30;
-        } else if(svm_class ==3){
-            psvm_class =40;
-        }
-
-
-
+    public ArrayList getWeightCoeffPhotoList(int WeightCoeff){
         DBHelper dbHelper = AppApplication.getDbHelper();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
@@ -141,8 +125,7 @@ public class EngineDBInterface {
         ArrayList photoArrayList = new ArrayList();
         Cursor c = db.rawQuery("SELECT file_location, update_date " +
                 " FROM photos " +
-                " WHERE extra_feat is null" +
-                " OR extra_feat = " + nsvm_class +
+                " WHERE weight_coeff = " + WeightCoeff +
                 " ORDER BY update_date DESC; ", null);
 
 
@@ -164,12 +147,9 @@ public class EngineDBInterface {
         db.close();
 
         return photoArrayList;
-
-//        return c;
-
     }
 
-    public Cursor getPhotoListwithoutSVMclass_cursor(){
+    public ArrayList getPSNRPhotoList(int PSNR){
         DBHelper dbHelper = AppApplication.getDbHelper();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
@@ -178,15 +158,28 @@ public class EngineDBInterface {
         ArrayList photoArrayList = new ArrayList();
         Cursor c = db.rawQuery("SELECT file_location, update_date " +
                 " FROM photos " +
-                " WHERE extra_feat is null" +
+                " WHERE psnr_index = " + PSNR +
                 " ORDER BY update_date DESC; ", null);
 
+
+        if(c.moveToFirst()){
+            do{
+                file_location_name = c.getString(0);
+                update_date = c.getString(1);
+
+                PhotosTableModel photo = new PhotosTableModel();
+                photo.setFile_location(file_location_name);
+                photo.setUpdate_date(update_date);
+
+                photoArrayList.add(photo);
+
+            }while(c.moveToNext());
+        }
 
         c.close();
         db.close();
 
-        return c;
-
+        return photoArrayList;
     }
 
     public int getNextClusterId(){
@@ -329,6 +322,52 @@ public class EngineDBInterface {
         return photoArrayList;
     }
 
+    public float getExtraFeatWithPhotoURL(String file_location_name){
+        DBHelper dbHelper = AppApplication.getDbHelper();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        float Extra_Feat = 0;
+
+        Cursor c = db.rawQuery(" SELECT extra_feat " +
+                " FROM PHOTOS " +
+                " WHERE file_location = '" + file_location_name + "';", null);
+
+        if(c.moveToFirst()){
+            do{
+                Extra_Feat = c.getFloat(0);
+
+            }while(c.moveToNext());
+        }
+
+        c.close();
+        db.close();
+
+        return Extra_Feat;
+    }
+
+    public float getWeightCoeffWithPhotoURL(String file_location_name){
+        DBHelper dbHelper = AppApplication.getDbHelper();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        float Weight_Coeff = 0;
+
+        Cursor c = db.rawQuery(" SELECT weight_coeff " +
+                " FROM PHOTOS " +
+                " WHERE file_location = '" + file_location_name + "';", null);
+
+        if(c.moveToFirst()){
+            do{
+                Weight_Coeff = c.getFloat(0);
+
+            }while(c.moveToNext());
+        }
+
+        c.close();
+        db.close();
+
+        return Weight_Coeff;
+    }
+
     public void updateClusterID(String file_location, int cluster_id) {
         DBHelper dbHelper = AppApplication.getDbHelper();
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -351,16 +390,39 @@ public class EngineDBInterface {
         db.close();
     }
 
-    public void updateSVMIndex(String file_location, int svm_class) {
+    public void updatePSNRIndex(String file_location, int pSNR) {
         DBHelper dbHelper = AppApplication.getDbHelper();
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         db.execSQL("UPDATE photos" +
-                " SET extra_feat = " + svm_class +
+                " SET psnr_index = " + pSNR +
                 " WHERE file_location = '" + file_location + "';");
 
         db.close();
     }
+
+    public void updateExtraFeatIndex(String file_location, int extraFeat) {
+        DBHelper dbHelper = AppApplication.getDbHelper();
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        db.execSQL("UPDATE photos" +
+                " SET extra_feat = " + extraFeat +
+                " WHERE file_location = '" + file_location + "';");
+
+        db.close();
+    }
+
+    public void updateWeightCoeffIndex(String file_location, double WeightCoeff) {
+        DBHelper dbHelper = AppApplication.getDbHelper();
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        db.execSQL("UPDATE photos" +
+                " SET weight_coeff = " + WeightCoeff +
+                " WHERE file_location = '" + file_location + "';");
+
+        db.close();
+    }
+
 
     public void updateQualityScore(String file_location, double final_score){
         DBHelper dbHelper = AppApplication.getDbHelper();

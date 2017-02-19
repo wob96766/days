@@ -473,16 +473,6 @@ public class ClusterEngine {
         /*          Get image orientation and rerotation       */
         /////////////////////////////////////////////////////////
         // This is not necesary when face detection is turned off
-        /*ExifInterface exif = null;
-        try {
-            exif = new ExifInterface(fname);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,
-                ExifInterface.ORIENTATION_UNDEFINED);
-*/
-
         int orientation =1;
 
         ExifInterface exif = null;
@@ -533,10 +523,16 @@ public class ClusterEngine {
         SparseArray<Face> faces = fdetector.detect(frame);
 
         double avg_face_weight =0;
+
+        double avg_faceSmile_weight =0;
+        double avg_faceEyeOpen_weight =0;
+
         double avg_dist_from_center = 0;
         double max_dist = Math.sqrt((imgW - imgW / 2.0) * (imgW - imgW / 2.0) + (imgH - imgH / 2.0) * (imgH - imgH / 2.0));
 
-        for (int i = 0; i < faces.size(); ++i) {
+
+        int Size_Face=faces.size();
+        for (int i = 0; i < Size_Face; ++i) {
             Face face = faces.valueAt(i);
 
             float face_weight1= face.getIsLeftEyeOpenProbability();
@@ -551,11 +547,14 @@ public class ClusterEngine {
 
             avg_face_weight = avg_face_weight +face_weight1+ face_weight2+face_weight3 ;
 
+            avg_faceSmile_weight = avg_faceSmile_weight +face_weight3 ;
+            avg_faceEyeOpen_weight = avg_faceSmile_weight +face_weight1 + face_weight2 ;
+
 
             avg_dist_from_center = avg_dist_from_center + dist_from_center;
 
         }
-
+        avg_faceSmile_weight=avg_faceSmile_weight/Size_Face;   //This is average smile probability
 
 
         double face_dist_score =0;
@@ -575,52 +574,9 @@ public class ClusterEngine {
 
         Log.d("Avg_dist_from_center", ":: " + String.valueOf(avg_dist_from_center));
 
-/*
-        int MAX_FACES = 5;
-        int face_count;
-        FaceDetector.Face[] faces;
-
-        FaceDetector face_detector = new FaceDetector(
-                bmRotated_crop.getWidth(), bmRotated_crop.getHeight(), MAX_FACES);
-
-        faces = new FaceDetector.Face[MAX_FACES]; // The bitmap must be in 565 format (for now).
-        face_count = face_detector.findFaces(bmRotated_crop, faces);
-        //Log.d("Face_Detection", "Face Count: " + String.valueOf(face_count));
-
-        double avg_dist_from_center = 0;
-
-        for (int j = 0; j < face_count; j++) {
-
-            FaceDetector.Face face = faces[j];
-            PointF myMidPoint = new PointF();
-            face.getMidPoint(myMidPoint);
-
-            // Top left corner is 0,0 Bottom right corner is Max x Max y
-            float x = myMidPoint.x;
-            float y = myMidPoint.y;
-
-            double dist_from_center = Math.sqrt((x - imgW / 2.0) * (x - imgW / 2.0) + (y - imgH / 2.0) * (y - imgH / 2.0));
-
-            float myEyesDistance = face.eyesDistance();
-            if(myEyesDistance>0)   // It means eye is detected. Then we give best score which is minimym distance from the center of the picture.
-                dist_from_center = 0;
-
-            avg_dist_from_center = avg_dist_from_center + dist_from_center;
-
-        }
-
-        if (face_count == 0) {
-            avg_dist_from_center = 0.01 ;
-        } else {
-            avg_dist_from_center = 1 - (avg_dist_from_center / (double) face_count)/(Math.sqrt((imgW - imgW / 2.0) * (imgW - imgW / 2.0) + (imgH - imgH / 2.0) * (imgH - imgH / 2.0)));  //Normalized and averaged face loaction with respec to the image center
-        }
-
-
-        double score_quality = avg_dist_from_center + sum_sobel_out + face_count * (30*30) / (Math.sqrt((imgW - imgW / 2.0) * (imgW - imgW / 2.0) + (imgH - imgH / 2.0) * (imgH - imgH / 2.0))) ;
-        */
         //
         //double score_quality = var_sobel_out;
-        double score_quality = face_dist_score + avg_face_weight + var_sobel_out + faces.size() * (30*30) / (Math.sqrt((imgW - imgW / 2.0) * (imgW - imgW / 2.0) + (imgH - imgH / 2.0) * (imgH - imgH / 2.0))) ;
+        double score_quality = face_dist_score + avg_face_weight * 5 + var_sobel_out + faces.size() * (30*30) / (Math.sqrt((imgW - imgW / 2.0) * (imgW - imgW / 2.0) + (imgH - imgH / 2.0) * (imgH - imgH / 2.0))) ;
 
 
         System.out.printf("#face_dist_score# : %s, %f%n", fname, face_dist_score);
@@ -629,15 +585,6 @@ public class ClusterEngine {
 
 
         System.out.printf("#score_quality score# : %s, %f%n", fname, score_quality);
-//        //////////////////////////////////////////////////////////////////
-//        /*                          DB update for score                 */
-//        //////////////////////////////////////////////////////////////////
-//
-//        engineDBInterface.updateQualityScore(fname, score_quality);
-//
-//        if (score_quality < Blurry_th) {
-//            engineDBInterface.updateCBlurryIndex(fname, 1);  // Image is blurred
-//        }
 
 
         /////////////////////////////////////////////////////////
@@ -728,10 +675,16 @@ public class ClusterEngine {
         //////////////////////////////////////////////////////////////////
         /*                          DB update for score                 */
         //////////////////////////////////////////////////////////////////
-
+        // Total quality score update
         engineDBInterface.updateQualityScore(fname, score_quality);
+        // Face Area
+        engineDBInterface.updateExtraFeatIndex(fname, Size_Face);
+//        // Smile probability
+        engineDBInterface.updateWeightCoeffIndex(fname, avg_faceSmile_weight);
 
-        if (score_quality < Blurry_th || diff <100) {
+
+        // Burry index score update
+        if (var_sobel_out < Blurry_th || diff <100) {
             engineDBInterface.updateCBlurryIndex(fname, 1);  // Image is blurred
         }
 

@@ -164,19 +164,29 @@ public class ProfileActivity extends BaseActivity {
                 });
             }
         } else if(requestCode == AppConfig.IntentCode.ACTION_MAPPICK1) {
-            if(resultCode==1) {
-                if(data != null) {
-                    String title = data.getStringExtra(AppConfig.IntentParam.TITLE);
-                    double latitude = data.getDoubleExtra(AppConfig.IntentParam.LATITUDE, 0);
-                    double longitude = data.getDoubleExtra(AppConfig.IntentParam.LONGITUDE, 0);
-                    if(latitude != 0 && longitude != 0){
-                        mProfile.address1 = title;
-                        mProfile.latitude1 = latitude;
-                        mProfile.longitude1 = longitude;
-                        mEditAddress1.setText(title);
-                    }
-                }
-            }
+
+            // Only for debugging
+            mProfile.address1 = "Catalina Apartments";
+            mProfile.latitude1 = 37.3502357;
+            mProfile.longitude1 = -121.9919638;
+            mEditAddress1.setText("Catalina Apartments");
+
+
+//            if(resultCode==1) {
+//                if(data != null) {
+//                    String title = data.getStringExtra(AppConfig.IntentParam.TITLE);
+//                    double latitude = data.getDoubleExtra(AppConfig.IntentParam.LATITUDE, 0);
+//                    double longitude = data.getDoubleExtra(AppConfig.IntentParam.LONGITUDE, 0);
+//                    if(latitude != 0 && longitude != 0){
+//                        mProfile.address1 = title;
+//                        mProfile.latitude1 = latitude;
+//                        mProfile.longitude1 = longitude;
+//                        mEditAddress1.setText(title);
+//                    }
+//                }
+//            }
+
+
         } else if(requestCode == AppConfig.IntentCode.ACTION_MAPPICK2) {
             if(resultCode==1) {
                 if(data != null) {
