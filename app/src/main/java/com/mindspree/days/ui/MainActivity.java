@@ -6,6 +6,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.graphics.ImageFormat;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -28,6 +32,7 @@ import android.view.View;
 import com.androidquery.AQuery;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.images.Size;
 import com.google.android.gms.vision.face.FaceDetector;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -93,6 +98,10 @@ public class MainActivity extends BaseActivity {
     private boolean mLockScreenLoaded = false;
 
 
+//    private String cameraId;
+//    protected CameraDevice cameraDevice;
+//    public Integer lensFacing;
+
     public FaceDetector fdetector;
 
     public static void startActivity(Context context) {
@@ -105,6 +114,11 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         overridePendingTransition(R.anim.slide_in_up, R.anim.hold);
         setContentView(R.layout.activity_main);
+
+
+        // Get camera information
+
+
         initData();
         initView();
     }
@@ -174,6 +188,8 @@ public class MainActivity extends BaseActivity {
                 .setClassificationType(FaceDetector.ALL_CLASSIFICATIONS)
                 .build();
 
+        //getCamerainfo();
+
         mExecuteEnginesAgain = new ExecuteEnginesAgain();
         mExecuteEnginesAgain.execute();
     }
@@ -211,7 +227,7 @@ public class MainActivity extends BaseActivity {
                 .build();
 
 
-
+        //getCamerainfo();
 
 
         if (!mPreference.getLaunchHistory().equals(mPreference.getUserUid())) {
@@ -353,6 +369,33 @@ public class MainActivity extends BaseActivity {
             return MAX_TAB_NUM;
         }
     }
+
+//    protected void getCamerainfo() {
+//
+//        CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
+//        CameraCharacteristics characteristics =null;
+//
+//
+//        try {
+//            String [] camera_ID = manager.getCameraIdList();
+//            characteristics = manager.getCameraCharacteristics(camera_ID[0]);
+//
+//            Integer lensFacing = characteristics.get(CameraCharacteristics.LENS_FACING);
+//
+//            characteristics = manager.getCameraCharacteristics(camera_ID[1]);
+//            Integer lensFacing2 = characteristics.get(CameraCharacteristics.LENS_FACING);
+//
+//            int width = 640;
+//            int height = 480;
+//
+//
+//
+//        } catch (CameraAccessException e) {
+//            e.printStackTrace();
+//        }
+//    }
+
+
 
     /**
      * Method for get the all images of device.

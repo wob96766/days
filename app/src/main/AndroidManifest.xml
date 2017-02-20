@@ -17,6 +17,7 @@
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_SERVICE" />
     <uses-feature android:name="android.hardware.location.gps" />
 
+    <!-- <uses-feature android:name="android.hardware.camera2.full" /> -->
     <uses-feature android:name="android.hardware.camera" />
     <uses-permission android:name="android.permission.CAMERA" />
 

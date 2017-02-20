@@ -20,6 +20,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 
 import com.mindspree.days.engine.EngineDBInterface;
@@ -52,7 +53,9 @@ public class TimelineModel implements Parcelable {
     private TimelineModel mTimelineModel;
     private DBWrapper mDBWrapper;
 
-
+    public int weekend_days=0;
+    public String strWeek;
+    public int nWeek;
 
     public TimelineModel(){
     }
@@ -145,6 +148,34 @@ public class TimelineModel implements Parcelable {
         }
     }
 
+    public void doDayOfWeek() {
+        Calendar cal = Calendar.getInstance();
+        strWeek = null;
+
+        nWeek = cal.get(Calendar.DAY_OF_WEEK);
+        if (nWeek == 1) {
+            strWeek = "일요일";
+        } else if (nWeek == 2) {
+            strWeek = "월요";
+        } else if (nWeek == 3) {
+            strWeek = "화요일";
+        } else if (nWeek == 4) {
+            strWeek = "수요일";
+        } else if (nWeek == 5) {
+            strWeek = "목요일";
+        } else if (nWeek == 6) {
+            strWeek = "금요일";
+        } else if (nWeek == 7) {
+            strWeek = "토요일";
+        }
+
+        if( nWeek>=2 && nWeek<=6)
+            weekend_days =0;  // Weekdays
+        else
+            weekend_days =1;  // Weekend
+
+
+    }
     public double getLatitude()
     {
         return mLatitude;
@@ -189,44 +220,100 @@ public class TimelineModel implements Parcelable {
 
 
 
+        String hash_string = null;
+        // Check date
+        doDayOfWeek();
+
         // 1. POI estimation
         String POI = mName;
-
+        hash_string =String.format("#%s ", mName);
 
         // 2. Time
         String S_time = mCreateDate;
+        hash_string =hash_string + String.format("#%s ", mCreateDate);
+
+        // 2.5
+        if(weekend_days==0){
+            // Weekdays
+            // POI 가 집 -->  9시 이전이면 #출근 전,  9시 이후이면 # 여유있는 아침
 
 
+        }
+        else{
+            // Weekend
+            // POI 가 집 -->  9시 이전이면 #이른 주말 아침, 9시 이후 12 시 이전 이면 # 한가로운 주말 오전
+
+        }
+
+        /*
+            if( Weekdays and time < 10:00 am)
+                add "Before going to the work"
+            elese
+                add " "   // Nothing
+        */
+
+
+
+        // 4. Face detectoion/ Smile score
         EngineDBInterface engineDBInterface = new EngineDBInterface();
         float Num_Face=0;
-        float Smile_Prob;
+        float Smile_Prob=0;
 
         int photoCount = getPhotoList().size();
         if(photoCount > 0) {
 
-            // 3.  Extract the name of the representing photo
+            // Extract the name of the representing photo
             //String PhotoString = getPhotoString();
-            //images.size();
 
-            // 4.  getExtraFeatWithPhotoURL(PhotoString);
-            ArrayList PhotoList = getPhotoList();
+            ArrayList PhotoList = getPhotoList();  // getExtraFeatWithPhotoURL(PhotoString);
 
             for (int i = 0; i < photoCount; i++){
                 String timelinePhotoFile = PhotoList.get(0).toString();
                 //String temp1 = "/storage/emulated/0/DCIM/Camera/20170219_095851.jpg";
 
-                 Num_Face = engineDBInterface.getExtraFeatWithPhotoURL(timelinePhotoFile);
-                 Smile_Prob = engineDBInterface.getWeightCoeffWithPhotoURL(timelinePhotoFile);
+                 Num_Face = Num_Face + engineDBInterface.getExtraFeatWithPhotoURL(timelinePhotoFile);
+                 Smile_Prob = Smile_Prob + engineDBInterface.getWeightCoeffWithPhotoURL(timelinePhotoFile);
+
+//                if( Num_Face == 1) {
+//                    if("selfie resolution")
+//                        hash_string = hash_string + String.format("#%s ", "셀피");
+//                    else
+//                        hash_string = hash_string + String.format("#%s ", "사랑하는 사람들");
+//
+//
+//                    if(Smile_Prob > 0.6)
+//                        hash_string =hash_string + String.format("#%s ", "행복한 미소");
+//                }
+                if( Num_Face >= 1) {
+                    hash_string = hash_string + String.format("#%s ", "사랑하는 사람들");
+                }
+
+            }
+            Smile_Prob = Smile_Prob / photoCount;
+            if( Smile_Prob >= 0.6) {
+                hash_string = hash_string + String.format("#%s ", "아름다운 미소");
             }
 
-            return String.format("%d개의 사진이 등록된 장소입니다. 뭘 했길래 사진을 이렇게 많이 찍었을까 ? ", getPhotoList().size());
         } else {
+            /*
+            if( Weekdays and time < 10:00 am)
+                add "Busy morning"
+            else if( Weekdays and time > 12:00 am)
+                add " "   // Nothing
 
+            else if( Weekend and time < 10:00 am)
+                add "게으른 아침"
 
+            else if( Weekend and time > 12:00 am)
+                add "방콕"
+            */
             // This is default message. Needs more data
+            hash_string = hash_string + String.format("#Busy");
 
-            return String.format("볼일만 간단히 보고 휘리릭 ~~~ 오늘도 즐겁고 신나는 하루. 오늘은 어떤 일이 기다리고 있을까  ");
         }
+
+        return String.format(" %s ", hash_string);
+
     }
 
     public String getDateFormat() {
