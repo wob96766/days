@@ -532,29 +532,41 @@ public class ClusterEngine {
 
 
         int Size_Face=faces.size();
-        for (int i = 0; i < Size_Face; ++i) {
-            Face face = faces.valueAt(i);
 
-            float face_weight1= face.getIsLeftEyeOpenProbability();
-            float face_weight2 = face.getIsLeftEyeOpenProbability();
-            float face_weight3= face.getIsSmilingProbability();
+        if(Size_Face>0)
+        {
+            for (int i = 0; i < Size_Face; ++i) {
+                Face face = faces.valueAt(i);
 
-            float x= face.getPosition().x;
-            float y = face.getPosition().y;
+                float face_weight1= face.getIsLeftEyeOpenProbability();
+                float face_weight2 = face.getIsLeftEyeOpenProbability();
+                float face_weight3= face.getIsSmilingProbability();
 
-            double dist_from_center = Math.sqrt((x - imgW / 2.0) * (x - imgW / 2.0) + (y - imgH / 2.0) * (y - imgH / 2.0));
+                float x= face.getPosition().x;
+                float y = face.getPosition().y;
 
-
-            avg_face_weight = avg_face_weight +face_weight1+ face_weight2+face_weight3 ;
-
-            avg_faceSmile_weight = avg_faceSmile_weight +face_weight3 ;
-            avg_faceEyeOpen_weight = avg_faceSmile_weight +face_weight1 + face_weight2 ;
+                double dist_from_center = Math.sqrt((x - imgW / 2.0) * (x - imgW / 2.0) + (y - imgH / 2.0) * (y - imgH / 2.0));
 
 
-            avg_dist_from_center = avg_dist_from_center + dist_from_center;
+                avg_face_weight = avg_face_weight +face_weight1+ face_weight2+face_weight3 ;
 
+                avg_faceSmile_weight = avg_faceSmile_weight +face_weight3 ;
+                avg_faceEyeOpen_weight = avg_faceSmile_weight +face_weight1 + face_weight2 ;
+
+
+                avg_dist_from_center = avg_dist_from_center + dist_from_center;
+
+            }
+            avg_faceSmile_weight=avg_faceSmile_weight/Size_Face;   //This is average smile probability
         }
-        avg_faceSmile_weight=avg_faceSmile_weight/Size_Face;   //This is average smile probability
+        else{
+            avg_faceSmile_weight =0;
+            avg_face_weight =0;
+            avg_faceEyeOpen_weight=0;
+            avg_dist_from_center = Math.sqrt((imgW - imgW / 2.0) * (imgW - imgW / 2.0) + (imgH - imgH / 2.0) * (imgH - imgH / 2.0));
+        }
+
+
 
 
         double face_dist_score =0;

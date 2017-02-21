@@ -49,6 +49,7 @@ public class TimelineModel implements Parcelable {
     private String mImageGroup = "";
 
 
+    private String mMeasureTime ="";
     private ArrayList<TextView> mSelectedImages = new ArrayList<TextView>();
     private TimelineModel mTimelineModel;
     private DBWrapper mDBWrapper;
@@ -148,6 +149,18 @@ public class TimelineModel implements Parcelable {
         }
     }
 
+    public void setMeasureTime(String formatDate){
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+            Date updateDate= dateFormat.parse(formatDate);
+            SimpleDateFormat formatString = new SimpleDateFormat("HH/mm");
+            mMeasureTime = formatString.format(updateDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     public void doDayOfWeek() {
         Calendar cal = Calendar.getInstance();
         strWeek = null;
@@ -229,8 +242,13 @@ public class TimelineModel implements Parcelable {
         hash_string =String.format("#%s ", mName);
 
         // 2. Time
-        String S_time = mCreateDate;
-        hash_string =hash_string + String.format("#%s ", mCreateDate);
+
+        setMeasureTime(mCreateDate);
+
+        hash_string =hash_string + String.format("#%s ", mMeasureTime);
+
+
+
 
         // 2.5
         if(weekend_days==0){
