@@ -7,10 +7,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.ImageFormat;
+import android.hardware.Camera;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
+import android.hardware.camera2.params.StreamConfigurationMap;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -58,6 +60,7 @@ import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -98,9 +101,11 @@ public class MainActivity extends BaseActivity {
     private boolean mLockScreenLoaded = false;
 
 
-//    private String cameraId;
-//    protected CameraDevice cameraDevice;
-//    public Integer lensFacing;
+    private String cameraId;
+    protected CameraDevice cameraDevice;
+
+    public int rear_cam_width ;
+    public int front_cam_width ;
 
     public FaceDetector fdetector;
 
@@ -117,7 +122,7 @@ public class MainActivity extends BaseActivity {
 
 
         // Get camera information
-
+        rear_cam_width=getCamerainfo(0);
 
         initData();
         initView();
@@ -188,7 +193,7 @@ public class MainActivity extends BaseActivity {
                 .setClassificationType(FaceDetector.ALL_CLASSIFICATIONS)
                 .build();
 
-        //getCamerainfo();
+        rear_cam_width=getCamerainfo(0);
 
         mExecuteEnginesAgain = new ExecuteEnginesAgain();
         mExecuteEnginesAgain.execute();
@@ -370,30 +375,58 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-//    protected void getCamerainfo() {
-//
-//        CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
-//        CameraCharacteristics characteristics =null;
-//
-//
-//        try {
-//            String [] camera_ID = manager.getCameraIdList();
-//            characteristics = manager.getCameraCharacteristics(camera_ID[0]);
-//
-//            Integer lensFacing = characteristics.get(CameraCharacteristics.LENS_FACING);
-//
-//            characteristics = manager.getCameraCharacteristics(camera_ID[1]);
-//            Integer lensFacing2 = characteristics.get(CameraCharacteristics.LENS_FACING);
-//
-//            int width = 640;
-//            int height = 480;
-//
-//
-//
-//        } catch (CameraAccessException e) {
-//            e.printStackTrace();
-//        }
-//    }
+    public int getCamerainfo(int rear_front) {
+
+        // rear_front ==0   -> Rear cameare width
+        // rear_front ==1   -> Front cameare width
+
+
+        CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
+        CameraCharacteristics characteristics =null;
+
+
+        try {
+            String [] camera_ID = manager.getCameraIdList();
+            characteristics = manager.getCameraCharacteristics(camera_ID[0]);
+
+            StreamConfigurationMap config =characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+
+            android.util.Size[] temp1 =   config.getOutputSizes(32);
+            rear_cam_width = temp1[0].getWidth();
+
+
+            characteristics = manager.getCameraCharacteristics(camera_ID[1]);
+            StreamConfigurationMap config2 =characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+            android.util.Size[] temp2 =   config2.getOutputSizes(32);
+            front_cam_width = temp2[0].getWidth();
+
+
+
+            if(temp1[0].getWidth() > temp2[0].getWidth()) {
+                rear_cam_width = temp1[0].getWidth();
+                front_cam_width = temp2[0].getWidth();
+            }
+            else
+            {
+                rear_cam_width = temp2[0].getWidth();
+                front_cam_width = temp1[0].getWidth();
+            }
+            //android.util.Size[] temp4 =   config2.getOutputSizes(4);
+
+
+
+        } catch (CameraAccessException e) {
+            e.printStackTrace();
+            rear_cam_width =0;
+            front_cam_width=0;
+        }
+
+        if(rear_front ==0)
+            return rear_cam_width;
+        else
+            return front_cam_width;
+
+    }
 
 
 

@@ -2,10 +2,14 @@ package com.mindspree.days.model;
 
 //import android.hardware.Camera;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.hardware.Camera;
+import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
 import android.location.*;
 import android.location.Location;
+import android.media.ExifInterface;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.widget.ImageView;
@@ -15,6 +19,7 @@ import android.widget.TextView;
 import com.mindspree.days.data.DBWrapper;
 import com.mindspree.days.lib.AppPreference;
 import com.mindspree.days.lib.AppUtils;
+import com.mindspree.days.ui.MainActivity;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -25,6 +30,7 @@ import java.util.Date;
 
 import com.mindspree.days.engine.EngineDBInterface;
 
+import static android.R.attr.defaultValue;
 import static android.media.CamcorderProfile.get;
 
 /**
@@ -57,6 +63,8 @@ public class TimelineModel implements Parcelable {
     public int weekend_days=0;
     public String strWeek;
     public int nWeek;
+
+    private MainActivity mainActivity =new MainActivity();
 
     public TimelineModel(){
     }
@@ -233,6 +241,8 @@ public class TimelineModel implements Parcelable {
 
 
 
+        int rear_cam_width = mainActivity.rear_cam_width;
+
         String hash_string = null;
         // Check date
         doDayOfWeek();
@@ -284,15 +294,40 @@ public class TimelineModel implements Parcelable {
             //String PhotoString = getPhotoString();
 
             ArrayList PhotoList = getPhotoList();  // getExtraFeatWithPhotoURL(PhotoString);
-
+            photoCount=1;
             for (int i = 0; i < photoCount; i++){
                 String timelinePhotoFile = PhotoList.get(0).toString();
+
+
+                int Im_width=0;
+                int Im_height=0;
+
+                final BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inJustDecodeBounds = true;
+                BitmapFactory.decodeFile(timelinePhotoFile, options);
+                int sample_size =32;
+
+                BitmapFactory.Options bitmap_options = new BitmapFactory.Options();
+                bitmap_options.inPreferredConfig = Bitmap.Config.RGB_565;
+                bitmap_options.inSampleSize = sample_size;
+                Bitmap bMap_temp = BitmapFactory.decodeFile(timelinePhotoFile, bitmap_options);
+                Im_width = bMap_temp.getWidth() * sample_size ;
+
                 //String temp1 = "/storage/emulated/0/DCIM/Camera/20170219_095851.jpg";
 
                  Num_Face = Num_Face + engineDBInterface.getExtraFeatWithPhotoURL(timelinePhotoFile);
                  Smile_Prob = Smile_Prob + engineDBInterface.getWeightCoeffWithPhotoURL(timelinePhotoFile);
 
-//                if( Num_Face == 1) {
+                if( Num_Face == 1) {
+
+
+
+                    if( Math.abs(rear_cam_width - Im_width) < 500)
+                        hash_string = hash_string + String.format("#%s ", "셀피");
+                    else
+                        hash_string = hash_string + String.format("#%s ", "독사진");
+
+
 //                    if("selfie resolution")
 //                        hash_string = hash_string + String.format("#%s ", "셀피");
 //                    else
@@ -301,8 +336,8 @@ public class TimelineModel implements Parcelable {
 //
 //                    if(Smile_Prob > 0.6)
 //                        hash_string =hash_string + String.format("#%s ", "행복한 미소");
-//                }
-                if( Num_Face >= 1) {
+                }
+                else if( Num_Face >1) {
                     hash_string = hash_string + String.format("#%s ", "사랑하는 사람들");
                 }
 
@@ -310,6 +345,7 @@ public class TimelineModel implements Parcelable {
             Smile_Prob = Smile_Prob / photoCount;
             if( Smile_Prob >= 0.6) {
                 hash_string = hash_string + String.format("#%s ", "아름다운 미소");
+                // In this case, change moode automatically to "Happy"
             }
 
         } else {
