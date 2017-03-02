@@ -5,12 +5,17 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraManager;
+import android.hardware.camera2.params.StreamConfigurationMap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +35,8 @@ import com.mindspree.days.model.WeatherModel;
 import com.mindspree.days.network.AsyncHttpResponse;
 import com.mindspree.days.network.RequestCode;
 
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
@@ -183,17 +190,34 @@ public class TodayFragment extends BaseFragment{
         if(iconId>0) {
             mTextMood.setCompoundDrawablesWithIntrinsicBounds(iconId, 0, 0, 0);
         }
+
+
+        SaveWeather();
+
     }
 
-    public String requestWeather() {
+    public String SaveWeather() {
         String weather = "";
         if(mSentence != null) {
             weather = mSentence.mWeather;
         }
         mSentence = mDBWrapper.getSentence();
         mSentence.mWeather = weather;
+//        writeToFile(weather, "weather.txt" , getContext());
 
         return weather;
+    }
+
+
+    private void writeToFile(String data, String filename, Context context) {
+        try {
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(filename, Context.MODE_PRIVATE));
+            outputStreamWriter.write(data);
+            outputStreamWriter.close();
+        }
+        catch (IOException e) {
+            Log.e("Exception", "File write failed: " + e.toString());
+        }
     }
 
     public void finishView() {

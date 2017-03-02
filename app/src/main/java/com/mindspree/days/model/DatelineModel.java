@@ -1,8 +1,10 @@
 package com.mindspree.days.model;
 
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.provider.Telephony;
+import android.util.Log;
 
 import com.mindspree.days.AppApplication;
 import com.mindspree.days.R;
@@ -15,6 +17,12 @@ import com.mindspree.days.model.DailyModel;
 import com.mindspree.days.model.TimelineModel;
 import com.mindspree.days.model.SentenceModel;
 import com.mindspree.days.model.WeatherModel;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -32,8 +40,7 @@ public class DatelineModel implements Parcelable {
     private int mPhotoCount = 0;
     private String mSentence = "";
 
-
-
+    public Context mContext;
 
     public DatelineModel(){
     }
@@ -129,8 +136,8 @@ public class DatelineModel implements Parcelable {
 
     public String getSummarize() {
 
-
-
+//        mContext = AppApplication.getAppInstance().getApplicationContext();
+//        String weatherFromToday = readFromFile("weather.txt", AppApplication.getAppInstance().getApplicationContext()) ;
 
 
         if(mSentence == null || mSentence.equals("")) {
@@ -143,7 +150,13 @@ public class DatelineModel implements Parcelable {
             hash_string = hash_string + String.format("Today is %s. ", getDate());
 
 
+            //2 Weather
+//            if(weatherFromToday !=""){
+//
+//                hash_string = hash_string + String.format("Today's weather is %s. ", weatherFromToday);
+//            }
 
+            //3. Locations
             ArrayList poiList = getPoiList();
             if(poiList.size()>0)
             {
@@ -155,6 +168,7 @@ public class DatelineModel implements Parcelable {
                         hash_string = hash_string + String.format("%s, ", poiList.get(i).toString());
                 }
 
+
                 if(poiList.size() < 4)
                     hash_string = hash_string + "Just one ordinary day. Nothing much.";
                 else if(poiList.size() >= 4 && poiList.size() <= 6)
@@ -162,12 +176,15 @@ public class DatelineModel implements Parcelable {
                 else if (poiList.size() > 6)
                     hash_string = hash_string + "Oh shit ! It was a super busy day";
 
-
             }
             else{
                 hash_string ="I stayed at home whole day. What a boring day. I will go out somewhere tomorrow";
             }
 
+            //3. Photos
+            if(getPoiList().size() >0){
+                hash_string = hash_string + String.format("I also took %s photos. ", getPoiList().size());
+            }
 
 
             return hash_string;
@@ -182,5 +199,34 @@ public class DatelineModel implements Parcelable {
 
     }
 
+    private String readFromFile(String filename, Context context) {
+
+        String ret = "";
+
+        try {
+            InputStream inputStream = context.openFileInput(filename);
+
+            if ( inputStream != null ) {
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                String receiveString = "";
+                StringBuilder stringBuilder = new StringBuilder();
+
+                while ( (receiveString = bufferedReader.readLine()) != null ) {
+                    stringBuilder.append(receiveString);
+                }
+
+                inputStream.close();
+                ret = stringBuilder.toString();
+            }
+        }
+        catch (FileNotFoundException e) {
+            Log.e("login activity", "File not found: " + e.toString());
+        } catch (IOException e) {
+            Log.e("login activity", "Can not read file: " + e.toString());
+        }
+
+        return ret;
+    }
 
 }
