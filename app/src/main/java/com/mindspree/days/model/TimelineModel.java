@@ -2,6 +2,7 @@ package com.mindspree.days.model;
 
 //import android.hardware.Camera;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.Camera;
@@ -12,6 +13,7 @@ import android.location.Location;
 import android.media.ExifInterface;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -21,6 +23,13 @@ import com.mindspree.days.lib.AppPreference;
 import com.mindspree.days.lib.AppUtils;
 import com.mindspree.days.ui.MainActivity;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -48,6 +57,7 @@ public class TimelineModel implements Parcelable {
 
     public AppPreference mPreference;
     public Location mHomeLocation;
+    public Location mCurrentLocation = new Location("other");;
 
     private String mMeasureDate = "";
     private String mCreateDate = "";
@@ -56,6 +66,7 @@ public class TimelineModel implements Parcelable {
 
 
     private String mMeasureTime ="";
+    private String mMeasureTimeInHour ="";
     private ArrayList<TextView> mSelectedImages = new ArrayList<TextView>();
     private TimelineModel mTimelineModel;
     private DBWrapper mDBWrapper;
@@ -63,6 +74,9 @@ public class TimelineModel implements Parcelable {
     public int weekend_days=0;
     public String strWeek;
     public int nWeek;
+
+
+
 
     private MainActivity mainActivity =new MainActivity();
 
@@ -161,11 +175,68 @@ public class TimelineModel implements Parcelable {
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
             Date updateDate= dateFormat.parse(formatDate);
-            SimpleDateFormat formatString = new SimpleDateFormat("HH/mm");
+            SimpleDateFormat formatString = new SimpleDateFormat("HH:mm");
             mMeasureTime = formatString.format(updateDate);
         } catch (ParseException e) {
             e.printStackTrace();
         }
+    }
+
+
+    public void setMeasureTimeInHour(String formatDate){
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+            Date updateDate= dateFormat.parse(formatDate);
+            SimpleDateFormat formatString = new SimpleDateFormat("HH");
+            mMeasureTimeInHour = formatString.format(updateDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+
+
+    private void writeToFile(String data, String filename, Context context) {
+        try {
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(filename, Context.MODE_PRIVATE));
+            outputStreamWriter.write(data);
+            outputStreamWriter.close();
+        }
+        catch (IOException e) {
+            Log.e("Exception", "File write failed: " + e.toString());
+        }
+    }
+
+    private String readFromFile(String filename, Context context) {
+
+        String ret = "";
+
+        try {
+            InputStream inputStream = context.openFileInput(filename);
+
+            if ( inputStream != null ) {
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                String receiveString = "";
+                StringBuilder stringBuilder = new StringBuilder();
+
+                while ( (receiveString = bufferedReader.readLine()) != null ) {
+                    stringBuilder.append(receiveString);
+                }
+
+                inputStream.close();
+                ret = stringBuilder.toString();
+            }
+        }
+        catch (FileNotFoundException e) {
+            Log.e("login activity", "File not found: " + e.toString());
+        } catch (IOException e) {
+            Log.e("login activity", "Can not read file: " + e.toString());
+        }
+
+        return ret;
     }
 
 
@@ -237,11 +308,19 @@ public class TimelineModel implements Parcelable {
         return mImageGroup;
     }
 
-    public String getSummarize() {
+    public String getSummarize(Context context) {
 
 
+        // Read Caemra Information (defined in Main Activity)
+        int rear_cam_width =5000;
+        int front_cam_width =3000;
 
-        int rear_cam_width = mainActivity.rear_cam_width;
+        rear_cam_width = Integer.parseInt(readFromFile("rear_camera_setting.txt", context)) ;
+        front_cam_width = Integer.parseInt(readFromFile("front_camera_setting.txt", context)) ;
+
+        mCurrentLocation.setLatitude(getLatitude());
+        mCurrentLocation.setLongitude(getLongitude());
+
 
         String hash_string = null;
         // Check date
@@ -254,53 +333,91 @@ public class TimelineModel implements Parcelable {
         // 2. Time
 
         setMeasureTime(mCreateDate);
-
+        setMeasureTimeInHour(mCreateDate);
         hash_string =hash_string + String.format("#%s ", mMeasureTime);
 
-
-
-
-        // 2.5
+        // 3. Location
         if(weekend_days==0){
             // Weekdays
-            // POI 가 집 -->  9시 이전이면 #출근 전,  9시 이후이면 # 여유있는 아침
+            if(mName == "집"){
 
+                if( Integer.parseInt(mMeasureTimeInHour) <9 ){
+                    hash_string =hash_string + String.format("#%s ", "바쁜 아침");  // Busy morning
+                }else if ( Integer.parseInt(mMeasureTimeInHour) >= 10 && Integer.parseInt(mMeasureTimeInHour) <= 12){
+                    hash_string =hash_string + String.format("#%s ", "여유있는 아침");   // Lazy morning
+                }else if ( Integer.parseInt(mMeasureTimeInHour) > 18 && Integer.parseInt(mMeasureTimeInHour) < 24){
+                    hash_string =hash_string + String.format("#%s ", "다시 집");   // Lazy morning
+                }
+
+
+            }
+            else
+            {
+                if( Integer.parseInt(mMeasureTimeInHour) <6 ) {
+                    hash_string = hash_string + String.format("#%s ", "외박 ~");
+                }
+            }
 
         }
         else{
             // Weekend
-            // POI 가 집 -->  9시 이전이면 #이른 주말 아침, 9시 이후 12 시 이전 이면 # 한가로운 주말 오전
+            if(mName == "집"){
 
+                if( Integer.parseInt(mMeasureTimeInHour) <9 ){
+                    hash_string =hash_string + String.format("#%s ", "이른 주말 아침");    // Early weekend moning
+                }else if ( Integer.parseInt(mMeasureTimeInHour) >= 9 && Integer.parseInt(mMeasureTimeInHour) <= 12){
+                    hash_string =hash_string + String.format("#%s ", "한가로운 주말 아침");   // Cozy weekend mornign
+                }else if ( Integer.parseInt(mMeasureTimeInHour) > 18 && Integer.parseInt(mMeasureTimeInHour) < 24){
+                    hash_string =hash_string + String.format("#%s ", "다시 집");   // Lazy morning
+                }
+
+            }
+            else
+            {
+               if( mHomeLocation.distanceTo(mCurrentLocation) <5000 ){
+                   hash_string =hash_string + String.format("#%s ", "잠시 외출");   // Temporary out
+               }else if( mHomeLocation.distanceTo(mCurrentLocation) >= 5000 && mHomeLocation.distanceTo(mCurrentLocation) < 20000 ){
+                   hash_string =hash_string + String.format("#%s ", "일상 탈출");      // Esapce from town
+               }else if( mHomeLocation.distanceTo(mCurrentLocation) > 20000 ){
+                   hash_string =hash_string + String.format("#%s ", "오늘 외박 ~");     // Stay outside ~
+
+               }
+
+
+            }
         }
-
-        /*
-            if( Weekdays and time < 10:00 am)
-                add "Before going to the work"
-            elese
-                add " "   // Nothing
-        */
-
 
 
         // 4. Face detectoion/ Smile score
         EngineDBInterface engineDBInterface = new EngineDBInterface();
         float Num_Face=0;
         float Smile_Prob=0;
+        int selfie_cnt=0;
+        int singlePhoto_cnt=0;
+        int groupSelfie_cnt=0;
+        int groupPhoto_cnt=0;
+        int smile_cnt=0;
 
         int photoCount = getPhotoList().size();
         if(photoCount > 0) {
 
+
             // Extract the name of the representing photo
             //String PhotoString = getPhotoString();
+
+
+            // Extract timeline data
 
             ArrayList PhotoList = getPhotoList();  // getExtraFeatWithPhotoURL(PhotoString);
             photoCount=1;
             for (int i = 0; i < photoCount; i++){
                 String timelinePhotoFile = PhotoList.get(0).toString();
 
-
                 int Im_width=0;
                 int Im_height=0;
+
+
+                // Face detectioin : Face number. Eye close. Smile probability
 
                 final BitmapFactory.Options options = new BitmapFactory.Options();
                 options.inJustDecodeBounds = true;
@@ -313,58 +430,77 @@ public class TimelineModel implements Parcelable {
                 Bitmap bMap_temp = BitmapFactory.decodeFile(timelinePhotoFile, bitmap_options);
                 Im_width = bMap_temp.getWidth() * sample_size ;
 
-                //String temp1 = "/storage/emulated/0/DCIM/Camera/20170219_095851.jpg";
-
-                 Num_Face = Num_Face + engineDBInterface.getExtraFeatWithPhotoURL(timelinePhotoFile);
-                 Smile_Prob = Smile_Prob + engineDBInterface.getWeightCoeffWithPhotoURL(timelinePhotoFile);
+                Num_Face = Num_Face + engineDBInterface.getExtraFeatWithPhotoURL(timelinePhotoFile);
+                Smile_Prob = Smile_Prob + engineDBInterface.getWeightCoeffWithPhotoURL(timelinePhotoFile);
 
                 if( Num_Face == 1) {
 
+                    if( Math.abs(front_cam_width - Im_width) < 500)
+                        selfie_cnt++;
+                    else if ( Math.abs(rear_cam_width - Im_width) < 500)
+                        singlePhoto_cnt ++;
 
-
-                    if( Math.abs(rear_cam_width - Im_width) < 500)
-                        hash_string = hash_string + String.format("#%s ", "셀피");
-                    else
-                        hash_string = hash_string + String.format("#%s ", "독사진");
-
-
-//                    if("selfie resolution")
-//                        hash_string = hash_string + String.format("#%s ", "셀피");
-//                    else
-//                        hash_string = hash_string + String.format("#%s ", "사랑하는 사람들");
-//
-//
-//                    if(Smile_Prob > 0.6)
-//                        hash_string =hash_string + String.format("#%s ", "행복한 미소");
                 }
                 else if( Num_Face >1) {
-                    hash_string = hash_string + String.format("#%s ", "사랑하는 사람들");
+
+
+
+                    if( Math.abs(front_cam_width - Im_width) < 500)
+                        groupSelfie_cnt++;
+                    else if ( Math.abs(rear_cam_width - Im_width) < 500)
+                        groupPhoto_cnt++;
+
+                }else {
+
+                    hash_string = hash_string + String.format("#%s ", "Oops");
+
                 }
 
+
             }
+
             Smile_Prob = Smile_Prob / photoCount;
             if( Smile_Prob >= 0.6) {
-                hash_string = hash_string + String.format("#%s ", "아름다운 미소");
-                // In this case, change moode automatically to "Happy"
+                smile_cnt++;
             }
 
         } else {
-            /*
-            if( Weekdays and time < 10:00 am)
-                add "Busy morning"
-            else if( Weekdays and time > 12:00 am)
-                add " "   // Nothing
 
-            else if( Weekend and time < 10:00 am)
-                add "게으른 아침"
 
-            else if( Weekend and time > 12:00 am)
-                add "방콕"
-            */
-            // This is default message. Needs more data
-            hash_string = hash_string + String.format("#Busy");
+            hash_string = hash_string + String.format("#Nothing much ~");
 
         }
+
+
+        if(selfie_cnt > 0){
+            hash_string = hash_string + String.format("#%d %s ", selfie_cnt, "Selfie");
+            hash_string = hash_string + String.format("#%s ", "So Handsome");
+        }
+
+        if(singlePhoto_cnt >0) {
+            hash_string = hash_string + String.format("#%s ", "Who is that nice guy in the picture ?");
+        }
+
+        if(groupPhoto_cnt > 0){
+            hash_string = hash_string + String.format("#%s ", "Best People !");
+        }
+
+        if(groupSelfie_cnt >0) {
+            hash_string = hash_string + String.format("#%d %s ", selfie_cnt, "Group Selfie");
+            hash_string = hash_string + String.format("#%s ", "Handsome guys");
+        }
+
+
+        if(smile_cnt ==1) {
+            hash_string = hash_string + String.format("#%s ", "Beautifule Smile");
+        }else if(smile_cnt >1) {
+            hash_string = hash_string + String.format("#%s ", "Oh Happy Day ~");
+        }
+
+
+
+
+
 
         return String.format(" %s ", hash_string);
 

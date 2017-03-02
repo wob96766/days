@@ -273,7 +273,7 @@ public class LocationLoggingService extends Service {
             mPreference.setLongitude(location.getLongitude());
 
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            Date loggingStart = AppUtils.getTodayDateTime(now, "01:00:00");
+            Date loggingStart = AppUtils.getTodayDateTime(now, "00:10:00");
             Date loggingEnd = AppUtils.getTodayDateTime(now, "23:59:00");
             if(now.before(loggingStart) || now.after(loggingEnd)){
                 if(mPreference.getLoggingOnOff() == true) {

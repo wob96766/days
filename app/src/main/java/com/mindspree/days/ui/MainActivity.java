@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
@@ -53,9 +54,15 @@ import com.mindspree.days.services.LocationLoggingService;
 import com.mindspree.days.services.LocationServiceReciever;
 import com.mindspree.days.view.LoadingImageDialog;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -101,11 +108,10 @@ public class MainActivity extends BaseActivity {
     private boolean mLockScreenLoaded = false;
 
 
-    private String cameraId;
-    protected CameraDevice cameraDevice;
 
     public int rear_cam_width ;
     public int front_cam_width ;
+
 
     public FaceDetector fdetector;
 
@@ -380,7 +386,6 @@ public class MainActivity extends BaseActivity {
         // rear_front ==0   -> Rear cameare width
         // rear_front ==1   -> Front cameare width
 
-
         CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
         CameraCharacteristics characteristics =null;
 
@@ -413,7 +418,8 @@ public class MainActivity extends BaseActivity {
             }
             //android.util.Size[] temp4 =   config2.getOutputSizes(4);
 
-
+            writeToFile(String.valueOf(rear_cam_width), "rear_camera_setting.txt" , getContext());
+            writeToFile(String.valueOf(front_cam_width), "front_camera_setting.txt" , getContext());
 
         } catch (CameraAccessException e) {
             e.printStackTrace();
@@ -421,13 +427,62 @@ public class MainActivity extends BaseActivity {
             front_cam_width=0;
         }
 
-        if(rear_front ==0)
+
+
+
+
+        if(rear_front ==0) {
+
             return rear_cam_width;
-        else
+        }
+        else {
+
             return front_cam_width;
+        }
 
     }
 
+
+    private void writeToFile(String data, String filename, Context context) {
+        try {
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(filename, Context.MODE_PRIVATE));
+            outputStreamWriter.write(data);
+            outputStreamWriter.close();
+        }
+        catch (IOException e) {
+            Log.e("Exception", "File write failed: " + e.toString());
+        }
+    }
+
+    private String readFromFile(String filename, Context context) {
+
+        String ret = "";
+
+        try {
+            InputStream inputStream = context.openFileInput(filename);
+
+            if ( inputStream != null ) {
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                String receiveString = "";
+                StringBuilder stringBuilder = new StringBuilder();
+
+                while ( (receiveString = bufferedReader.readLine()) != null ) {
+                    stringBuilder.append(receiveString);
+                }
+
+                inputStream.close();
+                ret = stringBuilder.toString();
+            }
+        }
+        catch (FileNotFoundException e) {
+            Log.e("login activity", "File not found: " + e.toString());
+        } catch (IOException e) {
+            Log.e("login activity", "Can not read file: " + e.toString());
+        }
+
+        return ret;
+    }
 
 
     /**

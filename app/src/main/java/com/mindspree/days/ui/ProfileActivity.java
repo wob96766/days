@@ -166,25 +166,25 @@ public class ProfileActivity extends BaseActivity {
         } else if(requestCode == AppConfig.IntentCode.ACTION_MAPPICK1) {
 
             // Only for debugging
-            mProfile.address1 = "Catalina Apartments";
-            mProfile.latitude1 = 37.3502357;
-            mProfile.longitude1 = -121.9919638;
-            mEditAddress1.setText("Catalina Apartments");
+//            mProfile.address1 = "My house";
+//            mProfile.latitude1 = 37.35001097;
+//            mProfile.longitude1 = -121.9920082;
+//            mEditAddress1.setText("My house");
 
 
-//            if(resultCode==1) {
-//                if(data != null) {
-//                    String title = data.getStringExtra(AppConfig.IntentParam.TITLE);
-//                    double latitude = data.getDoubleExtra(AppConfig.IntentParam.LATITUDE, 0);
-//                    double longitude = data.getDoubleExtra(AppConfig.IntentParam.LONGITUDE, 0);
-//                    if(latitude != 0 && longitude != 0){
-//                        mProfile.address1 = title;
-//                        mProfile.latitude1 = latitude;
-//                        mProfile.longitude1 = longitude;
-//                        mEditAddress1.setText(title);
-//                    }
-//                }
-//            }
+            if(resultCode==1) {
+                if(data != null) {
+                    String title = data.getStringExtra(AppConfig.IntentParam.TITLE);
+                    double latitude = data.getDoubleExtra(AppConfig.IntentParam.LATITUDE, 0);
+                    double longitude = data.getDoubleExtra(AppConfig.IntentParam.LONGITUDE, 0);
+                    if(latitude != 0 && longitude != 0){
+                        mProfile.address1 = title;
+                        mProfile.latitude1 = latitude;
+                        mProfile.longitude1 = longitude;
+                        mEditAddress1.setText(title);
+                    }
+                }
+            }
 
 
         } else if(requestCode == AppConfig.IntentCode.ACTION_MAPPICK2) {

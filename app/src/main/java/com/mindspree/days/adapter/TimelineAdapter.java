@@ -3,6 +3,7 @@ package com.mindspree.days.adapter;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +16,14 @@ import com.bumptech.glide.Glide;
 import com.mindspree.days.R;
 import com.mindspree.days.interfaces.OnItemClickListener;
 import com.mindspree.days.model.TimelineModel;
+import com.mindspree.days.ui.TimelineActivity;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
 
@@ -28,6 +36,7 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
     public TimelineAdapter(Context context) {
         this.mContext = context;
     }
+
 
     @Override
     public MyViewHolders onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -72,10 +81,16 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
             }
         }
 
+
+
         holder.mTextTitle.setText(mDataSource.get(position).getDateFormat());
         holder.mTextSubTitle.setText(mDataSource.get(position).getName());
-        holder.mTextContent.setText(mDataSource.get(position).getSummarize());
+        holder.mTextContent.setText(mDataSource.get(position).getSummarize(mContext));
     }
+
+
+
+
 
     @Override
     public int getItemCount() {

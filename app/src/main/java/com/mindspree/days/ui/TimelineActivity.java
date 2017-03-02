@@ -3,6 +3,7 @@ package com.mindspree.days.ui;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -39,6 +40,9 @@ public class TimelineActivity extends BaseActivity {
     private ArrayList<TimelineModel> mDataList;
     private TextView mTextSentence;
     private DatelineModel mDateline;
+
+    public SentenceModel sentenceModel;
+
 
     public static void startActivity(Context context, String dateString, DatelineModel dateline)
     {
@@ -82,6 +86,7 @@ public class TimelineActivity extends BaseActivity {
     }
 
     public void initData() {
+
         mPhotoWrapper = new DBWrapper(mPreference.getUserUid());
         mDateline = getIntent().getParcelableExtra(AppConfig.IntentParam.DATELINE);
         mSelectedDate = getIntent().getStringExtra(AppConfig.IntentParam.DATE);
@@ -139,6 +144,7 @@ public class TimelineActivity extends BaseActivity {
 
     public void requestSentence() {
         SentenceModel sentence = mPhotoWrapper.getSentence(mSelectedDate);
+        sentenceModel = sentence;
         mTextSentence.setText(sentence.getSummarize());
     }
 

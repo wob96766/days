@@ -1,20 +1,31 @@
 package com.mindspree.days.engine;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Environment;
 import android.os.StatFs;
+import android.util.Log;
 
 import com.mindspree.days.AppApplication;
 import com.mindspree.days.data.DBHelper;
 import com.mindspree.days.model.PhotosTableModel;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
 
 public class EngineDBInterface {
+
+  
+
 
     public ArrayList getPhotoListWithoutClusterId(){
         DBHelper dbHelper = AppApplication.getDbHelper();
@@ -422,6 +433,7 @@ public class EngineDBInterface {
 
         db.close();
     }
+
 
 
     public void updateQualityScore(String file_location, double final_score){

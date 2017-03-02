@@ -185,6 +185,17 @@ public class TodayFragment extends BaseFragment{
         }
     }
 
+    public String requestWeather() {
+        String weather = "";
+        if(mSentence != null) {
+            weather = mSentence.mWeather;
+        }
+        mSentence = mDBWrapper.getSentence();
+        mSentence.mWeather = weather;
+
+        return weather;
+    }
+
     public void finishView() {
 
     }
