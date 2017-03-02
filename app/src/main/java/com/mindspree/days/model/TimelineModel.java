@@ -334,7 +334,7 @@ public class TimelineModel implements Parcelable {
 
         setMeasureTime(mCreateDate);
         setMeasureTimeInHour(mCreateDate);
-//        hash_string =hash_string + String.format("#%s ", mMeasureTime);
+        hash_string =hash_string + String.format("#%s ", mMeasureTime);
 
         // 3. Location
         if(weekend_days==0){

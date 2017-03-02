@@ -49,9 +49,6 @@ public class ShareDialog extends Dialog {
     private FirebaseStorage mStorage;
     private StorageReference mStorageReference;
 
-
-
-
     public ShareDialog(Activity activity, String selectedDate, DatelineModel dateline) {
         super(activity , android.R.style.Theme_Translucent_NoTitleBar);
         mActivity = activity;
