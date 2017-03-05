@@ -27,29 +27,29 @@ public class DatelineModel implements Parcelable {
     public String mCreated= "";
     public String mUpdateDate = "";
     private String mPhotoGroup = "";
+    private String mPhotoIds = "";
     private String mPoiGroup = "";
     private int mLocationCount = 0;
     private int mPhotoCount = 0;
     private String mSentence = "";
 
-
-
-
     public DatelineModel(){
     }
 
-    public DatelineModel(String updateDate, String photoGroup, int locationCount, int photoCount, String sentence, String poiGroup){
+    public DatelineModel(String updateDate, String photoGroup, String ids, int locationCount, int photoCount, String sentence, String poiGroup){
         mUpdateDate = updateDate;
         mPhotoGroup = photoGroup;
+        mPhotoIds = ids;
         mPoiGroup = poiGroup;
         mLocationCount = locationCount;
         mPhotoCount = photoCount;
         mSentence = sentence;
     }
 
-    public DatelineModel(String updateDate, String photoGroup, int locationCount, int photoCount, String sentence, String mood, String created){
+    public DatelineModel(String updateDate, String photoGroup, String ids, int locationCount, int photoCount, String sentence, String mood, String created){
         mUpdateDate = updateDate;
         mPhotoGroup = photoGroup;
+        mPhotoIds = ids;
         mLocationCount = locationCount;
         mPhotoCount = photoCount;
         mSentence = sentence;
@@ -61,6 +61,7 @@ public class DatelineModel implements Parcelable {
 
         mUpdateDate			= in.readString();
         mPhotoGroup 		= in.readString();
+        mPhotoIds 	    	=   in.readString();
         mLocationCount		= in.readInt();
         mPhotoCount			= in.readInt();
         mSentence 		= in.readString();
@@ -87,17 +88,37 @@ public class DatelineModel implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(mUpdateDate);
         dest.writeString(mPhotoGroup);
+        dest.writeString(mPhotoIds);
         dest.writeInt(mLocationCount);
         dest.writeInt(mPhotoCount);
         dest.writeString(mSentence);
     }
-
+    //junyong  - get the 3 representing photo URL
     public ArrayList<String> getPhotoList() {
         if(mPhotoGroup != null) {
             return new ArrayList<String>(Arrays.asList(mPhotoGroup.split(",")));
         } else {
             return new ArrayList<>();
         }
+    }
+    //junyong - get image's "photo_index" to be displayed on the screen
+    public ArrayList<String> getDisplayPhotoIds() {
+        if(mPhotoGroup != null) {
+            ArrayList<String> photoids = new ArrayList<String>(Arrays.asList(mPhotoIds.split(",")));
+            if(photoids.size() > 3){
+                return new ArrayList<String>(photoids.subList(0, 2));
+            } else {
+                return new ArrayList<String>(Arrays.asList(mPhotoIds.split(",")));
+            }
+        } else {
+            return new ArrayList<>();
+        }
+    }
+    //junyong - check the poi's where each photos was taken
+    //junyong - check the size of the cluster for each photo
+    public PhotoInfoModel getPhotoInfo(String file_index){
+        DBWrapper dbWrapper = new DBWrapper(AppPreference.getInstance().getUserUid());
+        return dbWrapper.getPhotoInfo(file_index);
     }
 
     public ArrayList<String> getPoiList() {
@@ -128,9 +149,6 @@ public class DatelineModel implements Parcelable {
     }
 
     public String getSummarize() {
-
-
-
 
 
         if(mSentence == null || mSentence.equals("")) {

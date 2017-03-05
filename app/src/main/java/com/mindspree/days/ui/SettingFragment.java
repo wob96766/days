@@ -255,15 +255,24 @@ public class SettingFragment extends BaseFragment{
                 } else {
                     Glide.with(getContext()).load(R.mipmap.ic_person).bitmapTransform(new CircleTransform(getContext())).into(mImageUser);
                 }
+                // junyong - Clear Location data when there is no location information on the Server.
                 if(profile.address1 != null && !profile.address1.equals("")){
                     mPreference.setPoiTitle1(profile.address1);
                     mPreference.setPoiLatitude1(profile.latitude1);
                     mPreference.setPoiLongitude1(profile.longitude1);
+                } else {
+                    mPreference.setPoiTitle1("");
+                    mPreference.setPoiLatitude1(0);
+                    mPreference.setPoiLongitude1(0);
                 }
                 if(profile.address2 != null && !profile.address2.equals("")){
                     mPreference.setPoiTitle2(profile.address2);
                     mPreference.setPoiLatitude2(profile.latitude2);
                     mPreference.setPoiLongitude2(profile.longitude2);
+                } else{mPreference.setPoiTitle2("");
+                    mPreference.setPoiLatitude2(0);
+                    mPreference.setPoiLongitude2(0);
+
                 }
             } catch(Exception e){
                 e.printStackTrace();
