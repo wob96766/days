@@ -27,9 +27,6 @@ public class DatelineAdapter extends RecyclerView.Adapter<DatelineAdapter.MyView
     private Context mContext;
     private OnItemClickListener mItemClickListener;
 
-
-
-
     public DatelineAdapter(Context context) {
         this.mContext = context;
     }
@@ -64,7 +61,6 @@ public class DatelineAdapter extends RecyclerView.Adapter<DatelineAdapter.MyView
             // for default image
             /*Picasso.with(mContext).load(R.drawable.background_white_round).into(holder.mThumnail);*/
         }
-
         holder.mTextContent.setText(mDataSource.get(position).getSummarize());
 //        holder.mTextTitle.setText(mDataSource.get(position).getDateFormat());
         holder.mTextDay.setText(mDataSource.get(position).getDayFormat());

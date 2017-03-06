@@ -152,7 +152,7 @@ convolutional_layer parse_convolutional(list *options, size_params params)
     w = params.w;
     c = params.c;
     batch=params.batch;
-  //  if(!(h && w && c)) error("Layer before convolutional layer must output image.");
+    if(!(h && w && c)) error("Layer before convolutional layer must output image.");
     int batch_normalize = option_find_int_quiet(options, "batch_normalize", 0);
     int binary = option_find_int_quiet(options, "binary", 0);
     int xnor = option_find_int_quiet(options, "xnor", 0);
@@ -366,7 +366,7 @@ maxpool_layer parse_maxpool(list *options, size_params params)
     w = params.w;
     c = params.c;
     batch=params.batch;
- //   if(!(h && w && c)) error("Layer before maxpool layer must output image.");
+    if(!(h && w && c)) error("Layer before maxpool layer must output image.");
 
     maxpool_layer layer = make_maxpool_layer(batch,h,w,c,size,stride,padding);
     return layer;
@@ -581,7 +581,7 @@ int is_network(section *s)
             || strcmp(s->type, "[network]")==0);
 }
 
-network * parse_network_cfg2(char *filename)
+network parse_network_cfg(char *filename)
 {
     list *sections = read_cfg(filename);
     node *n = sections->front;
@@ -695,135 +695,13 @@ network * parse_network_cfg2(char *filename)
         net.workspace = calloc(1, workspace_size);
 #endif
     }
-    return &net;
-}
-
-
-network  parse_network_cfg(char *filename)
-{
-    list *sections = read_cfg(filename);
-    node *n = sections->front;
-    if(!n) error("Config file has no sections");
-    network net = make_network(sections->size - 1);
-    net.gpu_index = gpu_index;
-    size_params params;
-
-    section *s = (section *)n->val;
-    list *options = s->options;
-    if(!is_network(s)) error("First section must be [net] or [network]");
-    parse_net_options(options, &net);
-
-    params.h = net.h;
-    params.w = net.w;
-    params.c = net.c;
-    params.inputs = net.inputs;
-    params.batch = net.batch;
-    params.time_steps = net.time_steps;
-    params.net = net;
-
-    size_t workspace_size = 0;
-    n = n->next;
-    int count = 0;
-    free_section(s);
-    fprintf(stderr, "layer     filters    size              input                output\n");
-    while(n){
-        params.index = count;
-        fprintf(stderr, "%5d ", count);
-        s = (section *)n->val;
-        options = s->options;
-        layer l = {0};
-        LAYER_TYPE lt = string_to_layer_type(s->type);
-        if(lt == CONVOLUTIONAL){   // modified
-            l = parse_convolutional(options, params); }
-        else if(lt == LOCAL){
-            l = parse_local(options, params); }
-        else if(lt == ACTIVE){
-            l = parse_activation(options, params);
-        }else if(lt == RNN){
-            l = parse_rnn(options, params);
-        }else if(lt == GRU){
-            l = parse_gru(options, params);
-        }else if(lt == CRNN){
-            l = parse_crnn(options, params);
-        }else if(lt == CONNECTED){
-            l = parse_connected(options, params);
-        }else if(lt == CROP){
-            l = parse_crop(options, params);
-        }else if(lt == COST){
-            l = parse_cost(options, params);
-        }else if(lt == REGION){
-            l = parse_region(options, params);
-        }else if(lt == DETECTION){
-            l = parse_detection(options, params);
-        }else if(lt == SOFTMAX){
-            l = parse_softmax(options, params);
-            net.hierarchy = l.softmax_tree;
-        }else if(lt == NORMALIZATION){
-            l = parse_normalization(options, params);
-        }else if(lt == BATCHNORM){
-            l = parse_batchnorm(options, params);
-        }else if(lt == MAXPOOL) {
-            l = parse_maxpool(options, params);   //--> Cause
-        }else if(lt == REORG){
-            l = parse_reorg(options, params);}
-        else if(lt == AVGPOOL) {
-            l = parse_avgpool(options, params);    //--> Cause
-        }else if(lt == ROUTE){
-            l = parse_route(options, params, net);
-        }else if(lt == SHORTCUT){
-            l = parse_shortcut(options, params, net);
-        }else if(lt == DROPOUT){
-            l = parse_dropout(options, params);
-            l.output = net.layers[count-1].output;
-            l.delta = net.layers[count-1].delta;}
-#ifdef GPU
-            l.output_gpu = net.layers[count-1].output_gpu;
-            l.delta_gpu = net.layers[count-1].delta_gpu;
-#endif
-
-        else{
-            fprintf(stderr, "Type not recognized: %s\n", s->type);
-        }
-
-        l.dontload = option_find_int_quiet(options, "dontload", 0);
-        l.dontloadscales = option_find_int_quiet(options, "dontloadscales", 0);
-        option_unused(options);
-        net.layers[count] = l;
-        if (l.workspace_size > workspace_size) workspace_size = l.workspace_size;
-        free_section(s);
-        n = n->next;
-        ++count;
-        if(n){
-            params.h = l.out_h;
-            params.w = l.out_w;
-            params.c = l.out_c;
-            params.inputs = l.outputs;
-        }
-    }
-    free_list(sections);
-    net.outputs = get_network_output_size(net);
-    net.output = get_network_output(net);
-    if(workspace_size){
-        //printf("%ld\n", workspace_size);
-#ifdef GPU
-        if(gpu_index >= 0){
-            net.workspace = cuda_make_array(0, (workspace_size-1)/sizeof(float)+1);
-        }else {
-            net.workspace = calloc(1, workspace_size);
-        }
-#else
-        net.workspace = calloc(1, workspace_size);
-#endif
-    }
     return net;
 }
-
 
 list *read_cfg(char *filename)
 {
     FILE *file = fopen(filename, "r");
-    if(file == 0)
-        file_error(filename);
+    if(file == 0) file_error(filename);
     char *line;
     int nu = 0;
     list *sections = make_list();

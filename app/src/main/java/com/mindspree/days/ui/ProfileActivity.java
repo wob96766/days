@@ -166,10 +166,10 @@ public class ProfileActivity extends BaseActivity {
         } else if(requestCode == AppConfig.IntentCode.ACTION_MAPPICK1) {
 
             // Only for debugging
-            mProfile.address1 = "Bernal Intermediate";
+            mProfile.address1 = "My house";
             mProfile.latitude1 = 37.350086;
             mProfile.longitude1 = -121.991964;
-            mEditAddress1.setText("Bernal Intermediate");
+            mEditAddress1.setText("My house");
 
 
             if(resultCode==1) {

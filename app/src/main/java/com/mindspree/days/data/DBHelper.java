@@ -17,6 +17,7 @@ import com.mindspree.days.model.DailyModel;
 import com.mindspree.days.model.DatelineModel;
 import com.mindspree.days.model.Location;
 import com.mindspree.days.model.Photo;
+import com.mindspree.days.model.PhotoInfoModel;
 import com.mindspree.days.model.TimelineModel;
 import com.mindspree.days.model.PhotosGridModel;
 import com.mindspree.days.model.SentenceModel;
@@ -886,9 +887,11 @@ public class DBHelper extends SQLiteOpenHelper {
             Cursor cursor = database.rawQuery(
                     "select a.create_date, "
                             + "(select group_concat(ifnull(b.file_location, b.file_location_url)) from (select * from PHOTOS where date(update_date) = date(a.create_date) and user_id = '" + userUid + "' order by quality_rank desc) b )  as files,"
+                            + "(select group_concat(b.file_index) from (select * from PHOTOS where date(update_date) = date(a.create_date) and user_id = '" + userUid + "' order by quality_rank desc) b )  as ids,"
                             + "(select count(*) from PHOTOS where date(a.create_date) = date(update_date) and user_id = '" + userUid + "')  as photo_count, "
                             + "(select count(*) from LOCATIONS where date(a.create_date) = date(create_date) and user_id = '" + userUid + "')  as location_count,"
                             + "(select sentence from DAILY where date(create_date) = date(a.create_date)) as sentence ,"
+                            + "(select weather from DAILY where date(create_date) = date(a.create_date)) as weather ,"
                             + "(select group_concat(name) from LOCATIONS where date(a.create_date) = date(create_date) and user_id = '" + userUid + "')  as pois"
                             + " from LOCATIONS a"
                             + " where user_id = '" + userUid + "' and date(a.create_date) < date('now','localtime') "
@@ -898,11 +901,13 @@ public class DBHelper extends SQLiteOpenHelper {
                 do {
                     String create_date = cursor.getString(cursor.getColumnIndex(COLUMN_CREATE_DATE));
                     String files = cursor.getString(cursor.getColumnIndex("files"));
+                    String ids = cursor.getString(cursor.getColumnIndex("ids"));
+                    String weather = cursor.getString(cursor.getColumnIndex("weather"));
                     String poiGroup = cursor.getString(cursor.getColumnIndex("pois"));
                     int locationCount = cursor.getInt(cursor.getColumnIndex("location_count"));
                     int photoCount = cursor.getInt(cursor.getColumnIndex("photo_count"));
                     String sentence = cursor.getString(cursor.getColumnIndex("sentence"));
-                    list.add(new DatelineModel(create_date, files, locationCount, photoCount, sentence, poiGroup));
+                    list.add(new DatelineModel(create_date, files, ids, weather, locationCount, photoCount, sentence, poiGroup));
                 } while (cursor.moveToNext());
             }
             if (cursor != null)
@@ -950,6 +955,7 @@ public class DBHelper extends SQLiteOpenHelper {
                             + "(select count(*) from PHOTOS where date(a.create_date) = date(update_date) and user_id = '" + userUid + "')  as photo_count, "
                             + "(select count(*) from LOCATIONS where date(a.create_date) = date(create_date) and user_id = '" + userUid + "')  as location_count,"
                             + "(select sentence from DAILY where date(create_date) = date(a.create_date)) as sentence,"
+                            + "(select weather from DAILY where date(create_date) = date(a.create_date)) as weather ,"
                             + "(select group_concat(name) from LOCATIONS where date(a.create_date) = date(create_date) and user_id = '" + userUid + "')  as pois"
                             + " from LOCATIONS a"
                             + " where user_id = '" + userUid + "' and date(a.create_date) = '" + dateString + "' "
@@ -959,11 +965,13 @@ public class DBHelper extends SQLiteOpenHelper {
                 do {
                     String create_date = cursor.getString(cursor.getColumnIndex(COLUMN_CREATE_DATE));
                     String files = cursor.getString(cursor.getColumnIndex("files"));
+                    String ids = cursor.getString(cursor.getColumnIndex("ids"));
+                    String weather = cursor.getString(cursor.getColumnIndex("weather"));
                     String poiGroup = cursor.getString(cursor.getColumnIndex("pois"));
                     int locationCount = cursor.getInt(cursor.getColumnIndex("location_count"));
                     int photoCount = cursor.getInt(cursor.getColumnIndex("photo_count"));
                     String sentence = cursor.getString(cursor.getColumnIndex("sentence"));
-                    return new DatelineModel(create_date, files, locationCount, photoCount, sentence, poiGroup);
+                    return new DatelineModel(create_date, files, ids, weather, locationCount, photoCount, sentence, poiGroup);
                 } while (cursor.moveToNext());
             }
             if (cursor != null)
@@ -983,9 +991,11 @@ public class DBHelper extends SQLiteOpenHelper {
             Cursor cursor = database.rawQuery(
                     "select a.create_date, "
                             + "(select group_concat(ifnull(b.file_location, b.file_location_url)) from (select * from PHOTOS where date(update_date) = date(a.create_date) and user_id = '" + userUid + "' order by quality_rank desc) b )  as files,"
+                            + "(select group_concat(b.file_index) from (select * from PHOTOS where date(update_date) = date(a.create_date) and user_id = '" + userUid + "' order by quality_rank desc) b )  as ids,"
                             + "(select count(*) from PHOTOS where date(a.create_date) = date(update_date) and user_id = '" + userUid + "')  as photo_count, "
                             + "(select count(*) from LOCATIONS where date(a.create_date) = date(create_date) and user_id = '" + userUid + "')  as location_count,"
                             + "(select sentence from DAILY where date(create_date) = date(a.create_date)) as sentence,"
+                            + "(select weather from DAILY where date(create_date) = date(a.create_date)) as weather ,"
                             + "(select group_concat(name) from LOCATIONS where date(a.create_date) = date(create_date) and user_id = '" + userUid + "')  as pois"
                             + " from LOCATIONS a  LEFT OUTER JOIN DAILY b ON date(a.create_date) = date(b.create_date)"
                             + " where   ( (a.name like '%'||'"+searchText+"'||'%') OR (b.mood like '%'||'"+searchText+"'||'%') OR (b.sentence like '%'||'"+searchText+"'||'%') ) "
@@ -996,11 +1006,13 @@ public class DBHelper extends SQLiteOpenHelper {
                 do {
                     String create_date = cursor.getString(cursor.getColumnIndex(COLUMN_CREATE_DATE));
                     String files = cursor.getString(cursor.getColumnIndex("files"));
+                    String ids = cursor.getString(cursor.getColumnIndex("ids"));
+                    String weather = cursor.getString(cursor.getColumnIndex("weather"));
                     String poiGroup = cursor.getString(cursor.getColumnIndex("pois"));
                     int locationCount = cursor.getInt(cursor.getColumnIndex("location_count"));
                     int photoCount = cursor.getInt(cursor.getColumnIndex("photo_count"));
                     String sentence = cursor.getString(cursor.getColumnIndex("sentence"));
-                    list.add(new DatelineModel(create_date, files, locationCount, photoCount, sentence, poiGroup));
+                    list.add(new DatelineModel(create_date, ids, weather, files, locationCount, photoCount, sentence, poiGroup));
                 } while (cursor.moveToNext());
             }
             if (cursor != null)
@@ -1458,6 +1470,33 @@ public class DBHelper extends SQLiteOpenHelper {
             e.printStackTrace();
         }
     }
+
+    public PhotoInfoModel getPhotoInfo(String userUid, String photo_index) {
+        PhotoInfoModel result =  new PhotoInfoModel();
+        try {
+            Cursor cursor = database.rawQuery(
+                    "SELECT a.*," +
+                    "       (SELECT name FROM LOCATIONS where a.update_date between ifnull(create_date, date('now','localtime')) and ifnull(update_date, datetime('now', 'localtime')))" +
+                    "  FROM PHOTOS a" +
+                    " WHERE a.file_index = '" + photo_index + "' and user_id = '" + userUid + "'"
+                    , null);
+            if (cursor.moveToFirst()) {
+                do {
+                    result.name = cursor.getString(cursor.getColumnIndex(COLUMN_NAME));
+                    result.photo_size = cursor.getString(cursor.getColumnIndex(COLUMN_PHOTO_SIZE));
+                    // junyong - define the data if you need
+
+                } while (cursor.moveToNext());
+            }
+            if (cursor != null)
+                cursor.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
 
 
 }

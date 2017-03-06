@@ -7,6 +7,7 @@ import com.mindspree.days.model.DatelineModel;
 import com.mindspree.days.model.DailyModel;
 import com.mindspree.days.model.Location;
 import com.mindspree.days.model.Photo;
+import com.mindspree.days.model.PhotoInfoModel;
 import com.mindspree.days.model.PhotosGridModel;
 import com.mindspree.days.model.TimelineModel;
 import com.mindspree.days.model.SentenceModel;
@@ -198,5 +199,9 @@ public class DBWrapper {
 
     public void setSentence(String date, String dateString) {
         mDbHelper.setSentence(mUserUid, date, dateString);
+    }
+
+    public PhotoInfoModel getPhotoInfo(String file_index) {
+        return mDbHelper.getPhotoInfo(mUserUid, file_index);
     }
 }
