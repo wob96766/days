@@ -729,44 +729,42 @@ void predict_classifier2(char *datacfg, char *cfgfile, char *weightfile, char *f
 
 float * predict_classifier_custom(char *datacfg, char *cfgfile, char *weightfile, char *filename, char *resource_path,  int top, int offset)
 {
+
     network net = parse_network_cfg(cfgfile);
     if(weightfile){
         load_weights(&net, weightfile);
     }
-    set_batch_network(&net, 1);
-    srand(2222222);
 
-    list *options = read_data_cfg(datacfg);
+    set_batch_network(&net, 1);
+        srand(2222222);
+
+        list *options = read_data_cfg(datacfg);
 
     char *name_list = "/storage/emulated/0/Download/data/labels.txt"; // Temporarily, only for cifar -10
-
-
     if(!name_list) name_list = option_find_str(options, "labels", "data/labels.list");
     if(top == 0) top = option_find_int(options, "top", 1);
+//
+        char buff[256];
+        char *input = buff;
+ //  int size = net.w;
 
-    int i = 0;
-    char **names = get_labels(name_list);
-    clock_t time;
-    int *indexes = calloc(top, sizeof(int));
-    char buff[256];
-    char *input = buff;
-    int size = net.w;
-
-
-        strncpy(input, filename, 256);
+      strncpy(input, filename, 256);
         image im = load_image_color(input, 0, 0);
-        image r = resize_min(im, size);
+        //image r = resize_min(im, size);
+        image r = im;
         resize_network(&net, r.w, r.h);
         printf("%d %d\n", r.w, r.h);
 
         float *X = r.data;
-        time=clock();
-
         float *predictions = network_predict_offset(net, X, offset);
+
 
 
         if(r.data != im.data) free_image(r);
         free_image(im);
+
+//        float predictions[1000];
+//        predictions[0]=10;
 
 
         return predictions;
@@ -1273,23 +1271,10 @@ float * run_classifier_custom(int argc, char **argv, int offset)
 
 
 
-    if(0==strcmp(argv[2], "predict")) predict_classifier(data, cfg, weights, filename, top);
-    else if(0==strcmp(argv[2], "predict2")) predict_classifier2(data, cfg, weights, filename, resource_path, top);
-    else if(0==strcmp(argv[2], "predictCustom")) {
+    if(0==strcmp(argv[2], "predictCustom")) {
        feat_return =predict_classifier_custom(data, cfg, weights, filename, resource_path, top, offset);
     }
-    else if(0==strcmp(argv[2], "try")) try_classifier(data, cfg, weights, filename, atoi(layer_s));
-    else if(0==strcmp(argv[2], "train")) train_classifier(data, cfg, weights, gpus, ngpus, clear);
-    else if(0==strcmp(argv[2], "demo")) demo_classifier(data, cfg, weights, cam_index, filename);
-    else if(0==strcmp(argv[2], "gun")) gun_classifier(data, cfg, weights, cam_index, filename);
-    else if(0==strcmp(argv[2], "threat")) threat_classifier(data, cfg, weights, cam_index, filename);
-    else if(0==strcmp(argv[2], "test")) test_classifier(data, cfg, weights, layer);
-    else if(0==strcmp(argv[2], "label")) label_classifier(data, cfg, weights);
-    else if(0==strcmp(argv[2], "valid")) validate_classifier_single(data, cfg, weights);
-    else if(0==strcmp(argv[2], "validmulti")) validate_classifier_multi(data, cfg, weights);
-    else if(0==strcmp(argv[2], "valid10")) validate_classifier_10(data, cfg, weights);
-    else if(0==strcmp(argv[2], "validcrop")) validate_classifier_crop(data, cfg, weights);
-    else if(0==strcmp(argv[2], "validfull")) validate_classifier_full(data, cfg, weights);
+
 
 
     return feat_return;

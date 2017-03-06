@@ -5,9 +5,11 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
+import android.os.Environment;
 import android.util.Log;
 import android.util.SparseArray;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -35,6 +37,39 @@ public class ClusterEngine {
         double time_feat_gain =1;
 
 // For loop
+
+
+
+
+        System.gc();
+
+        String [] DNN_path = null;
+        if(task == null)
+            DNN_path = againTask.DNN_path;
+        else
+            DNN_path = task.DNN_path;
+
+        File outDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString());
+
+        String DNN_test = "IMG_7543.JPG"; // Seashore
+        String DNN_test_path = outDir + "/data/" + DNN_test;
+
+
+        // This is for classification
+        String[] jargv =new String[7];
+        jargv[0] ="classifier_Class";
+        jargv[1] ="predictCustom";  // This is for classification
+        jargv[2] =DNN_path[0];
+        jargv[3] =DNN_path[1];
+        jargv[4] =DNN_path[2];
+        jargv[5] =DNN_test_path;
+        jargv[6] = outDir+"/";
+
+        String test ;
+        test = DnnEngineClassJNI(jargv);
+
+
+
 
         /////////////////////////////////////////////////////////
             /*                Image file reading                   */
@@ -704,10 +739,10 @@ public class ClusterEngine {
 
         return garray_row;
     }
-    public native float[] DnnEngineJNI(String[] jargv);
-    public native String DnnEngineClassJNI(String[] jargv);
+
     public native static void clusteringTest6Initialize();
     public native static double clusteringTest6(double[] a, double[] b, double c);
+    public native static String DnnEngineClassJNI(String[] jargv);
     static {
         System.loadLibrary("DNN-jni");
         System.loadLibrary("interface_jni");

@@ -231,3 +231,95 @@ JNIEXPORT jstring JNICALL Java_com_mindspree_days_engine_ClusterEngine_DnnEngine
 
 
 
+
+JNIEXPORT jstring JNICALL Java_com_mindspree_days_model_DatelineModel_DnnEngineClassJNI( JNIEnv* env, jobject thiz , jobjectArray jargv)
+{
+#if defined(__arm__)
+#if defined(__ARM_ARCH_7A__)
+#if defined(__ARM_NEON__)
+    #if defined(__ARM_PCS_VFP)
+        #define ABI "armeabi-v7a/NEON (hard-float)"
+      #else
+        #define ABI "armeabi-v7a/NEON"
+      #endif
+#else
+#if defined(__ARM_PCS_VFP)
+#define ABI "armeabi-v7a (hard-float)"
+#else
+#define ABI "armeabi-v7a"
+#endif
+#endif
+#else
+#define ABI "armeabi"
+#endif
+#elif defined(__i386__)
+    #define ABI "x86"
+#elif defined(__x86_64__)
+#define ABI "x86_64"
+#elif defined(__mips64)  /* mips64el-* toolchain defines __mips__ too */
+#define ABI "mips64"
+#elif defined(__mips__)
+#define ABI "mips"
+#elif defined(__aarch64__)
+#define ABI "arm64-v8a"
+#else
+#define ABI "unknown"
+#endif
+
+    jfloatArray result;
+    result = (*env) -> NewFloatArray(env, 1000);
+    if (result == NULL) {
+        return NULL; /* out of memory error thrown */
+    }
+
+
+
+    // Get the number of args
+    jsize ArgCount = (*env)->GetArrayLength(env, jargv);
+
+    // malloc the array of char* to be passed to the legacy main
+    char ** argv = malloc(sizeof(char*)*(ArgCount+1)); // +1 for fake program name at index 0
+    argv[ 0 ] = "MyProgramName";
+
+    int i;
+    for ( i = 0; i < ArgCount; ++i ) {
+
+        jstring string = (jstring)((*env)->GetObjectArrayElement(env, jargv, i));
+        const char *cstring = (*env)->GetStringUTFChars(env, string, 0);
+        argv[ i + 1 ] = strdup( cstring );
+        (*env)->ReleaseStringUTFChars(env, string, cstring );
+        (*env)->DeleteLocalRef(env, string );
+    }
+
+
+
+
+    float * feat_return = main(ArgCount+1, argv);
+
+
+    int n = 1000; //Size of array feat_return
+    float max_val= max_array(feat_return, n);
+    int index=0;
+
+    for(i=0;i<1000;i++){
+        if(feat_return[i]==max_val)
+            index=i;
+    }
+
+    // Add classfication logic here
+
+    // Get labels
+    char *name_list = "/storage/emulated/0/Download/data/imagenet.shortnames.list";
+    char **names = get_labels(name_list);
+
+    jstring test2 = names[index];
+
+    // cleanup
+    for( i = 0; i < ArgCount; ++i ) free( argv[ i + 1 ] );
+    free( argv );
+
+
+    return (*env)->NewStringUTF(env, test2);
+
+}
+

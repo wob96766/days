@@ -256,9 +256,16 @@ void free_ptrs(void **ptrs, int n)
 
 char *fgetl(FILE *fp)
 {
-    if(feof(fp)) return 0;
+    if(feof(fp))
+        return 0;
+
     size_t size = 512;
     char *line = malloc(size*sizeof(char));
+
+    if(line==NULL)
+        return 0;
+
+
     if(!fgets(line, size, fp)){
         free(line);
         return 0;

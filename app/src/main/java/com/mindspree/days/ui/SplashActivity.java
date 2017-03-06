@@ -45,7 +45,7 @@ public class SplashActivity extends BaseActivity {
         } else {
             afterPermission();
         }
-
+        System.gc();
     }
 
     @Override
