@@ -116,6 +116,25 @@ public class DatelineModel implements Parcelable {
             return new ArrayList<>();
         }
     }
+    //junyong - get weather
+    public String getWeather(){
+        if(mWeather.equals("Clear")){
+            return AppUtils.getAppText(R.string.text_weather_clear);
+        } else if(mWeather.equals("Clouds")){
+            return AppUtils.getAppText(R.string.text_weather_clouds);
+        } else if(mWeather.equals("Dust")){
+            return AppUtils.getAppText(R.string.text_weather_dust);
+        } else if(mWeather.equals("Haze")){
+            return AppUtils.getAppText(R.string.text_weather_haze);
+        } else if(mWeather.equals("Mist")){
+            return AppUtils.getAppText(R.string.text_weather_mist);
+        } else if(mWeather.equals("Fog")){
+            return AppUtils.getAppText(R.string.text_weather_fog);
+        } else if(mWeather.equals("Rain")){
+            return AppUtils.getAppText(R.string.text_weather_rain);
+        }
+        return mWeather;
+    }
     //junyong - check the poi's where each photos was taken
     //junyong - check the size of the cluster for each photo
     public PhotoInfoModel getPhotoInfo(String file_index){
