@@ -23,6 +23,7 @@ import java.util.Arrays;
  */
 public class DatelineModel implements Parcelable {
 
+    private String mWeather = "";
     public String mMood = "";
     public String mCreated= "";
     public String mUpdateDate = "";
@@ -36,10 +37,11 @@ public class DatelineModel implements Parcelable {
     public DatelineModel(){
     }
 
-    public DatelineModel(String updateDate, String photoGroup, String ids, int locationCount, int photoCount, String sentence, String poiGroup){
+    public DatelineModel(String updateDate, String photoGroup, String ids, String weather, int locationCount, int photoCount, String sentence, String poiGroup){
         mUpdateDate = updateDate;
         mPhotoGroup = photoGroup;
         mPhotoIds = ids;
+        mWeather = weather;
         mPoiGroup = poiGroup;
         mLocationCount = locationCount;
         mPhotoCount = photoCount;
