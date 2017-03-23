@@ -145,7 +145,7 @@ public class DatelineModel implements Parcelable {
     }
 
     public ArrayList<String> getPoiList() {
-        if(mPhotoGroup != null) {
+        if(mPoiGroup != null) {
             return new ArrayList<String>(Arrays.asList(mPoiGroup.split(",")));
         } else {
             return new ArrayList<>();
