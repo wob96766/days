@@ -132,7 +132,9 @@ public class DatelineModel implements Parcelable {
             return AppUtils.getAppText(R.string.text_weather_fog);
         } else if(mWeather.equals("Rain")){
             return AppUtils.getAppText(R.string.text_weather_rain);
-        }
+        } else if(mWeather==null)
+            return null;
+
         return mWeather;
     }
     //junyong - check the poi's where each photos was taken
@@ -182,6 +184,8 @@ public class DatelineModel implements Parcelable {
             hash_string = hash_string + String.format("Today is %s. ", getDate());
 
 
+
+            //String test = getWeather();
 
             ArrayList poiList = getPoiList();
             if(poiList.size()>0)
