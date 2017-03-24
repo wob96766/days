@@ -755,7 +755,8 @@ float * predict_classifier_custom(char *datacfg, char *cfgfile, char *weightfile
 
         strncpy(input, filename, 256);
         image im = load_image_color(input, 0, 0);
-        image r = resize_min(im, size);
+        //image r = resize_min(im, size);
+        image r=im;
         resize_network(&net, r.w, r.h);
         printf("%d %d\n", r.w, r.h);
 

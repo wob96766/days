@@ -204,4 +204,15 @@ public class DBWrapper {
     public PhotoInfoModel getPhotoInfo(String file_index) {
         return mDbHelper.getPhotoInfo(mUserUid, file_index);
     }
+
+    public int getClusteredImageSize (String cluster_id) {
+        return mDbHelper.getClusteredImageSize(mUserUid, cluster_id);
+    }
+
+    public String getCreateTime (String name) {
+        return mDbHelper.getCreateTime(mUserUid, name);
+    }
+
+
+
 }

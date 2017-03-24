@@ -691,8 +691,9 @@ public class ClusterEngine {
         engineDBInterface.updateQualityScore(fname, score_quality);
         // Face Area
         engineDBInterface.updateExtraFeatIndex(fname, Size_Face);
-        // updatPsbrIndex
-        // Smile probability
+
+
+        // Smile probability : Temporarily using updateWeithtCoeffIndex
         engineDBInterface.updateWeightCoeffIndex(fname, avg_faceSmile_weight);
 
 

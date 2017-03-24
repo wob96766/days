@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
@@ -62,6 +63,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
@@ -114,6 +116,8 @@ public class MainActivity extends BaseActivity {
 
 
     public FaceDetector fdetector;
+    // DNN related : Added by Mindspree
+    public static String [] DNN_path=null;
 
     public static void startActivity(Context context) {
         final Intent intent = new Intent(context, MainActivity.class);
@@ -129,7 +133,7 @@ public class MainActivity extends BaseActivity {
 
         // Get camera information
         rear_cam_width=getCamerainfo(0);
-
+        initDNN();
         initData();
         initView();
     }
@@ -252,6 +256,97 @@ public class MainActivity extends BaseActivity {
         IntentFilter filter = new IntentFilter(AppConfig.AppService.LOCATIONLOGGING);
         registerReceiver(mLocationServiceReciever, filter);
         startService(intent);
+    }
+
+    private void copyAssets(String path, String outPath) {
+        AssetManager assetManager = this.getAssets();
+        String assets[];
+        try {
+            assets = assetManager.list(path);
+            if (assets.length == 0) {
+                copyFile(path, outPath);
+            } else {
+                String fullPath = outPath + "/" + path;
+                File dir = new File(fullPath);
+                if (!dir.exists())
+                    if (!dir.mkdir()) Log.e("ERROR", "No create external directory: " + dir);
+
+                for (String asset : assets) {
+                    copyAssets(path + "/" + asset, outPath);
+                }
+            }
+        } catch (IOException ex) {
+            Log.e("ERROR", "I/O Exception", ex);
+        }
+    }
+    private void copyFile(String filename, String outPath) {
+        AssetManager assetManager = this.getAssets();
+
+        InputStream in;
+        OutputStream out;
+        try {
+            in = assetManager.open(filename);
+            String newFileName = outPath + "/" + filename;
+            out = new FileOutputStream(newFileName);
+
+            byte[] buffer = new byte[1024];
+            int read;
+            while ((read = in.read(buffer)) != -1) {
+                out.write(buffer, 0, read);
+            }
+            in.close();
+            out.flush();
+            out.close();
+        } catch (Exception e) {
+            Log.e("ERROR", e.getMessage());
+        }
+
+    }
+
+    String[] load_DNN_resource(String DNN_dataset,String DNN_cfg,String DNN_weight) {
+
+        File outDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString());
+        String DNN_dataset_path = outDir + "/cfg/" + DNN_dataset;
+        String DNN_cfg_path = outDir + "/cfg/" + DNN_cfg;
+        String DNN_weight_path = outDir + "/weight/" + DNN_weight;
+
+        File file1 = new File(DNN_dataset_path);
+        File file2 = new File(DNN_cfg_path);
+        File file3 = new File(DNN_weight_path);
+
+        if(file1.exists() && file2.exists() && file3.exists())
+        {
+            // Asset already copied. Do nothing.
+        }
+        else
+        {
+            copyAssets("data",outDir.toString());
+            copyAssets("cfg",outDir.toString());
+            copyAssets("weight",outDir.toString());
+
+        }
+
+
+//        String DNN_dataset_path = outDir + "/cfg/" + DNN_dataset;
+//        String DNN_cfg_path = outDir + "/cfg/" + DNN_cfg;
+//        String DNN_weight_path = outDir + "/weight/" + DNN_weight;
+
+        String [] path_array = {DNN_dataset_path, DNN_cfg_path, DNN_weight_path};
+
+        return path_array;
+    }
+
+    private void initDNN() {
+        // For clasification
+        String DNN_dataset = "imagenet1k.data";
+        String DNN_cfg = "tiny.cfg";
+        String DNN_weight = "tiny.weights";
+
+//        String DNN_dataset = "cifar100.data";
+//        String DNN_cfg = "cifar_custom100.cfg";
+//        String DNN_weight = "cifar_custom100.weights";
+
+        DNN_path = load_DNN_resource(DNN_dataset,DNN_cfg,DNN_weight);
     }
 
     private void initView() {

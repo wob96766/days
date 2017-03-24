@@ -879,6 +879,9 @@ public class DBHelper extends SQLiteOpenHelper {
         return list;
     }
 
+
+
+
     public ArrayList<DatelineModel> getDatelineList(String userUid, int nextpage) {
         int start = nextpage * 20;
         int end = nextpage+1 * 20;
@@ -918,6 +921,7 @@ public class DBHelper extends SQLiteOpenHelper {
         }
         return list;
     }
+
 
     public ArrayList<DatelineModel> getDatelineList(String userUid) {
         ArrayList<DatelineModel> list =  new ArrayList<DatelineModel>();
@@ -1471,19 +1475,77 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
+    public String getCreateTime(String userUid, String name) {
+
+
+        String poidates =null;
+        try {
+            Cursor cursor = database.rawQuery(
+                    "select a.create_date, "
+                            + "(select create_date from LOCATIONS as poisdates"
+                            + " from LOCATIONS a"
+                            + " WHERE a.name = '" + name + "' and a.user_id = '" + userUid + "'"
+                    , null);
+            if (cursor.moveToFirst()) {
+                do {
+                    poidates = cursor.getString(cursor.getColumnIndex("create_date"));
+
+                } while (cursor.moveToNext());
+            }
+            if (cursor != null)
+                cursor.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return poidates;
+    }
+
+
+    public int getClusteredImageSize(String userUid, String cluster_id) {
+
+        int size =0;
+        try {
+            Cursor cursor = database.rawQuery(
+                    "SELECT a.*," +
+                            "       (SELECT name FROM LOCATIONS where a.update_date between ifnull(create_date, date('now','localtime')) and ifnull(update_date, datetime('now', 'localtime'))) as name" +
+                            "  FROM PHOTOS a" +
+                            " WHERE a.cluster_id = '" + cluster_id + "' and a.user_id = '" + userUid + "'"
+                    , null);
+            if (cursor.moveToFirst()) {
+                do {
+
+                    // junyong - define the data if you need
+                    size++;
+
+                } while (cursor.moveToNext());
+            }
+            if (cursor != null)
+                cursor.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return size;
+    }
+
+
     public PhotoInfoModel getPhotoInfo(String userUid, String photo_index) {
         PhotoInfoModel result =  new PhotoInfoModel();
         try {
             Cursor cursor = database.rawQuery(
                     "SELECT a.*," +
-                    "       (SELECT name FROM LOCATIONS where a.update_date between ifnull(create_date, date('now','localtime')) and ifnull(update_date, datetime('now', 'localtime')))" +
-                    "  FROM PHOTOS a" +
-                    " WHERE a.file_index = '" + photo_index + "' and user_id = '" + userUid + "'"
+                            "       (SELECT name FROM LOCATIONS where a.update_date between ifnull(create_date, date('now','localtime')) and ifnull(update_date, datetime('now', 'localtime'))) as name" +
+                            "  FROM PHOTOS a" +
+                            " WHERE a.file_index = '" + photo_index + "' and a.user_id = '" + userUid + "'"
                     , null);
             if (cursor.moveToFirst()) {
                 do {
-                    result.name = cursor.getString(cursor.getColumnIndex(COLUMN_NAME));
+                    result.name = cursor.getString(cursor.getColumnIndex(COLUMN_FILE_LOCATION));
                     result.photo_size = cursor.getString(cursor.getColumnIndex(COLUMN_PHOTO_SIZE));
+                    result.update_date = cursor.getString(cursor.getColumnIndex(COLUMN_UPDATE_DATE));
+                    result.cluster_id = Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_CLUSER_ID)));
+                    result.weight_coeff = cursor.getString(cursor.getColumnIndex(COLUMN_WEIGHT_COEFF));  // This is currenlty used as smile probability
                     // junyong - define the data if you need
 
                 } while (cursor.moveToNext());

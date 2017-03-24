@@ -5,7 +5,7 @@ public class AppConfig {
     // IS_TEST_APPLICATION == [true : test Server], [false : real Server]
     public static final boolean IS_TEST_APPLICATION		= true;
     // IS_BETA == [true : beta SERVICE], [false : open SERVICE]
-    public static final boolean IS_BETA		            = true;
+    public static final boolean IS_BETA		            = false;
 
     public static final String REAL_SERVER_URL = "http://localhost/REST_API/";
     public static final String TEST_SERVER_URL = "http://127.0.0.1/REST_API/";
