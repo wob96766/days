@@ -46,8 +46,22 @@ public class AppUtils {
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd ", Locale.KOREA);
             String dateString = dateFormat.format(origin);
+
             SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
+
             return sdFormat.parse(dateString + timeFormat);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return origin;
+        }
+    }
+
+    public static Date StringToDate(Date origin, String timeFormat){
+        try {
+
+            SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
+
+            return sdFormat.parse(timeFormat);
         } catch (ParseException e) {
             e.printStackTrace();
             return origin;

@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.mindspree.days.AppApplication;
 import com.mindspree.days.data.DBWrapper;
 import com.mindspree.days.lib.AppPreference;
 import com.mindspree.days.lib.AppUtils;
@@ -74,8 +75,6 @@ public class TimelineModel implements Parcelable {
     public int weekend_days=0;
     public String strWeek;
     public int nWeek;
-
-
 
 
     private MainActivity mainActivity =new MainActivity();
@@ -315,14 +314,14 @@ public class TimelineModel implements Parcelable {
         int rear_cam_width =5000;
         int front_cam_width =3000;
 
-        rear_cam_width = Integer.parseInt(readFromFile("rear_camera_setting.txt", context)) ;
-        front_cam_width = Integer.parseInt(readFromFile("front_camera_setting.txt", context)) ;
+        rear_cam_width = Integer.parseInt(readFromFile("rear_camera_setting.txt", AppApplication.getAppInstance().getApplicationContext())) ;
+        front_cam_width = Integer.parseInt(readFromFile("front_camera_setting.txt", AppApplication.getAppInstance().getApplicationContext())) ;
 
         mCurrentLocation.setLatitude(getLatitude());
         mCurrentLocation.setLongitude(getLongitude());
 
 
-        String hash_string = null;
+        String hash_string = "";
         // Check date
         doDayOfWeek();
 
@@ -390,7 +389,18 @@ public class TimelineModel implements Parcelable {
 
 
         // 4. Face detectoion/ Smile score
-        EngineDBInterface engineDBInterface = new EngineDBInterface();
+        ArrayList PhotoList = getPhotoList();  // getExtraFeatWithPhotoURL(PhotoString);
+
+        hash_string = hash_string+hashFromFace(PhotoList, front_cam_width, rear_cam_width);
+
+        return String.format("%s", hash_string);
+
+    }
+
+    public String hashFromFace(ArrayList PhotoList,  int front_cam_width, int rear_cam_width)
+    {
+        String hash_string = "";
+        int photoCount = PhotoList.size();
         float Num_Face=0;
         float Smile_Prob=0;
         int selfie_cnt=0;
@@ -398,25 +408,21 @@ public class TimelineModel implements Parcelable {
         int groupSelfie_cnt=0;
         int groupPhoto_cnt=0;
         int smile_cnt=0;
+        EngineDBInterface engineDBInterface = new EngineDBInterface();
 
-        int photoCount = getPhotoList().size();
         if(photoCount > 0) {
-
-
             // Extract the name of the representing photo
             //String PhotoString = getPhotoString();
-
-
             // Extract timeline data
 
-            ArrayList PhotoList = getPhotoList();  // getExtraFeatWithPhotoURL(PhotoString);
-            photoCount=1;
+
+            //photoCount=1; // for debugging
+
             for (int i = 0; i < photoCount; i++){
-                String timelinePhotoFile = PhotoList.get(0).toString();
+                String timelinePhotoFile = PhotoList.get(i).toString();
 
                 int Im_width=0;
                 int Im_height=0;
-
 
                 // Face detectioin : Face number. Eye close. Smile probability
 
@@ -452,32 +458,26 @@ public class TimelineModel implements Parcelable {
                         groupPhoto_cnt++;
 
                 }else {
-
                     hash_string = hash_string + String.format("#%s ", "Oops");
-
                 }
-
 
             }
 
             Smile_Prob = Smile_Prob / photoCount;
             if( Smile_Prob >= 0.6) {
-                smile_cnt++;
-            }
+                smile_cnt++; }
 
         } else {
-
-
             hash_string = hash_string + String.format("#Nothing much ~");
-
         }
 
-
+        // Selfie check
         if(selfie_cnt > 0){
             hash_string = hash_string + String.format("#%d %s ", selfie_cnt, "Selfie");
             hash_string = hash_string + String.format("#%s ", "So Handsome");
         }
 
+        // Group photo, single photo check
         if(singlePhoto_cnt >0) {
             hash_string = hash_string + String.format("#%s ", "Who is that nice guy in the picture ?");
         }
@@ -491,20 +491,14 @@ public class TimelineModel implements Parcelable {
             hash_string = hash_string + String.format("#%s ", "Handsome guys");
         }
 
-
+        // Smile detection
         if(smile_cnt ==1) {
             hash_string = hash_string + String.format("#%s ", "Beautifule Smile");
         }else if(smile_cnt >1) {
             hash_string = hash_string + String.format("#%s ", "Oh Happy Day ~");
         }
 
-
-
-
-
-
-        return String.format(" %s ", hash_string);
-
+        return hash_string;
     }
 
     public String getDateFormat() {

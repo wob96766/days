@@ -1,5 +1,8 @@
 package com.mindspree.days.model;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.ExifInterface;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -11,6 +14,7 @@ import android.util.Log;
 import com.mindspree.days.AppApplication;
 import com.mindspree.days.R;
 import com.mindspree.days.data.DBWrapper;
+import com.mindspree.days.engine.EngineDBInterface;
 import com.mindspree.days.lib.AppPreference;
 import com.mindspree.days.lib.AppUtils;
 import com.mindspree.days.ui.MainActivity;
@@ -21,12 +25,18 @@ import com.mindspree.days.model.TimelineModel;
 import com.mindspree.days.model.SentenceModel;
 import com.mindspree.days.model.WeatherModel;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by Admin on 19-10-2015.
@@ -40,6 +50,7 @@ public class DatelineModel implements Parcelable {
     private String mPhotoGroup = "";
     private String mPhotoIds = "";
     private String mPoiGroup = "";
+    private String mPoiCRDatesGroup = "";
     private int mLocationCount = 0;
     private int mPhotoCount = 0;
     private String mSentence = "";
@@ -55,12 +66,13 @@ public class DatelineModel implements Parcelable {
     public DatelineModel(){
     }
 
-    public DatelineModel(String updateDate, String photoGroup, String ids, String weather, int locationCount, int photoCount, String sentence, String poiGroup){
+    public DatelineModel(String updateDate, String photoGroup, String ids, String weather, int locationCount, int photoCount, String sentence, String poiGroup, String poiCRDatesGroup){
         mUpdateDate = updateDate;
         mPhotoGroup = photoGroup;
         mPhotoIds = ids;
         mWeather = weather;
         mPoiGroup = poiGroup;
+        mPoiCRDatesGroup = poiCRDatesGroup;
         mLocationCount = locationCount;
         mPhotoCount = photoCount;
         mSentence = sentence;
@@ -200,6 +212,15 @@ public class DatelineModel implements Parcelable {
         }
     }
 
+    public ArrayList<String> getPoiCRDatesList() {
+//        if(mPhotoGroup != null) {
+        if(mPoiCRDatesGroup != null) {
+            return new ArrayList<String>(Arrays.asList(mPoiCRDatesGroup.split(",")));
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
     public String getPhotoString() {
         return mPhotoGroup;
     }
@@ -245,6 +266,10 @@ public class DatelineModel implements Parcelable {
         jargv[6] = outDir+"/";
 
 
+        int rear_cam_width =5000;
+        int front_cam_width =3000;
+        rear_cam_width = Integer.parseInt(readFromFile("rear_camera_setting.txt", AppApplication.getAppInstance().getApplicationContext())) ;
+        front_cam_width = Integer.parseInt(readFromFile("front_camera_setting.txt", AppApplication.getAppInstance().getApplicationContext())) ;
 
 
         if(mSentence == null || mSentence.equals("")) {
@@ -253,17 +278,24 @@ public class DatelineModel implements Parcelable {
 //            DNN_result = DnnEngineClassJNI(jargv);
 
 
-
-
-
-
             String hash_string ="";
 
             //1. Today is *** date\
             hash_string = hash_string + String.format("Today is %s. ", getDate());
 
+            //1.5 Weather
+            if(mWeather.equals("")){
+            }else{
+                hash_string = hash_string + String.format("It is %s. ", getWeatherEnglish()); ;
+            }
+
+
+
+
             //2. Place
             ArrayList poiList = getPoiList();
+            ArrayList poiCRDatesList = getPoiCRDatesList();
+
             if(poiList.size()>0)
             {
 
@@ -275,17 +307,46 @@ public class DatelineModel implements Parcelable {
 
                 if(photoID_size>0){
                     photoinfos = new PhotoInfoModel[photoID_size];
+                    int[] poi_index= new int[photoID_size];
+
                     for (int i=0;i<photoID_size;i++)
                         photoinfos[i] = getPhotoInfo(photoIDs.get(i).toString());
+
+
+
+
+
+
+                    // This is sample
+                    // convert POI & Photo create time format to yyyy-MM-dd HH:mm:ss
+                    Date now = new Date();
+                    Date poiCRDatesList_format1 = AppUtils.StringToDate(now, poiCRDatesList.get(0).toString());
+                    Date poiCRDatesList_format2 =null;
+
+                    if(poiList.size()==1)
+                        poiCRDatesList_format2 = AppUtils.getTodayDateTime(now, "11:59:59");
+                    else
+                        poiCRDatesList_format2 = AppUtils.StringToDate(now, poiCRDatesList.get(1).toString());
+
+                    Date photoCRDatesList_format = AppUtils.StringToDate(now, photoinfos[0].update_date);
+
+                    if(poiCRDatesList_format1.after(photoCRDatesList_format) && poiCRDatesList_format2.before(photoCRDatesList_format))
+                    {
+                        poi_index[0]= 0; // This is also example
+                    }
+
+
                 }
 
-                ;
+
 
                 // This is how you get cluster size for the specific cluster ID
                 //int temp = getClusterSize(String.valueOf(photoinfos[1].cluster_id));
 
 
+                // Phot0 & POI mapping
                 String temp = getCreateTime(poiList.get(0).toString());
+
 
                 // Measure how busy user was
                 if(poiList.size() < 4)
@@ -298,15 +359,26 @@ public class DatelineModel implements Parcelable {
 
 
                 // Describe where user went
+                // This part is mainly for GPS error handling
+
                 if(poiList.size() ==1) {
                     // POI size 1 means user stayed in one place
                     hash_string = hash_string + String.format("%s %s.", "I didn't go anywhere. Just stayed in", poiList.get(0).toString());
 
                 }else if(poiList.size() ==2){
+
+                    // poilist 를 unique poilist 로 바꾸어야 함
                     // POI size 2 means user went to one place
-                    hash_string = hash_string + String.format("Today I just went to %s.", poiList.get(0).toString());
+                    hash_string = hash_string + String.format("Today I just went to %s.", poiList.get(1).toString());
 
                 }else{
+
+//                    hash_string = hash_string + "Today I went to "+ String.format("%s places.", String.valueOf(poiList.size()));
+                    // Add handling mechanism for the folling situation
+                    // 집 집 학교 학교 집 학교 집 집 학교 스타벅스 집 학교 집 과 같은 패턴도 가능할 수 있기 때문
+                    // 중복 장소를 제외하고 나서 다음과 같은 두가지 패턴이 가능
+                    // 상황 1: 집 학교
+                    // 상황 2: 집 학교 그 외 다른 장소
 
                     hash_string = hash_string + "Today I went to ";
 
@@ -318,11 +390,14 @@ public class DatelineModel implements Parcelable {
                     }
 
 
-
-
-
                 }
 
+                // 3. Photo based sentence generation part
+                ArrayList photolist = getPhotoList();
+                String hash_string_face ="";
+                if(photolist.size() >0){
+                    hash_string_face=SentenceFromFace(photolist,front_cam_width,rear_cam_width);
+                }
 
 
             }
@@ -358,7 +433,163 @@ public class DatelineModel implements Parcelable {
     }
 
 
+    public String SentenceFromFace(ArrayList PhotoList,  int front_cam_width, int rear_cam_width)
+    {
+        String hash_string = "";
+        int photoCount = PhotoList.size();
 
+        EngineDBInterface engineDBInterface = new EngineDBInterface();
+
+
+            for (int i = 0; i < photoCount; i++){
+                String timelinePhotoFile = PhotoList.get(i).toString();
+
+                int Im_width=0;
+                int Im_height=0;
+
+                float Num_Face=0;
+                float Smile_Prob=0;
+                int selfie_cnt=0;
+                int singlePhoto_cnt=0;
+                int groupSelfie_cnt=0;
+                int groupPhoto_cnt=0;
+                int smile_cnt=0;
+
+                // Face detectioin : Face number. Eye close. Smile probability
+
+                final BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inJustDecodeBounds = true;
+                BitmapFactory.decodeFile(timelinePhotoFile, options);
+                int sample_size =32;
+
+                BitmapFactory.Options bitmap_options = new BitmapFactory.Options();
+                bitmap_options.inPreferredConfig = Bitmap.Config.RGB_565;
+                bitmap_options.inSampleSize = sample_size;
+                Bitmap bMap_temp = BitmapFactory.decodeFile(timelinePhotoFile, bitmap_options);
+                Im_width = bMap_temp.getWidth() * sample_size ;
+
+                Num_Face =  engineDBInterface.getExtraFeatWithPhotoURL(timelinePhotoFile);
+                Smile_Prob =  engineDBInterface.getWeightCoeffWithPhotoURL(timelinePhotoFile);
+
+
+                // Selfie, solo , group
+                if( Num_Face == 1) {
+                    if( Math.abs(front_cam_width - Im_width) < 500)
+                        selfie_cnt++;
+                    else if ( Math.abs(rear_cam_width - Im_width) < 500)
+                        singlePhoto_cnt ++;
+                }
+                else if( Num_Face >1) {
+
+                    if( Math.abs(front_cam_width - Im_width) < 500)
+                        groupSelfie_cnt++;
+                    else if ( Math.abs(rear_cam_width - Im_width) < 500)
+                        groupPhoto_cnt++;
+
+                }else {
+
+                    // Do nothing at this point
+
+                }
+
+
+
+                if( Smile_Prob >= 0.6)
+                    smile_cnt++;
+
+
+
+                // Selfie check
+                if(selfie_cnt > 0){
+
+                    // Smile detection
+                    if(smile_cnt >0) {
+                        hash_string = hash_string + String.format("%s ", "I took some nice selfie today. Beautifule smile ~~ ");
+                    }else{
+                        hash_string = hash_string + String.format("%s ", "I took some selfie today. Let's smile ~");
+
+                    }
+                }
+
+                // Group photo, single photo check
+                if(singlePhoto_cnt >0) {
+
+                    // Smile detection
+                    if(smile_cnt >0) {
+                        hash_string = hash_string + String.format("%s ", "My friend took some nice photo for me. Beautifule smile ~~ ");
+                    }else{
+                        hash_string = hash_string + String.format("%s ", "My friend took some nice photo for me. Let's smile ~");
+
+                    }
+                }
+
+                if(groupPhoto_cnt > 0){
+
+                    // Smile detection
+                    if(smile_cnt >0) {
+                        hash_string = hash_string + String.format("%s ", "I took some nice photo with people. Everyone had Beautifule smile ~~ ");
+                    }else{
+                        hash_string = hash_string + String.format("%s ", "I took some nice photo with people. Let's smile ~");
+
+                    }
+
+                }
+
+                if(groupSelfie_cnt >0) {
+                    // Smile detection
+                    if(smile_cnt >0) {
+                        hash_string = hash_string + String.format("%s ", "I took some nice selfie with my friends. Everyone had Beautifule smile ~~ ");
+                    }else{
+                        hash_string = hash_string + String.format("%s ", "I took some nice selfie with my friends. Let's smile ~");
+
+                    }
+
+                }
+
+
+
+
+
+            }
+
+
+
+
+
+
+        return hash_string;
+    }
+
+
+    private String readFromFile(String filename, Context context) {
+
+        String ret = "";
+
+        try {
+            InputStream inputStream = context.openFileInput(filename);
+
+            if ( inputStream != null ) {
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                String receiveString = "";
+                StringBuilder stringBuilder = new StringBuilder();
+
+                while ( (receiveString = bufferedReader.readLine()) != null ) {
+                    stringBuilder.append(receiveString);
+                }
+
+                inputStream.close();
+                ret = stringBuilder.toString();
+            }
+        }
+        catch (FileNotFoundException e) {
+            Log.e("login activity", "File not found: " + e.toString());
+        } catch (IOException e) {
+            Log.e("login activity", "Can not read file: " + e.toString());
+        }
+
+        return ret;
+    }
 
 
     // Async Task Class : This method is not currently used in this model.
