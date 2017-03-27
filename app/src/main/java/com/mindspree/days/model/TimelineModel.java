@@ -416,7 +416,10 @@ public class TimelineModel implements Parcelable {
             // Extract timeline data
 
 
+
             //photoCount=1; // for debugging
+            if(photoCount>3)
+                photoCount=3;
 
             for (int i = 0; i < photoCount; i++){
                 String timelinePhotoFile = PhotoList.get(i).toString();
@@ -437,66 +440,68 @@ public class TimelineModel implements Parcelable {
                 Bitmap bMap_temp = BitmapFactory.decodeFile(timelinePhotoFile, bitmap_options);
                 Im_width = bMap_temp.getWidth() * sample_size ;
 
-                Num_Face = Num_Face + engineDBInterface.getExtraFeatWithPhotoURL(timelinePhotoFile);
-                Smile_Prob = Smile_Prob + engineDBInterface.getWeightCoeffWithPhotoURL(timelinePhotoFile);
+                Num_Face =  engineDBInterface.getExtraFeatWithPhotoURL(timelinePhotoFile);
+                Smile_Prob =  engineDBInterface.getWeightCoeffWithPhotoURL(timelinePhotoFile);
 
                 if( Num_Face == 1) {
-
                     if( Math.abs(front_cam_width - Im_width) < 500)
                         selfie_cnt++;
                     else if ( Math.abs(rear_cam_width - Im_width) < 500)
                         singlePhoto_cnt ++;
-
                 }
                 else if( Num_Face >1) {
-
-
-
                     if( Math.abs(front_cam_width - Im_width) < 500)
                         groupSelfie_cnt++;
                     else if ( Math.abs(rear_cam_width - Im_width) < 500)
                         groupPhoto_cnt++;
 
                 }else {
-                    hash_string = hash_string + String.format("#%s ", "Oops");
+                    //hash_string = hash_string + String.format("#%s ", "Oops");
                 }
+
+                if( Smile_Prob >= 0.6)
+                    smile_cnt++;
+
+
+
+
 
             }
 
-            Smile_Prob = Smile_Prob / photoCount;
-            if( Smile_Prob >= 0.6) {
-                smile_cnt++; }
+            // Selfie check
+            if(selfie_cnt > 0){
+                hash_string = hash_string + String.format("#%d %s ", selfie_cnt, "Selfie");
+                hash_string = hash_string + String.format("#%s ", "So Handsome");
+            }
+
+            // Group photo, single photo check
+            if(singlePhoto_cnt >0) {
+                hash_string = hash_string + String.format("#%d %s ", singlePhoto_cnt, "Photos");
+                hash_string = hash_string + String.format("#%s ", "Who is that nice guy in the picture ?");
+            }
+
+            if(groupPhoto_cnt > 0){
+                hash_string = hash_string + String.format("#%d %s", groupPhoto_cnt, "Group photos" ,"Best People !");
+                hash_string = hash_string + String.format("#%s ", "Best People !");
+            }
+
+            if(groupSelfie_cnt >0) {
+                hash_string = hash_string + String.format("#%d %s ", selfie_cnt, "Group Selfie");
+                hash_string = hash_string + String.format("#%s ", "Handsome guys");
+            }
+
+            // Smile detection
+            if(smile_cnt ==1) {
+                hash_string = hash_string + String.format("#%s ", "Beautifule Smile");
+            }else if(smile_cnt >1) {
+                hash_string = hash_string + String.format("#%s ", "Oh Happy Day ~");
+            }
+
 
         } else {
             hash_string = hash_string + String.format("#Nothing much ~");
         }
 
-        // Selfie check
-        if(selfie_cnt > 0){
-            hash_string = hash_string + String.format("#%d %s ", selfie_cnt, "Selfie");
-            hash_string = hash_string + String.format("#%s ", "So Handsome");
-        }
-
-        // Group photo, single photo check
-        if(singlePhoto_cnt >0) {
-            hash_string = hash_string + String.format("#%s ", "Who is that nice guy in the picture ?");
-        }
-
-        if(groupPhoto_cnt > 0){
-            hash_string = hash_string + String.format("#%s ", "Best People !");
-        }
-
-        if(groupSelfie_cnt >0) {
-            hash_string = hash_string + String.format("#%d %s ", selfie_cnt, "Group Selfie");
-            hash_string = hash_string + String.format("#%s ", "Handsome guys");
-        }
-
-        // Smile detection
-        if(smile_cnt ==1) {
-            hash_string = hash_string + String.format("#%s ", "Beautifule Smile");
-        }else if(smile_cnt >1) {
-            hash_string = hash_string + String.format("#%s ", "Oh Happy Day ~");
-        }
 
         return hash_string;
     }

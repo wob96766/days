@@ -401,7 +401,7 @@ public class MainActivity extends BaseActivity {
                 mViewJournal.setSelected(false);
                 mViewSetting.setSelected(true);
                 mViewPager.setCurrentItem(position);
-                if(AppConfig.IS_BETA)
+//                if(AppConfig.IS_BETA)
                     sqliteExport();
                 break;
         }
