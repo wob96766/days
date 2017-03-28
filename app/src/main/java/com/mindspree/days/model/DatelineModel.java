@@ -72,11 +72,12 @@ public class DatelineModel implements Parcelable {
     public DatelineModel(){
     }
 
-    public DatelineModel(String updateDate, String photoGroup, String ids, String weather, int locationCount, int photoCount, String sentence, String poiGroup, String poiCRDatesGroup){
+    public DatelineModel(String updateDate, String photoGroup, String ids, String weather, String mood, int locationCount, int photoCount, String sentence, String poiGroup, String poiCRDatesGroup){
         mUpdateDate = updateDate;
         mPhotoGroup = photoGroup;
         mPhotoIds = ids;
         mWeather = weather;
+        mMood =mood;
         mPoiGroup = poiGroup;
         mPoiCRDatesGroup = poiCRDatesGroup;
         mLocationCount = locationCount;
@@ -291,9 +292,9 @@ public class DatelineModel implements Parcelable {
 
             //1.5 Weather
             if(mWeather==null){
-
+                hash_string = hash_string + "Not sure about the weather.\n";
             }else{
-                hash_string = hash_string + String.format("It is %s. ", getWeatherEnglish()); ;
+                hash_string = hash_string + String.format("It is %s. ", getWeatherEnglish());
             }
 
 
@@ -302,62 +303,25 @@ public class DatelineModel implements Parcelable {
             //2. Place
             ArrayList poiList = getPoiList();
             ArrayList poiCRDatesList = getPoiCRDatesList();
-            String [] uniquePoiString=null;
-            int [] uniquePoi = null;
-            int [] numPhotosInPoi = null;
 
             if(poiList.size()>0)
             {
 
                 // Get photo info retrieval
                 ArrayList photoIDs = getDisplayPhotoIds();
-
                 int photoID_size= photoIDs.size();
                 PhotoInfoModel[] photoinfos=null;
                 Integer[] PhotoPoi_mapping_index=null;   // This contains POI index for each photo element
 
-
                 if(photoID_size>0){
                     photoinfos = new PhotoInfoModel[photoID_size];
-                    PhotoPoi_mapping_index= new Integer[photoID_size];
+                    //PhotoPoi_mapping_index= new Integer[photoID_size];
 
                     for (int i=0;i<photoID_size;i++)
                         photoinfos[i] = getPhotoInfo(photoIDs.get(i).toString());
 
-
-
                     // convert POI & Photo create time format to yyyy-MM-dd HH:mm:ss
-                    Date now = new Date();
-                    Date poiCRDatesList_format1 =null;
-                    Date poiCRDatesList_format2 =null;
-
-                    if(poiCRDatesList.size() == 1){
-                        for(int i=0;i<photoID_size;i++)
-                            PhotoPoi_mapping_index[i]= 0; //
-
-                    }else{
-                        for(int k=0;k<photoID_size;k++){
-                            for(int j=0;j<poiCRDatesList.size();j++){
-
-                                // POI create Date formatting
-                                poiCRDatesList_format1 = AppUtils.StringToDate(now, poiCRDatesList.get(j).toString());
-                                if(j==poiCRDatesList.size()-1)
-                                    poiCRDatesList_format2 = AppUtils.getTodayDateTime(now, "11:59:59");
-                                else
-                                    poiCRDatesList_format2 = AppUtils.StringToDate(now, poiCRDatesList.get(j+1).toString());
-
-
-                                // Photo Create date formatting
-                                Date photoCRDatesList_format = AppUtils.StringToDate(now, photoinfos[k].update_date);
-                                if(photoCRDatesList_format.after(poiCRDatesList_format1) && photoCRDatesList_format.before(poiCRDatesList_format2)) {
-                                    PhotoPoi_mapping_index[k]= j; //
-                                }
-
-
-                            }
-                        }
-
-                    }
+                    PhotoPoi_mapping_index= PhotoPoi_mapping(photoID_size, photoinfos ,poiCRDatesList);
 
                     // Get the unique POI index
                     Set<Integer> uniqKeys = new TreeSet<Integer>();
@@ -374,34 +338,38 @@ public class DatelineModel implements Parcelable {
                     List<Integer> integerList = new ArrayList<>(uniqKeys);
                     Integer [] uniqKeysArray = new Integer[uniqKeys.size()];
                     for (int j = 0; j < uniqKeys.size(); j++)
-                      uniqKeysArray[j] = integerList.get(j);
+                      uniqKeysArray[j] = integerList.get(j); //
 
 
-                    if(uniqKeys.size()==1){
-                        hash_string = hash_string + String.format("%s %s.", "I didn't go anywhere. Just stayed in", poiList.get(uniqKeysArray[0]).toString());
+
+                    // Sentence for Places and corresponding photos
+                    if(uniqKeysArray.length==1){
+                        hash_string = hash_string + String.format("%s %s. ", "I didn't go anywhere. Just stayed in", poiList.get(uniqKeysArray[0]).toString());
                         hash_string = hash_string + String.format("%s.", " Here are some nice photos taken here");
-                    } else if(uniqKeys.size()==2){
+                    } else if(uniqKeysArray.length==2){
                         if( poiList.get(0).toString().equals(poiList.get(1).toString()) && poiList.size()==2)
-                            hash_string = hash_string + String.format("%s.", "I just quickly went outside and came back home soon.");
+                            hash_string = hash_string + String.format("%s. ", "I just quickly went outside and came back home soon.");
 
                         for (int k=0;k<2;k++){
                             if(k==0)
-                                hash_string = hash_string + String.format("Here are some nice photos taken in %s and ", poiList.get(uniqKeysArray[k]).toString());
+                                hash_string = hash_string + String.format("I went to %s and ", poiList.get(uniqKeysArray[k]).toString());
                             else
-                                hash_string = hash_string + String.format("%s, ", poiList.get(uniqKeysArray[k]).toString());
+                                hash_string = hash_string + String.format("%s. ", poiList.get(uniqKeysArray[k]).toString());
                         }
-                    }else if(uniqKeys.size()>2){
+
+                    }else if(uniqKeysArray.length>2){
 
                         // Later on, there might be some corner case such as home, home, home, school, school and home
+                        hash_string = hash_string + String.format("%s.", "I went to a couple of places. ");
 
-                        for (int l=0;l<uniqKeys.size();l++){
+                        for (int l=0;l<uniqKeysArray.length;l++){
                             Integer temp_poiIndex = uniqKeysArray[l];
                             if(l==0)
                                 hash_string = hash_string + String.format("Here are some nice photos taken in %s", poiList.get(uniqKeysArray[l]).toString());
-                            else if(l<uniqKeys.size()-1)
+                            else if(l<uniqKeysArray.length-1)
                                 hash_string = hash_string + String.format(", %s ", poiList.get(uniqKeysArray[l]).toString());
-                            else if(l==uniqKeys.size()-1)
-                                hash_string = hash_string + String.format("and %s.", poiList.get(uniqKeysArray[l]).toString());
+                            else if(l==uniqKeysArray.length-1)
+                                hash_string = hash_string + String.format("and %s. ", poiList.get(uniqKeysArray[l]).toString());
                         }
                     }
 
@@ -410,22 +378,25 @@ public class DatelineModel implements Parcelable {
                     int size =0;
                     ArrayList photolist = getPhotoList();
                     String hash_string_face ="";
-                    for (int m=0;m<result.size();m++)
+                    String hash_string_face_buf ="";
+                    for (int m=0;m<uniqKeysArray.length;m++)
                     {
                         // key is unique poi index
                         Integer key_temp = uniqKeysArray[m];  //This is POI index which is key
 
                         size = result.get(key_temp);          // This is the number of photos taken in this POI index
                         hash_string_face=SentenceFromFace(offset,size,poiList.get(key_temp).toString(),photolist,front_cam_width,rear_cam_width);
+                        if(hash_string_face.equals(hash_string_face_buf))
+                            hash_string_face=""; // This is to prevent the duplication
                         hash_string =hash_string+hash_string_face;
+                        hash_string_face_buf = hash_string_face;
+
                         offset=offset+size;
                     }
 
 
 
                 }
-
-
 
 
                 // This is how you get cluster size for the specific cluster ID
@@ -438,12 +409,16 @@ public class DatelineModel implements Parcelable {
 
                 // Measure how busy user was
                 if(poiList.size() < 4)
-                    hash_string = hash_string + "Just one ordinary day. Nothing much.";
+                    hash_string = hash_string + "It was not that busy ";
                 else if(poiList.size() >= 4 && poiList.size() <= 6)
-                    hash_string = hash_string + "It was a little bit busy day";
+                    hash_string = hash_string + "It was a little bit busy day ";
                 else if (poiList.size() > 6)
-                    hash_string = hash_string + "It was a super busy day";
+                    hash_string = hash_string + "It was a super busy day ";
 
+
+                if(mMood!="null"){
+                    hash_string = hash_string + String.format("\n I think today was %s day in general. ", mMood);
+                }
 
 
 
@@ -480,6 +455,50 @@ public class DatelineModel implements Parcelable {
     }
 
 
+
+
+
+    public Integer[] PhotoPoi_mapping(int photoID_size, PhotoInfoModel[] photoinfos ,ArrayList poiCRDatesList)
+    {
+        Integer[] PhotoPoi_mapping_index=new Integer[photoID_size];
+
+        Date now = new Date();
+        Date poiCRDatesList_format1 =null;
+        Date poiCRDatesList_format2 =null;
+
+        if(poiCRDatesList.size() == 1){
+            for(int i=0;i<photoID_size;i++)
+                PhotoPoi_mapping_index[i]= 0; //
+
+        }else{
+            for(int k=0;k<photoID_size;k++){
+                for(int j=0;j<poiCRDatesList.size();j++){
+
+                    // POI create Date formatting
+                    poiCRDatesList_format1 = AppUtils.StringToDate(now, poiCRDatesList.get(j).toString());
+                    if(j==poiCRDatesList.size()-1)
+                        poiCRDatesList_format2 = AppUtils.getTodayDateTime(now, "11:59:59");
+                    else
+                        poiCRDatesList_format2 = AppUtils.StringToDate(now, poiCRDatesList.get(j+1).toString());
+
+
+                    // Photo Create date formatting
+                    Date photoCRDatesList_format = AppUtils.StringToDate(now, photoinfos[k].update_date);
+                    if(photoCRDatesList_format.after(poiCRDatesList_format1) && photoCRDatesList_format.before(poiCRDatesList_format2)) {
+                        PhotoPoi_mapping_index[k]= j; //
+                    }
+
+
+                }
+            }
+
+        }
+
+
+        return PhotoPoi_mapping_index;
+    }
+
+
     public String SentenceFromFace(int offset,int size,String poi_string, ArrayList PhotoList,  int front_cam_width, int rear_cam_width)
     {
         String hash_string = "";
@@ -487,6 +506,7 @@ public class DatelineModel implements Parcelable {
 
         EngineDBInterface engineDBInterface = new EngineDBInterface();
 
+        hash_string = hash_string + String.format("In %s ",poi_string);
 
             for (int i = offset; i < offset + size; i++){
                 String timelinePhotoFile = PhotoList.get(i).toString();
@@ -544,54 +564,67 @@ public class DatelineModel implements Parcelable {
                 if( Smile_Prob >= 0.6)
                     smile_cnt++;
 
-                hash_string = hash_string + String.format("In %s ",poi_string);
 
-                // Selfie check
-                if(selfie_cnt > 0){
+                String connection="";
+                if(size==1)
+                    connection=".";
+                else if(size==2 && (i-offset)==0)
+                    connection="and";
+                else if(size==2 && (i-offset)==1)
+                    connection=".";
+                else if(size>2 && (i-offset)<size-2)
+                    connection=",";
+                else if(size>2 && (i-offset)==size-2)
+                    connection="and";
+                else if(size>2 && (i-offset)==size-1)
+                    connection=".";
+                else
+                    connection="";
 
-                    // Smile detection
-                    if(smile_cnt >0) {
-                        hash_string = hash_string + String.format("%s ", "I took some nice selfie. Beautifule smile ~~ ");
-                    }else{
-                        hash_string = hash_string + String.format("%s ", "I took some selfie. Let's smile ~");
 
-                    }
-                }
-
-                // Group photo, single photo check
-                if(singlePhoto_cnt >0) {
-
-                    // Smile detection
-                    if(smile_cnt >0) {
-                        hash_string = hash_string + String.format("%s ", "My friend took some nice photo for me. Beautifule smile ~~ ");
-                    }else{
-                        hash_string = hash_string + String.format("%s ", "My friend took some nice photo for me. Let's smile ~");
-
-                    }
-                }
-
-                if(groupPhoto_cnt > 0){
-
-                    // Smile detection
-                    if(smile_cnt >0) {
-                        hash_string = hash_string + String.format("%s ", "I took some nice photo with people. Everyone had Beautifule smile ~~ ");
-                    }else{
-                        hash_string = hash_string + String.format("%s ", "I took some nice photo with people. Let's smile ~");
-
+                    // Selfie check
+                    if (selfie_cnt > 0) {
+                        // Smile detection
+                        if (smile_cnt > 0) {
+                            hash_string = hash_string + String.format("%s %s ", "I took some nice selfie with beautifule smile", connection);
+                        } else {
+                            hash_string = hash_string + String.format("%s %s ", "I took some selfie", connection);
+                        }
                     }
 
-                }
+                    // Group photo, single photo check
+                    if (singlePhoto_cnt > 0) {
 
-                if(groupSelfie_cnt >0) {
-                    // Smile detection
-                    if(smile_cnt >0) {
-                        hash_string = hash_string + String.format("%s ", "I took some nice selfie with my friends. Everyone had Beautifule smile ~~ ");
-                    }else{
-                        hash_string = hash_string + String.format("%s ", "I took some nice selfie with my friends. Let's smile ~");
+                        // Smile detection
+                        if (smile_cnt > 0) {
+                            hash_string = hash_string + String.format("%s %s ", "I took some nice photo of my buddy with big smile", connection);
+                        } else {
+                            hash_string = hash_string + String.format("%s %s ", "I took some nice photo of my buddy", connection);
+
+                        }
+                    }
+
+                    if (groupPhoto_cnt > 0) {
+
+                        // Smile detection
+                        if (smile_cnt > 0) {
+                            hash_string = hash_string + String.format("%s %s ", "I took some nice group photos. What a beautiful smile !", connection);
+                        } else {
+                            hash_string = hash_string + String.format("%s %s ", "I took some nice group photos.", connection);
+
+                        }
 
                     }
 
-                }
+                    if (groupSelfie_cnt > 0) {
+                        // Smile detection
+                        if (smile_cnt > 0) {
+                            hash_string = hash_string + String.format("%s %s ", "I took some nice selfie with my buddies. Everybody happy", connection);
+                        } else {
+                            hash_string = hash_string + String.format("%s %s ", "I took some nice selfie with my buddies", connection);
+                        }
+
+                    }
 
 
 

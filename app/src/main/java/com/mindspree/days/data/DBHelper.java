@@ -895,6 +895,7 @@ public class DBHelper extends SQLiteOpenHelper {
                             + "(select count(*) from LOCATIONS where date(a.create_date) = date(create_date) and user_id = '" + userUid + "')  as location_count,"
                             + "(select sentence from DAILY where date(create_date) = date(a.create_date)) as sentence ,"
                             + "(select weather from DAILY where date(create_date) = date(a.create_date)) as weather ,"
+                            + "(select mood from DAILY where date(create_date) = date(a.create_date)) as mood ,"
                             + "(select group_concat(name) from LOCATIONS where date(a.create_date) = date(create_date) and user_id = '" + userUid + "')  as pois ,"
                             + "(select group_concat(create_date) from LOCATIONS where date(a.create_date) = date(create_date) and user_id = '" + userUid + "')  as poisCRDates"
                             + " from LOCATIONS a"
@@ -907,12 +908,13 @@ public class DBHelper extends SQLiteOpenHelper {
                     String files = cursor.getString(cursor.getColumnIndex("files"));
                     String ids = cursor.getString(cursor.getColumnIndex("ids"));
                     String weather = cursor.getString(cursor.getColumnIndex("weather"));
+                    String mood = cursor.getString(cursor.getColumnIndex("mood"));
                     String poiGroup = cursor.getString(cursor.getColumnIndex("pois"));
                     String poiCRDatesGroup = cursor.getString(cursor.getColumnIndex("poisCRDates"));
                     int locationCount = cursor.getInt(cursor.getColumnIndex("location_count"));
                     int photoCount = cursor.getInt(cursor.getColumnIndex("photo_count"));
                     String sentence = cursor.getString(cursor.getColumnIndex("sentence"));
-                    list.add(new DatelineModel(create_date, files, ids, weather, locationCount, photoCount, sentence, poiGroup, poiCRDatesGroup));
+                    list.add(new DatelineModel(create_date, files, ids, weather,mood, locationCount, photoCount, sentence, poiGroup, poiCRDatesGroup));
                 } while (cursor.moveToNext());
             }
             if (cursor != null)
@@ -962,6 +964,7 @@ public class DBHelper extends SQLiteOpenHelper {
                             + "(select count(*) from LOCATIONS where date(a.create_date) = date(create_date) and user_id = '" + userUid + "')  as location_count,"
                             + "(select sentence from DAILY where date(create_date) = date(a.create_date)) as sentence,"
                             + "(select weather from DAILY where date(create_date) = date(a.create_date)) as weather ,"
+                            + "(select mood from DAILY where date(create_date) = date(a.create_date)) as mood ,"
                             + "(select group_concat(name) from LOCATIONS where date(a.create_date) = date(create_date) and user_id = '" + userUid + "')  as pois ,"
                             + "(select group_concat(create_date) from LOCATIONS where date(a.create_date) = date(create_date) and user_id = '" + userUid + "')  as poisCRDates"
                             + " from LOCATIONS a"
@@ -974,12 +977,13 @@ public class DBHelper extends SQLiteOpenHelper {
                     String files = cursor.getString(cursor.getColumnIndex("files"));
                     String ids = cursor.getString(cursor.getColumnIndex("ids"));
                     String weather = cursor.getString(cursor.getColumnIndex("weather"));
+                    String mood = cursor.getString(cursor.getColumnIndex("mood"));
                     String poiGroup = cursor.getString(cursor.getColumnIndex("pois"));
                     String poiCRDatesGroup = cursor.getString(cursor.getColumnIndex("poisCRDates"));
                     int locationCount = cursor.getInt(cursor.getColumnIndex("location_count"));
                     int photoCount = cursor.getInt(cursor.getColumnIndex("photo_count"));
                     String sentence = cursor.getString(cursor.getColumnIndex("sentence"));
-                    return new DatelineModel(create_date, files, ids, weather, locationCount, photoCount, sentence, poiGroup,poiCRDatesGroup);
+                    return new DatelineModel(create_date, files, ids, weather, mood,locationCount, photoCount, sentence, poiGroup,poiCRDatesGroup);
                 } while (cursor.moveToNext());
             }
             if (cursor != null)
@@ -1004,6 +1008,7 @@ public class DBHelper extends SQLiteOpenHelper {
                             + "(select count(*) from LOCATIONS where date(a.create_date) = date(create_date) and user_id = '" + userUid + "')  as location_count,"
                             + "(select sentence from DAILY where date(create_date) = date(a.create_date)) as sentence,"
                             + "(select weather from DAILY where date(create_date) = date(a.create_date)) as weather ,"
+                            + "(select mood from DAILY where date(create_date) = date(a.create_date)) as mood ,"
                             + "(select group_concat(name) from LOCATIONS where date(a.create_date) = date(create_date) and user_id = '" + userUid + "')  as pois ,"
                             + "(select group_concat(create_date) from LOCATIONS where date(a.create_date) = date(create_date) and user_id = '" + userUid + "')  as poisCRDates"
                             + " from LOCATIONS a  LEFT OUTER JOIN DAILY b ON date(a.create_date) = date(b.create_date)"
@@ -1017,12 +1022,13 @@ public class DBHelper extends SQLiteOpenHelper {
                     String files = cursor.getString(cursor.getColumnIndex("files"));
                     String ids = cursor.getString(cursor.getColumnIndex("ids"));
                     String weather = cursor.getString(cursor.getColumnIndex("weather"));
+                    String mood = cursor.getString(cursor.getColumnIndex("mood"));
                     String poiGroup = cursor.getString(cursor.getColumnIndex("pois"));
                     String poiCRDatesGroup = cursor.getString(cursor.getColumnIndex("poisCRDates"));
                     int locationCount = cursor.getInt(cursor.getColumnIndex("location_count"));
                     int photoCount = cursor.getInt(cursor.getColumnIndex("photo_count"));
                     String sentence = cursor.getString(cursor.getColumnIndex("sentence"));
-                    list.add(new DatelineModel(create_date, ids, weather, files, locationCount, photoCount, sentence, poiGroup, poiCRDatesGroup));
+                    list.add(new DatelineModel(create_date, ids, weather, mood,files, locationCount, photoCount, sentence, poiGroup, poiCRDatesGroup));
                 } while (cursor.moveToNext());
             }
             if (cursor != null)
