@@ -347,8 +347,8 @@ public class DatelineModel implements Parcelable {
                         hash_string = hash_string + String.format("%s %s. ", "I didn't go anywhere. Just stayed in", poiList.get(uniqKeysArray[0]).toString());
                         hash_string = hash_string + String.format("%s.", " Here are some nice photos taken here");
                     } else if(uniqKeysArray.length==2){
-                        if( poiList.get(0).toString().equals(poiList.get(1).toString()) && poiList.size()==2)
-                            hash_string = hash_string + String.format("%s. ", "I just quickly went outside and came back home soon.");
+//                        if( poiList.get(0).toString().equals(poiList.get(1).toString()) && poiList.size()==2)
+//                            hash_string = hash_string + String.format("%s. ", "I just quickly went outside and came back home soon.");
 
                         for (int k=0;k<2;k++){
                             if(k==0)
@@ -416,7 +416,7 @@ public class DatelineModel implements Parcelable {
                     hash_string = hash_string + "It was a super busy day ";
 
 
-                if(mMood!="null"){
+                if(mMood!=null){
                     hash_string = hash_string + String.format("\n I think today was %s day in general. ", mMood);
                 }
 

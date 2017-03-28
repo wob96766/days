@@ -212,11 +212,17 @@ public class ClusterEngine {
     public static double[] timeFeatureExtract(String fname)
     {
         ExifInterface exif = null;
+//        try {
+//            exif = new ExifInterface(fname);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
         try {
             exif = new ExifInterface(fname);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
+
         String exif_DATETIME = exif.getAttribute(ExifInterface.TAG_DATETIME);
 
         double exif_year = 0;

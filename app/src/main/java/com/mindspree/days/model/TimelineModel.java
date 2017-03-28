@@ -374,7 +374,7 @@ public class TimelineModel implements Parcelable {
             else
             {
                 // junyong - add "null checking"
-                if(mHomeLocation !=null){
+                if (mHomeLocation !=null && mCurrentLocation != null){
                     if( mHomeLocation.distanceTo(mCurrentLocation) <5000 ){
                         hash_string =hash_string + String.format("#%s ", "잠시 외출");   // Temporary out
                     }else if( mHomeLocation.distanceTo(mCurrentLocation) >= 5000 && mHomeLocation.distanceTo(mCurrentLocation) < 20000 ){
