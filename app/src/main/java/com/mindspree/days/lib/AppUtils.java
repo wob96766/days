@@ -272,6 +272,27 @@ public class AppUtils {
     }
 
 
+
+    public static Bitmap downsampleImageFile(String filelocation, int targetW, int targetH){
+        System.gc();
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(filelocation, options);
+
+        int imgHeight = options.outHeight;
+        int imgWidth = options.outWidth;
+        int sample_size =1;
+
+
+        BitmapFactory.Options bitmap_options = new BitmapFactory.Options();
+        bitmap_options.inPreferredConfig = Bitmap.Config.RGB_565;
+        bitmap_options.inSampleSize = sample_size;
+        Bitmap bitmapSource = BitmapFactory.decodeFile(filelocation, bitmap_options);
+
+        Bitmap bm= Bitmap.createScaledBitmap(bitmapSource, targetW, targetH, true);
+        return bm;
+    }
+
     public static byte[] compressImageFile(String filelocation){
         System.gc();
         Bitmap bitmap = BitmapFactory.decodeFile(filelocation);

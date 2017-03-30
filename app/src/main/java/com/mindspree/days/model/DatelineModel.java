@@ -28,13 +28,16 @@ import com.mindspree.days.model.WeatherModel;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -61,6 +64,12 @@ public class DatelineModel implements Parcelable {
     private int mPhotoCount = 0;
     private String mSentence = "";
 
+    private DBWrapper mDBWrapper;
+    private AppPreference mPreference;
+
+    public int weekend_days=0;
+    public String strWeek;
+    public int nWeek;
 
     // DNN related classes
     boolean asynctask_flag = false;
@@ -192,6 +201,35 @@ public class DatelineModel implements Parcelable {
         return mWeather;
     }
 
+    public void doDayOfWeek() {
+        Calendar cal = Calendar.getInstance();
+        strWeek = null;
+
+        nWeek = cal.get(Calendar.DAY_OF_WEEK);
+        if (nWeek == 1) {
+            strWeek = "일요일";
+        } else if (nWeek == 2) {
+            strWeek = "월요";
+        } else if (nWeek == 3) {
+            strWeek = "화요일";
+        } else if (nWeek == 4) {
+            strWeek = "수요일";
+        } else if (nWeek == 5) {
+            strWeek = "목요일";
+        } else if (nWeek == 6) {
+            strWeek = "금요일";
+        } else if (nWeek == 7) {
+            strWeek = "토요일";
+        }
+
+        if( nWeek>=2 && nWeek<=6)
+            weekend_days =0;  // Weekdays
+        else
+            weekend_days =1;  // Weekend
+
+
+    }
+
     //junyong - check the poi's where each photos was taken
     //junyong - check the size of the cluster for each photo
 
@@ -258,20 +296,6 @@ public class DatelineModel implements Parcelable {
         // Garbage collection before any heavy load work
         System.gc();
 
-        File outDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString());
-        String DNN_test = "IMG_7543.JPG"; // Seashore
-        String DNN_test_path = outDir + "/data/" + DNN_test;
-
-        // This is for classification
-        String[] jargv =new String[7];
-        jargv[0] ="classifier_Class";
-        jargv[1] ="predictCustom";  // This is for classification
-        jargv[2] =DNN_path[0];
-        jargv[3] =DNN_path[1];
-        jargv[4] =DNN_path[2];
-        jargv[5] =DNN_test_path;
-        jargv[6] = outDir+"/";
-
 
         int rear_cam_width =5000;
         int front_cam_width =3000;
@@ -279,12 +303,13 @@ public class DatelineModel implements Parcelable {
         front_cam_width = Integer.parseInt(readFromFile("front_camera_setting.txt", AppApplication.getAppInstance().getApplicationContext())) ;
 
 
-        if(mSentence == null || mSentence.equals("")) {
+//        if(mSentence == null || mSentence.equals("")) {
 
+        if(mSentence != null) {
             //mDnnengine.execute();  Async task is not used in this model yet.
 //            DNN_result = DnnEngineClassJNI(jargv);
 
-
+            doDayOfWeek();
             String hash_string ="";
 
             //1. Today is *** date\
@@ -341,39 +366,10 @@ public class DatelineModel implements Parcelable {
                       uniqKeysArray[j] = integerList.get(j); //
 
 
+                    // POI based sentence generation part
+                    hash_string = POIbasedSentence(uniqKeysArray,poiList,hash_string);
 
-                    // Sentence for Places and corresponding photos
-                    if(uniqKeysArray.length==1){
-                        hash_string = hash_string + String.format("%s %s. ", "I didn't go anywhere. Just stayed in", poiList.get(uniqKeysArray[0]).toString());
-                        hash_string = hash_string + String.format("%s.", " Here are some nice photos taken here");
-                    } else if(uniqKeysArray.length==2){
-//                        if( poiList.get(0).toString().equals(poiList.get(1).toString()) && poiList.size()==2)
-//                            hash_string = hash_string + String.format("%s. ", "I just quickly went outside and came back home soon.");
-
-                        for (int k=0;k<2;k++){
-                            if(k==0)
-                                hash_string = hash_string + String.format("I went to %s and ", poiList.get(uniqKeysArray[k]).toString());
-                            else
-                                hash_string = hash_string + String.format("%s. ", poiList.get(uniqKeysArray[k]).toString());
-                        }
-
-                    }else if(uniqKeysArray.length>2){
-
-                        // Later on, there might be some corner case such as home, home, home, school, school and home
-                        hash_string = hash_string + String.format("%s.", "I went to a couple of places. ");
-
-                        for (int l=0;l<uniqKeysArray.length;l++){
-                            Integer temp_poiIndex = uniqKeysArray[l];
-                            if(l==0)
-                                hash_string = hash_string + String.format("Here are some nice photos taken in %s", poiList.get(uniqKeysArray[l]).toString());
-                            else if(l<uniqKeysArray.length-1)
-                                hash_string = hash_string + String.format(", %s ", poiList.get(uniqKeysArray[l]).toString());
-                            else if(l==uniqKeysArray.length-1)
-                                hash_string = hash_string + String.format("and %s. ", poiList.get(uniqKeysArray[l]).toString());
-                        }
-                    }
-
-                    // 3. Photo based sentence generation part
+                    // Photo based sentence generation part
                     int offset =0;
                     int size =0;
                     ArrayList photolist = getPhotoList();
@@ -395,12 +391,45 @@ public class DatelineModel implements Parcelable {
                     }
 
 
+                    // Deep learning engine
+                    // It detects food, mountain, cliff, river, sea, seashore only
+                    File outDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString());
+                    //String DNN_test = "IMG_7543.JPG"; // Seashore
+                    //String DNN_test_path = outDir + "/data/" + DNN_test;
+
+
+                    if(photolist.size() > 0) {
+                        for (int t=0;t<photolist.size();t++) {
+                            String DNN_test_path_input = photolist.get(t).toString();
+                            File files = new File(DNN_test_path_input);
+                            if (files.exists() == true) {
+                                Bitmap bm = AppUtils.downsampleImageFile(DNN_test_path_input, 149, 112);
+
+                            }
+                        }
+                    }
+
+
+                    String DNN_test_path_resample = photolist.get(0).toString();
+
+
+                    // This is for classification
+                    String[] jargv =new String[7];
+                    jargv[0] ="classifier_Class";
+                    jargv[1] ="predictCustom";  // This is for classification
+                    jargv[2] =DNN_path[0];
+                    jargv[3] =DNN_path[1];
+                    jargv[4] =DNN_path[2];
+                    jargv[5] =DNN_test_path_resample;
+                    jargv[6] = outDir+"/";
+
+                    DNN_result = DnnEngineClassJNI(jargv);
 
                 }
 
 
                 // This is how you get cluster size for the specific cluster ID
-                //int temp = getClusterSize(String.valueOf(photoinfos[1].cluster_id));
+//                int temp = getClusterSize(String.valueOf(photoinfos[1].cluster_id));
 
 
                 // Phot0 & POI mapping
@@ -439,8 +468,22 @@ public class DatelineModel implements Parcelable {
 //            }
 
 
-            return hash_string;
 
+            // This saves sentense to DB
+            mDBWrapper = new DBWrapper(AppPreference.getInstance().getUserUid());
+            String DateInMomeent= getDate();
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.DATE, -1);
+            String DateToday = dateFormat.format(cal.getTime()); //your formatted date here
+            cal.add(Calendar.DATE, -1);
+            String DateYesterday = dateFormat.format(cal.getTime()); //your formatted date here
+
+            if (!DateInMomeent.equals(DateToday))
+                mDBWrapper.setSentence(DateInMomeent,hash_string);
+
+
+            return hash_string;
 
 
 
@@ -454,6 +497,62 @@ public class DatelineModel implements Parcelable {
 
     }
 
+    private static void SaveImage(Bitmap finalBitmap, String filename) {
+
+        String root = Environment.getExternalStorageDirectory().getAbsolutePath();
+        File myDir = new File(root + "/resized_images");
+        myDir.mkdirs();
+
+        String fname = String.format("%s_resized.JPG", filename);
+        File file = new File (myDir, fname);
+        if (file.exists ()) file.delete ();
+        try {
+            FileOutputStream out = new FileOutputStream(file);
+            finalBitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
+            out.flush();
+            out.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+    }
+
+    public String POIbasedSentence(Integer [] uniqKeysArray, ArrayList poiList , String hash_string){
+
+        if(uniqKeysArray.length==1){
+            hash_string = hash_string + String.format("%s %s. ", "I didn't go anywhere. Just stayed in", poiList.get(uniqKeysArray[0]).toString());
+            hash_string = hash_string + String.format("%s.", " Here are some nice photos taken here");
+        } else if(uniqKeysArray.length==2){
+//                        if( poiList.get(0).toString().equals(poiList.get(1).toString()) && poiList.size()==2)
+//                            hash_string = hash_string + String.format("%s. ", "I just quickly went outside and came back home soon.");
+
+            for (int k=0;k<2;k++){
+                if(k==0)
+                    hash_string = hash_string + String.format("I went to %s and ", poiList.get(uniqKeysArray[k]).toString());
+                else
+                    hash_string = hash_string + String.format("%s. ", poiList.get(uniqKeysArray[k]).toString());
+            }
+
+        }else if(uniqKeysArray.length>2){
+
+            // Later on, there might be some corner case such as home, home, home, school, school and home
+            hash_string = hash_string + String.format("%s.", "I went to a couple of places. ");
+
+            for (int l=0;l<uniqKeysArray.length;l++){
+                Integer temp_poiIndex = uniqKeysArray[l];
+                if(l==0)
+                    hash_string = hash_string + String.format("Here are some nice photos taken in %s", poiList.get(uniqKeysArray[l]).toString());
+                else if(l<uniqKeysArray.length-1)
+                    hash_string = hash_string + String.format(", %s ", poiList.get(uniqKeysArray[l]).toString());
+                else if(l==uniqKeysArray.length-1)
+                    hash_string = hash_string + String.format("and %s. ", poiList.get(uniqKeysArray[l]).toString());
+            }
+        }
+
+        return hash_string;
+
+    }
 
 
 
