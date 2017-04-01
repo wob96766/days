@@ -10,12 +10,14 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.os.StatFs;
 
 import com.mindspree.days.AppApplication;
+import com.mindspree.days.engine.ClusterEngine;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -26,6 +28,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import static android.R.attr.orientation;
 
 
 public class AppUtils {
@@ -273,23 +277,57 @@ public class AppUtils {
 
 
 
-    public static Bitmap downsampleImageFile(String filelocation, int targetW, int targetH){
+    public static Bitmap downsampleImageFile(String filelocation, int target_ratio_short, int target_ratio_long){
         System.gc();
         final BitmapFactory.Options options = new BitmapFactory.Options();
+
+        ClusterEngine clusterEngine = new ClusterEngine();
+
+        int orientation =1;
+        ExifInterface exif = null;
+        try {
+            exif = new ExifInterface(filelocation);
+            orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+                    ExifInterface.ORIENTATION_UNDEFINED);
+
+        } catch (Exception e) {
+            //e.printStackTrace();
+
+            orientation = ExifInterface.ORIENTATION_NORMAL;
+        }
+
+
+
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(filelocation, options);
 
         int imgHeight = options.outHeight;
         int imgWidth = options.outWidth;
+
+
+        int targetW2;
+        int targetH2;
+
         int sample_size =1;
 
+        if(imgHeight>imgWidth){
+            targetH2 = target_ratio_long;
+            targetW2 = target_ratio_short;
+        }else{
+            targetW2 = target_ratio_long;
+            targetH2 = target_ratio_short;
+        }
 
         BitmapFactory.Options bitmap_options = new BitmapFactory.Options();
         bitmap_options.inPreferredConfig = Bitmap.Config.RGB_565;
         bitmap_options.inSampleSize = sample_size;
         Bitmap bitmapSource = BitmapFactory.decodeFile(filelocation, bitmap_options);
 
-        Bitmap bm= Bitmap.createScaledBitmap(bitmapSource, targetW, targetH, true);
+        Bitmap bmRotated = clusterEngine.rotateBitmap(bitmapSource, orientation);
+
+        Bitmap bm= Bitmap.createScaledBitmap(bmRotated, targetW2, targetH2, true);
+
+
         return bm;
     }
 

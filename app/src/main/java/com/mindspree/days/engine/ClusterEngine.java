@@ -233,14 +233,26 @@ public class ClusterEngine {
         double exif_sec = 0;
 
 
-        //TODO : WHy null? (Jeylee)
+
         if (exif_DATETIME != null) {
-            exif_year = Double.parseDouble(exif_DATETIME.substring(0, 4));
-            exif_month = Double.parseDouble(exif_DATETIME.substring(5, 7));
-            exif_date = Double.parseDouble(exif_DATETIME.substring(8, 10));
-            exif_hour = Double.parseDouble(exif_DATETIME.substring(11, 13));
-            exif_min = Double.parseDouble(exif_DATETIME.substring(14, 16));
-            exif_sec = Double.parseDouble(exif_DATETIME.substring(17, 19));
+
+            try {
+                exif_year = Double.parseDouble(exif_DATETIME.substring(0, 4));
+                exif_month = Double.parseDouble(exif_DATETIME.substring(5, 7));
+                exif_date = Double.parseDouble(exif_DATETIME.substring(8, 10));
+                exif_hour = Double.parseDouble(exif_DATETIME.substring(11, 13));
+                exif_min = Double.parseDouble(exif_DATETIME.substring(14, 16));
+                exif_sec = Double.parseDouble(exif_DATETIME.substring(17, 19));
+            } catch (Exception e) {
+                exif_year = 1997;
+                exif_month = 11;
+                exif_date = 11;
+                exif_hour = 11;
+                exif_min = 11;
+                exif_sec = 11;
+            }
+
+
         } else {
             exif_year = 1997;
             exif_month = 11;

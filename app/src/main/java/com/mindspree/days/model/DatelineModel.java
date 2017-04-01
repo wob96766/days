@@ -44,8 +44,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Created by Admin on 19-10-2015.
@@ -71,11 +74,14 @@ public class DatelineModel implements Parcelable {
     public String strWeek;
     public int nWeek;
 
+    public int rear_cam_width =5000;
+    public int front_cam_width =3000;
+
     // DNN related classes
     boolean asynctask_flag = false;
     String[] jargv =new String[7];
-    public DnnEngine mDnnengine ;
-    public String DNN_result;
+    //public DnnEngine mDnnengine ;
+    public ArrayList DNN_result;
     public String hashString_DNN="";
 
     public DatelineModel(){
@@ -288,26 +294,28 @@ public class DatelineModel implements Parcelable {
     public String getSummarize() {
 
 
-        mDnnengine = new DnnEngine();
-
-
         String [] DNN_path = MainActivity.DNN_path;
+        DNN_result = new ArrayList();
 
         // Garbage collection before any heavy load work
         System.gc();
 
+        if(mSentence == null || mSentence.equals("")) {
 
-        int rear_cam_width =5000;
-        int front_cam_width =3000;
-        rear_cam_width = Integer.parseInt(readFromFile("rear_camera_setting.txt", AppApplication.getAppInstance().getApplicationContext())) ;
-        front_cam_width = Integer.parseInt(readFromFile("front_camera_setting.txt", AppApplication.getAppInstance().getApplicationContext())) ;
-
-
-//        if(mSentence == null || mSentence.equals("")) {
-
-        if(mSentence != null) {
+//        if(mSentence != null) {
             //mDnnengine.execute();  Async task is not used in this model yet.
-//            DNN_result = DnnEngineClassJNI(jargv);
+
+            rear_cam_width = Integer.parseInt(readFromFile("rear_camera_setting.txt", AppApplication.getAppInstance().getApplicationContext())) ;
+            front_cam_width = Integer.parseInt(readFromFile("front_camera_setting.txt", AppApplication.getAppInstance().getApplicationContext())) ;
+
+            mDBWrapper = new DBWrapper(AppPreference.getInstance().getUserUid());
+            String DateInMomeent= getDate();
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.DATE, -1);
+            String DateToday = dateFormat.format(cal.getTime()); //your formatted date here
+            cal.add(Calendar.DATE, -1);
+            String DateYesterday = dateFormat.format(cal.getTime()); //your formatted date here
 
             doDayOfWeek();
             String hash_string ="";
@@ -323,18 +331,17 @@ public class DatelineModel implements Parcelable {
             }
 
 
-
-
             //2. Place
             ArrayList poiList = getPoiList();
             ArrayList poiCRDatesList = getPoiCRDatesList();
+            int photoID_size=0;
 
             if(poiList.size()>0)
             {
 
                 // Get photo info retrieval
                 ArrayList photoIDs = getDisplayPhotoIds();
-                int photoID_size= photoIDs.size();
+                photoID_size= photoIDs.size();
                 PhotoInfoModel[] photoinfos=null;
                 Integer[] PhotoPoi_mapping_index=null;   // This contains POI index for each photo element
 
@@ -394,36 +401,76 @@ public class DatelineModel implements Parcelable {
                     // Deep learning engine
                     // It detects food, mountain, cliff, river, sea, seashore only
                     File outDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString());
-                    //String DNN_test = "IMG_7543.JPG"; // Seashore
-                    //String DNN_test_path = outDir + "/data/" + DNN_test;
+
+//                    Random generator = new Random();
+//                    int n = 10000;
+//                    n = generator.nextInt(n);
+                    String root = Environment.getExternalStorageDirectory().toString();
+                    File myDir = new File(root + "/days_resample_images"); //
+                    ArrayList days_moment_resample_image  = new ArrayList();
 
 
-                    if(photolist.size() > 0) {
-                        for (int t=0;t<photolist.size();t++) {
+
+
+                    if(photoID_size > 0 && DateInMomeent.equals(DateToday) ) {
+
+                        for (int t=0;t<photoID_size;t++) {
                             String DNN_test_path_input = photolist.get(t).toString();
                             File files = new File(DNN_test_path_input);
                             if (files.exists() == true) {
-                                Bitmap bm = AppUtils.downsampleImageFile(DNN_test_path_input, 149, 112);
+                                Bitmap bm = AppUtils.downsampleImageFile(DNN_test_path_input, 122, 149);
+
+
+                                if(myDir.exists() && myDir.isDirectory()) {
+                                    // do nothing
+                                }else{
+                                    myDir.mkdirs();
+                                }
+
+                                String fname = "Days_Moment_" + t + ".jpg";
+                                File file = new File(myDir, fname);
+                                days_moment_resample_image.add(file.toString());
+
+                                if (file.exists())
+                                    file.delete();
+
+                                try {
+                                    FileOutputStream out = new FileOutputStream(file);
+                                    bm.compress(Bitmap.CompressFormat.JPEG, 90, out);
+                                    out.flush();
+                                    out.close();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+
 
                             }
                         }
+                        System.gc();
+
+                        for (int t=0;t<photoID_size;t++) {
+                            // Run neural network
+                            String DNN_test_path_resample =days_moment_resample_image.get(t).toString();
+
+                            // This is for classification
+                            String[] jargv =new String[7];
+                            jargv[0] ="classifier_Class";
+                            jargv[1] ="predictCustom";  // This is for classification
+                            jargv[2] =DNN_path[0];
+                            jargv[3] =DNN_path[1];
+                            jargv[4] =DNN_path[2];
+                            jargv[5] =DNN_test_path_resample;
+                            jargv[6] = outDir+"/";
+
+                            DNN_result.add(DnnEngineClassJNI(jargv));
+                            System.gc();
+
+                        }
+
                     }
 
 
-                    String DNN_test_path_resample = photolist.get(0).toString();
 
-
-                    // This is for classification
-                    String[] jargv =new String[7];
-                    jargv[0] ="classifier_Class";
-                    jargv[1] ="predictCustom";  // This is for classification
-                    jargv[2] =DNN_path[0];
-                    jargv[3] =DNN_path[1];
-                    jargv[4] =DNN_path[2];
-                    jargv[5] =DNN_test_path_resample;
-                    jargv[6] = outDir+"/";
-
-                    DNN_result = DnnEngineClassJNI(jargv);
 
                 }
 
@@ -459,25 +506,16 @@ public class DatelineModel implements Parcelable {
                 hash_string =hash_string + "I stayed at home whole day. I think I didn't do anything special. What a boring day. I will go out somewhere tomorrow";
             }
 
-//            if(DNN_result.equals(""))
-//            {
-//
-//            }
-//            else{
-//                hash_string =hash_string+DNN_result;
-//            }
+            if(DNN_result!=null){
+                hash_string =hash_string + "\n";
+                for(int r=0;r<photoID_size;r++)
+                    hash_string =hash_string + String.format("\n #%s. ", DNN_result.get(r).toString());;
+            }
 
 
 
             // This saves sentense to DB
-            mDBWrapper = new DBWrapper(AppPreference.getInstance().getUserUid());
-            String DateInMomeent= getDate();
-            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            Calendar cal = Calendar.getInstance();
-            cal.add(Calendar.DATE, -1);
-            String DateToday = dateFormat.format(cal.getTime()); //your formatted date here
-            cal.add(Calendar.DATE, -1);
-            String DateYesterday = dateFormat.format(cal.getTime()); //your formatted date here
+
 
             if (!DateInMomeent.equals(DateToday))
                 mDBWrapper.setSentence(DateInMomeent,hash_string);
@@ -515,7 +553,7 @@ public class DatelineModel implements Parcelable {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
+
     }
 
     public String POIbasedSentence(Integer [] uniqKeysArray, ArrayList poiList , String hash_string){
@@ -771,96 +809,96 @@ public class DatelineModel implements Parcelable {
     }
 
 
-    // Async Task Class : This method is not currently used in this model.
-    public class DnnEngine extends AsyncTask<String, String, String> {
-
-
-
-        public String [] DNN_path = MainActivity.DNN_path;
-
-        // Show Progress bar before downloading Music
-        @Override
-        protected void onPreExecute() {
-
-
-
-            super.onPreExecute();
-
-            hashString_DNN ="";
-
-            String [] DNN_path =MainActivity.DNN_path;
-
-            // Garbage collection before any heavy load work
-            System.gc();
-
-            File outDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString());
-            String DNN_test = "IMG_7543.JPG"; // Seashore
-            String DNN_test_path = outDir + "/data/" + DNN_test;
-
-            // This is for classification
-
-            jargv[0] ="classifier_Class";
-            jargv[1] ="predictCustom";  // This is for classification
-            jargv[2] =DNN_path[0];
-            jargv[3] =DNN_path[1];
-            jargv[4] =DNN_path[2];
-            jargv[5] =DNN_test_path;
-            jargv[6] = outDir+"/";
-            asynctask_flag = true;
-
-
-        }
-
-
-        // Download Music File from Internet
-        @Override
-        protected String doInBackground(String... f_url) {
-
-            try {
-
-
-
-
-                DNN_result = DnnEngineClassJNI(jargv);
-
-
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onProgressUpdate(String... progress) {
-            super.onProgressUpdate(progress);
-
-            try {
-                int percent = Integer.parseInt(progress[0]);
-                Log.v("mp3dropboxsync", "Hi progressing - " + percent + "%");
-
-
-            } catch (NumberFormatException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-
-        }
-
-
-        @Override
-        protected void onPostExecute(String file_url) {
-
-            hashString_DNN=DNN_result;
-
-
-            asynctask_flag =false;
-
-        }
-
-
-    }
+//    // Async Task Class : This method is not currently used in this model.
+//    public class DnnEngine extends AsyncTask<String, String, String> {
+//
+//
+//
+//        public String [] DNN_path = MainActivity.DNN_path;
+//
+//        // Show Progress bar before downloading Music
+//        @Override
+//        protected void onPreExecute() {
+//
+//
+//
+//            super.onPreExecute();
+//
+//            hashString_DNN ="";
+//
+//            String [] DNN_path =MainActivity.DNN_path;
+//
+//            // Garbage collection before any heavy load work
+//            System.gc();
+//
+//            File outDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString());
+//            String DNN_test = "IMG_7543.JPG"; // Seashore
+//            String DNN_test_path = outDir + "/data/" + DNN_test;
+//
+//            // This is for classification
+//
+//            jargv[0] ="classifier_Class";
+//            jargv[1] ="predictCustom";  // This is for classification
+//            jargv[2] =DNN_path[0];
+//            jargv[3] =DNN_path[1];
+//            jargv[4] =DNN_path[2];
+//            jargv[5] =DNN_test_path;
+//            jargv[6] = outDir+"/";
+//            asynctask_flag = true;
+//
+//
+//        }
+//
+//
+//        // Download Music File from Internet
+//        @Override
+//        protected String doInBackground(String... f_url) {
+//
+//            try {
+//
+//
+//
+//
+//                DNN_result = DnnEngineClassJNI(jargv);
+//
+//
+//
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onProgressUpdate(String... progress) {
+//            super.onProgressUpdate(progress);
+//
+//            try {
+//                int percent = Integer.parseInt(progress[0]);
+//                Log.v("mp3dropboxsync", "Hi progressing - " + percent + "%");
+//
+//
+//            } catch (NumberFormatException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            }
+//
+//        }
+//
+//
+//        @Override
+//        protected void onPostExecute(String file_url) {
+//
+//            hashString_DNN=DNN_result;
+//
+//
+//            asynctask_flag =false;
+//
+//        }
+//
+//
+//    }
 
     public native static String DnnEngineClassJNI(String[] jargv);
 
