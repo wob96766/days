@@ -127,7 +127,7 @@ public class ClusterEngine {
             cluster_input.bkdist[i] = 0.114 * myM.clusteringTest6(garray_row[3], cluster_input.bb, c) ; // invoking the native method
 
 
-            if(cluster_input.kdist_time[i]>=1 && cluster_input.kdist_time[i] <15) {
+            if(cluster_input.kdist_time[i]>=2 && cluster_input.kdist_time[i] <15) {
                 cluster_input.kdist[i] = Math.max(Math.max(cluster_input.rkdist[i], cluster_input.gkdist[i]), cluster_input.bkdist[i]);
                 cluster_input.edge_level_dist[i] = Math.abs(cluster_input.edge_level[0] - cluster_input.edge_level[1]);
 
@@ -140,7 +140,7 @@ public class ClusterEngine {
 
                 cluster_input.kdist[i]=cluster_input.kdist[i] + cluster_input.edge_level_dist[i]*2 + (cluster_input.LU_level_dist[i] + cluster_input.RU_level_dist[i] +cluster_input. LL_level_dist[i] + cluster_input.RL_level_dist[i])*2 +cluster_input.kdist_time[i]* time_feat_gain;
             }
-            else if (cluster_input.kdist_time[i]<1) {
+            else if (cluster_input.kdist_time[i]<2) {
                 cluster_input.kdist[i]=Cluster_th-10;
             }else
                 cluster_input.kdist[i]=Cluster_th+10;
@@ -244,12 +244,12 @@ public class ClusterEngine {
                 exif_min = Double.parseDouble(exif_DATETIME.substring(14, 16));
                 exif_sec = Double.parseDouble(exif_DATETIME.substring(17, 19));
             } catch (Exception e) {
-                exif_year = 1997;
-                exif_month = 11;
-                exif_date = 11;
-                exif_hour = 11;
-                exif_min = 11;
-                exif_sec = 11;
+                exif_year = Double.parseDouble(exif_DATETIME.substring(0, 4));
+                exif_month = Double.parseDouble(exif_DATETIME.substring(5, 7));
+                exif_date = Double.parseDouble(exif_DATETIME.substring(8, 10));
+                exif_hour = Double.parseDouble(exif_DATETIME.substring(11, 13));
+                exif_min = Double.parseDouble(exif_DATETIME.substring(14, 16));
+                exif_sec = Double.parseDouble(exif_DATETIME.substring(17, 19));
             }
 
 

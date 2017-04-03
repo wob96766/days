@@ -11,6 +11,7 @@ import android.hardware.camera2.CameraManager;
 import android.location.*;
 import android.location.Location;
 import android.media.ExifInterface;
+import android.os.Environment;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
@@ -20,13 +21,16 @@ import android.widget.TextView;
 
 import com.mindspree.days.AppApplication;
 import com.mindspree.days.data.DBWrapper;
+import com.mindspree.days.engine.ClusterEngine;
 import com.mindspree.days.lib.AppPreference;
 import com.mindspree.days.lib.AppUtils;
 import com.mindspree.days.ui.MainActivity;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -42,6 +46,7 @@ import com.mindspree.days.engine.EngineDBInterface;
 
 import static android.R.attr.defaultValue;
 import static android.media.CamcorderProfile.get;
+import static com.mindspree.days.model.DatelineModel.DnnEngineClassJNI;
 
 /**
  * Created by Admin on 19-10-2015.
@@ -76,6 +81,17 @@ public class TimelineModel implements Parcelable {
     public String strWeek;
     public int nWeek;
 
+    public ClusterEngine clusterEngine;
+    // DNN related classes
+    //public DnnEngine mDnnengine ;
+    public String [] DNN_DB1 = {"Dutch oven","wok","caldron","frying pan","Crock Pot","plate","restaurant","groom","bakery"};
+    public String [] DNN_DB2 = {"lakeside","seashore","lakefront"};
+    public String [] DNN_DB3 = {"volcano","cliff","valley","mountainside","alp"};
+    public String [] DNN_DB4 = {"amusement park","playground"};
+    public ArrayList DNN_result;
+    public String hashString_DNN="";
+
+    public String [] DNN_path ;
 
     private MainActivity mainActivity =new MainActivity();
 
@@ -310,6 +326,10 @@ public class TimelineModel implements Parcelable {
     public String getSummarize(Context context) {
 
 
+        DNN_path = MainActivity.DNN_path;
+        DNN_result = new ArrayList();
+        clusterEngine =new ClusterEngine();
+
         // Read Caemra Information (defined in Main Activity)
         int rear_cam_width =5000;
         int front_cam_width =3000;
@@ -397,6 +417,47 @@ public class TimelineModel implements Parcelable {
 
     }
 
+
+    public String resampleandsave_single(int index, File myDir, String DNN_test_path_input) {
+
+        String days_moment_resample_image=null;
+
+
+        File files = new File(DNN_test_path_input);
+        if (files.exists()) {
+            Bitmap bm = AppUtils.downsampleImageFile(DNN_test_path_input, 122, 149);
+
+
+            if(myDir.exists() && myDir.isDirectory()) {
+                // do nothing
+            }else{
+                myDir.mkdirs();
+            }
+
+            String fname = "Days_Moment_" + index + ".days";
+            File file = new File(myDir, fname);
+            days_moment_resample_image=file.toString();
+
+            if (file.exists())
+                file.delete();
+
+            try {
+                FileOutputStream out = new FileOutputStream(file);
+                bm.compress(Bitmap.CompressFormat.JPEG, 90, out);
+                out.flush();
+                out.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
+        }
+
+
+        return days_moment_resample_image;
+    }
+
+
     public String hashFromFace(ArrayList PhotoList,  int front_cam_width, int rear_cam_width)
     {
         String hash_string = "";
@@ -464,7 +525,31 @@ public class TimelineModel implements Parcelable {
 
 
 
+                //4. Deep learning engine
+                // It detects food, mountain, cliff, river, sea, seashore only
+                File outDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString());
+                String root = Environment.getExternalStorageDirectory().toString();
+                File myDir = new File(root + "/days_resample_images"); //
+                String days_moment_resample_image ;
 
+                days_moment_resample_image=resampleandsave_single(i, myDir, timelinePhotoFile);
+
+//                double [] temp_time = clusterEngine.timeFeatureExtract(timelinePhotoFile);
+
+                // Run neural network
+                // This is for classification
+                String DNN_test_path_resample =days_moment_resample_image;
+                String[] jargv =new String[7];
+                jargv[0] ="classifier_Class";
+                jargv[1] ="predictCustom";  // This is for classification
+                jargv[2] =DNN_path[0];
+                jargv[3] =DNN_path[1];
+                jargv[4] =DNN_path[2];
+                jargv[5] =DNN_test_path_resample;
+                jargv[6] = outDir+"/";
+
+                String class_predict = DnnEngineClassJNI(jargv);
+                 System.gc();
 
             }
 

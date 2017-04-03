@@ -14,6 +14,7 @@ import android.util.Log;
 import com.mindspree.days.AppApplication;
 import com.mindspree.days.R;
 import com.mindspree.days.data.DBWrapper;
+import com.mindspree.days.engine.ClusterEngine;
 import com.mindspree.days.engine.EngineDBInterface;
 import com.mindspree.days.lib.AppPreference;
 import com.mindspree.days.lib.AppUtils;
@@ -77,10 +78,18 @@ public class DatelineModel implements Parcelable {
     public int rear_cam_width =5000;
     public int front_cam_width =3000;
 
+
+    public ClusterEngine clusterEngine;
+
     // DNN related classes
-    boolean asynctask_flag = false;
-    String[] jargv =new String[7];
     //public DnnEngine mDnnengine ;
+//    public String [] DNN_DB1 = {"Dutch oven","wok","caldron","frying pan","Crock Pot","plate","restaurant","groom","bakery"};
+//    public String [] DNN_DB2 = {"lakeside","seashore","lakefront"};
+//    public String [] DNN_DB3 = {"volcano","cliff","valley","mountainside","alp"};
+//    public String [] DNN_DB4 = {"amusement park","playground"};
+
+    public DnnModel dnnModel;
+
     public ArrayList DNN_result;
     public String hashString_DNN="";
 
@@ -293,14 +302,25 @@ public class DatelineModel implements Parcelable {
 
     public String getSummarize() {
 
+        dnnModel = new DnnModel();
+        String DateInMomeent= getDate();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -1);
+        String DateToday = dateFormat.format(cal.getTime()); //your formatted date here
+        cal.add(Calendar.DATE, -1);
+        String DateYesterday = dateFormat.format(cal.getTime()); //your formatted date here
 
-        String [] DNN_path = MainActivity.DNN_path;
-        DNN_result = new ArrayList();
+//        if(mSentence == null || mSentence.equals("") || DateInMomeent.equals(DateToday) ) {
+        if(mSentence == null || mSentence.equals("")  ) {
 
-        // Garbage collection before any heavy load work
-        System.gc();
+            // Garbage collection before any heavy load work
+            System.gc();
 
-        if(mSentence == null || mSentence.equals("")) {
+            clusterEngine =new ClusterEngine();
+
+            String [] DNN_path = MainActivity.DNN_path;
+            DNN_result = new ArrayList();
 
 //        if(mSentence != null) {
             //mDnnengine.execute();  Async task is not used in this model yet.
@@ -309,13 +329,13 @@ public class DatelineModel implements Parcelable {
             front_cam_width = Integer.parseInt(readFromFile("front_camera_setting.txt", AppApplication.getAppInstance().getApplicationContext())) ;
 
             mDBWrapper = new DBWrapper(AppPreference.getInstance().getUserUid());
-            String DateInMomeent= getDate();
-            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            Calendar cal = Calendar.getInstance();
-            cal.add(Calendar.DATE, -1);
-            String DateToday = dateFormat.format(cal.getTime()); //your formatted date here
-            cal.add(Calendar.DATE, -1);
-            String DateYesterday = dateFormat.format(cal.getTime()); //your formatted date here
+
+//            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+//            Calendar cal = Calendar.getInstance();
+//            cal.add(Calendar.DATE, -1);
+//            String DateToday = dateFormat.format(cal.getTime()); //your formatted date here
+//            cal.add(Calendar.DATE, -1);
+//            String DateYesterday = dateFormat.format(cal.getTime()); //your formatted date here
 
             doDayOfWeek();
             String hash_string ="";
@@ -323,7 +343,7 @@ public class DatelineModel implements Parcelable {
             //1. Today is *** date\
             hash_string = hash_string + String.format("Today is %s. ", getDate());
 
-            //1.5 Weather
+            //2 Weather
             if(mWeather==null){
                 hash_string = hash_string + "Not sure about the weather.\n";
             }else{
@@ -331,7 +351,7 @@ public class DatelineModel implements Parcelable {
             }
 
 
-            //2. Place
+            //3. Place
             ArrayList poiList = getPoiList();
             ArrayList poiCRDatesList = getPoiCRDatesList();
             int photoID_size=0;
@@ -347,7 +367,6 @@ public class DatelineModel implements Parcelable {
 
                 if(photoID_size>0){
                     photoinfos = new PhotoInfoModel[photoID_size];
-                    //PhotoPoi_mapping_index= new Integer[photoID_size];
 
                     for (int i=0;i<photoID_size;i++)
                         photoinfos[i] = getPhotoInfo(photoIDs.get(i).toString());
@@ -388,9 +407,12 @@ public class DatelineModel implements Parcelable {
                         Integer key_temp = uniqKeysArray[m];  //This is POI index which is key
 
                         size = result.get(key_temp);          // This is the number of photos taken in this POI index
-                        hash_string_face=SentenceFromFace(offset,size,poiList.get(key_temp).toString(),photolist,front_cam_width,rear_cam_width);
+
+                        hash_string_face=SentenceFromPhoto(offset,size,poiList.get(key_temp).toString(),photolist,front_cam_width,rear_cam_width, DNN_path);
+
                         if(hash_string_face.equals(hash_string_face_buf))
                             hash_string_face=""; // This is to prevent the duplication
+
                         hash_string =hash_string+hash_string_face;
                         hash_string_face_buf = hash_string_face;
 
@@ -398,82 +420,19 @@ public class DatelineModel implements Parcelable {
                     }
 
 
-                    // Deep learning engine
-                    // It detects food, mountain, cliff, river, sea, seashore only
-                    File outDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString());
-
-//                    Random generator = new Random();
-//                    int n = 10000;
-//                    n = generator.nextInt(n);
-                    String root = Environment.getExternalStorageDirectory().toString();
-                    File myDir = new File(root + "/days_resample_images"); //
-                    ArrayList days_moment_resample_image  = new ArrayList();
-
-
-
-
-                    if(photoID_size > 0 && DateInMomeent.equals(DateToday) ) {
-
-                        for (int t=0;t<photoID_size;t++) {
-                            String DNN_test_path_input = photolist.get(t).toString();
-                            File files = new File(DNN_test_path_input);
-                            if (files.exists() == true) {
-                                Bitmap bm = AppUtils.downsampleImageFile(DNN_test_path_input, 122, 149);
-
-
-                                if(myDir.exists() && myDir.isDirectory()) {
-                                    // do nothing
-                                }else{
-                                    myDir.mkdirs();
-                                }
-
-                                String fname = "Days_Moment_" + t + ".jpg";
-                                File file = new File(myDir, fname);
-                                days_moment_resample_image.add(file.toString());
-
-                                if (file.exists())
-                                    file.delete();
-
-                                try {
-                                    FileOutputStream out = new FileOutputStream(file);
-                                    bm.compress(Bitmap.CompressFormat.JPEG, 90, out);
-                                    out.flush();
-                                    out.close();
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-
-
-                            }
+//
+                        hashString_DNN="";
+                        if(DNN_result.size()>0){
+                            for(int r=0;r<photoID_size;r++)
+                                hashString_DNN =hashString_DNN + String.format("\n #%s. ", DNN_result.get(r).toString());;
                         }
-                        System.gc();
-
-                        for (int t=0;t<photoID_size;t++) {
-                            // Run neural network
-                            String DNN_test_path_resample =days_moment_resample_image.get(t).toString();
-
-                            // This is for classification
-                            String[] jargv =new String[7];
-                            jargv[0] ="classifier_Class";
-                            jargv[1] ="predictCustom";  // This is for classification
-                            jargv[2] =DNN_path[0];
-                            jargv[3] =DNN_path[1];
-                            jargv[4] =DNN_path[2];
-                            jargv[5] =DNN_test_path_resample;
-                            jargv[6] = outDir+"/";
-
-                            DNN_result.add(DnnEngineClassJNI(jargv));
-                            System.gc();
-
-                        }
-
-                    }
+//
+//                    }
 
 
 
 
                 }
-
 
                 // This is how you get cluster size for the specific cluster ID
 //                int temp = getClusterSize(String.valueOf(photoinfos[1].cluster_id));
@@ -483,7 +442,7 @@ public class DatelineModel implements Parcelable {
                 String temp = getCreateTime(poiList.get(0).toString());
 
 
-                // Measure how busy user was
+                // 5. Measure how busy user was
                 if(poiList.size() < 4)
                     hash_string = hash_string + "It was not that busy ";
                 else if(poiList.size() >= 4 && poiList.size() <= 6)
@@ -492,40 +451,27 @@ public class DatelineModel implements Parcelable {
                     hash_string = hash_string + "It was a super busy day ";
 
 
-                if(mMood!=null){
+                if(mMood!=null)
                     hash_string = hash_string + String.format("\n I think today was %s day in general. ", mMood);
-                }
-
 
 
             }
             else{
 
-//                mDnnengine.execute();
-
                 hash_string =hash_string + "I stayed at home whole day. I think I didn't do anything special. What a boring day. I will go out somewhere tomorrow";
             }
 
-            if(DNN_result!=null){
-                hash_string =hash_string + "\n";
-                for(int r=0;r<photoID_size;r++)
-                    hash_string =hash_string + String.format("\n #%s. ", DNN_result.get(r).toString());;
-            }
-
+            hash_string = hash_string + hashString_DNN;
 
 
             // This saves sentense to DB
 
 
-            if (!DateInMomeent.equals(DateToday))
+//            if (!DateInMomeent.equals(DateToday))
                 mDBWrapper.setSentence(DateInMomeent,hash_string);
 
 
             return hash_string;
-
-
-
-
 
 
         } else {
@@ -533,7 +479,97 @@ public class DatelineModel implements Parcelable {
             return mSentence;
         }
 
+
+        //                    Random generator = new Random();
+//                    int n = 10000;
+//                    n = generator.nextInt(n);
+
     }
+
+
+
+    public ArrayList resampleandsave(int photoID_size, File myDir, ArrayList photolist) {
+
+        ArrayList days_moment_resample_image  = new ArrayList();
+
+        for (int t=0;t<photoID_size;t++) {
+            String DNN_test_path_input = photolist.get(t).toString();
+            File files = new File(DNN_test_path_input);
+            if (files.exists()) {
+                Bitmap bm = AppUtils.downsampleImageFile(DNN_test_path_input, 122, 149);
+
+
+                if(myDir.exists() && myDir.isDirectory()) {
+                    // do nothing
+                }else{
+                    myDir.mkdirs();
+                }
+
+                String fname = "Days_Moment_" + t + ".days";
+                File file = new File(myDir, fname);
+                days_moment_resample_image.add(file.toString());
+
+                if (file.exists())
+                    file.delete();
+
+                try {
+                    FileOutputStream out = new FileOutputStream(file);
+                    bm.compress(Bitmap.CompressFormat.JPEG, 90, out);
+                    out.flush();
+                    out.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+
+            }
+        }
+
+        return days_moment_resample_image;
+    }
+
+
+    public String resampleandsave_single(int index, File myDir, String DNN_test_path_input) {
+
+        String days_moment_resample_image=null;
+
+
+            File files = new File(DNN_test_path_input);
+            if (files.exists()) {
+                Bitmap bm = AppUtils.downsampleImageFile(DNN_test_path_input, 122, 149);
+
+
+                if(myDir.exists() && myDir.isDirectory()) {
+                    // do nothing
+                }else{
+                    myDir.mkdirs();
+                }
+
+                String fname = "Days_Moment_" + index + ".days";
+                File file = new File(myDir, fname);
+                days_moment_resample_image=file.toString();
+
+                if (file.exists())
+                    file.delete();
+
+                try {
+                    FileOutputStream out = new FileOutputStream(file);
+                    bm.compress(Bitmap.CompressFormat.JPEG, 90, out);
+                    out.flush();
+                    out.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+
+            }
+
+
+        return days_moment_resample_image;
+    }
+
+
+
 
     private static void SaveImage(Bitmap finalBitmap, String filename) {
 
@@ -636,9 +672,10 @@ public class DatelineModel implements Parcelable {
     }
 
 
-    public String SentenceFromFace(int offset,int size,String poi_string, ArrayList PhotoList,  int front_cam_width, int rear_cam_width)
+    public String SentenceFromPhoto(int offset,int size,String poi_string, ArrayList PhotoList,  int front_cam_width, int rear_cam_width, String [] DNN_path)
     {
         String hash_string = "";
+        String hash_string_DNN= "";
         int photoCount = PhotoList.size();
 
         EngineDBInterface engineDBInterface = new EngineDBInterface();
@@ -657,6 +694,7 @@ public class DatelineModel implements Parcelable {
                 int singlePhoto_cnt=0;
                 int groupSelfie_cnt=0;
                 int groupPhoto_cnt=0;
+                int nonhumanPhoto_cnt=0;
                 int smile_cnt=0;
 
                 // Face detectioin : Face number. Eye close. Smile probability
@@ -690,13 +728,7 @@ public class DatelineModel implements Parcelable {
                     else if ( Math.abs(rear_cam_width - Im_width) < 500)
                         groupPhoto_cnt++;
 
-                }else {
-
-                    // Do nothing at this point
-
                 }
-
-
 
                 if( Smile_Prob >= 0.6)
                     smile_cnt++;
@@ -764,6 +796,83 @@ public class DatelineModel implements Parcelable {
                     }
 
 
+                    // This is to interpret non humand photos such as food and landscape
+                    //if(nonhumanPhoto_cnt >0) {
+                        // Do nothing at this point
+                        //4. Deep learning engine
+                        // It detects food, mountain, cliff, river, sea, seashore only
+                        File outDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString());
+                        String root = Environment.getExternalStorageDirectory().toString();
+                        File myDir = new File(root + "/days_resample_images"); //
+                        String days_moment_resample_image ;
+
+                        days_moment_resample_image=resampleandsave_single(i, myDir, timelinePhotoFile);
+
+                        double [] temp_time = clusterEngine.timeFeatureExtract(timelinePhotoFile);
+
+                        // Run neural network
+                        // This is for classification
+                        String DNN_test_path_resample =days_moment_resample_image;
+                        String[] jargv =new String[7];
+                        jargv[0] ="classifier_Class";
+                        jargv[1] ="predictCustom";  // This is for classification
+                        jargv[2] =DNN_path[0];
+                        jargv[3] =DNN_path[1];
+                        jargv[4] =DNN_path[2];
+                        jargv[5] =DNN_test_path_resample;
+                        jargv[6] = outDir+"/";
+
+                        String class_predict = DnnEngineClassJNI(jargv);
+                        System.gc();
+
+
+                        Boolean foodClass = classDetect(class_predict, dnnModel.DNN_DB1);
+                        Boolean WaterClass = classDetect(class_predict, dnnModel.DNN_DB2);
+                        Boolean MounatainClass = classDetect(class_predict, dnnModel.DNN_DB3);
+                        Boolean PlayClass = classDetect(class_predict, dnnModel.DNN_DB4);
+
+
+
+                        double pic_time = temp_time[3];
+                        if(foodClass)
+                        {
+                            if(pic_time>05 && pic_time< 10){
+                                //Breakfast
+                                hash_string_DNN = "I had breakfast. ";
+
+                            }else if(pic_time>11 && pic_time< 14){
+                                //Lunch
+                                hash_string_DNN = "I had a lunch outside. It was nice food. ";
+                            }else if(pic_time>17 && pic_time< 19){
+                                //dinner
+                                hash_string_DNN = "I had dinner outside. It was nice food. ";
+                            }else if(pic_time>=19) {
+                                //Party
+                                hash_string_DNN = "I had party with my friends and colleagues. Awesome food. ";
+                            }
+
+                            DNN_result.add(class_predict);
+
+                        }else if(WaterClass){
+
+                            hash_string_DNN = "I went outside today and had fun in the water. ";
+                            DNN_result.add(class_predict);
+
+                        }else if(MounatainClass){
+
+                            hash_string_DNN = "I went to mountain today. It was great. ";
+                            DNN_result.add(class_predict);
+                        }else if(PlayClass){
+
+                            hash_string_DNN = "I went to amusement part today. It was so fun with my family.";
+                            DNN_result.add(class_predict);
+                        }
+
+
+
+
+                    //}
+
 
 
 
@@ -771,12 +880,31 @@ public class DatelineModel implements Parcelable {
 
 
 
-
+                    hash_string = hash_string + hash_string_DNN;
 
 
         return hash_string;
     }
 
+
+    public boolean classDetect(String class_predict, String [] Class_DB){
+
+        boolean result=false;
+
+        for(int i=0;i<Class_DB.length;i++){
+            if(class_predict.equals(Class_DB[i])){
+                result = true;
+                break;
+            }else {
+                result = false;
+                break;
+            }
+
+        }
+
+        return result;
+
+    }
 
     private String readFromFile(String filename, Context context) {
 
