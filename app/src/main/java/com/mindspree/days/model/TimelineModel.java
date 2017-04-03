@@ -84,10 +84,7 @@ public class TimelineModel implements Parcelable {
     public ClusterEngine clusterEngine;
     // DNN related classes
     //public DnnEngine mDnnengine ;
-    public String [] DNN_DB1 = {"Dutch oven","wok","caldron","frying pan","Crock Pot","plate","restaurant","groom","bakery"};
-    public String [] DNN_DB2 = {"lakeside","seashore","lakefront"};
-    public String [] DNN_DB3 = {"volcano","cliff","valley","mountainside","alp"};
-    public String [] DNN_DB4 = {"amusement park","playground"};
+
     public ArrayList DNN_result;
     public String hashString_DNN="";
 
@@ -527,29 +524,29 @@ public class TimelineModel implements Parcelable {
 
                 //4. Deep learning engine
                 // It detects food, mountain, cliff, river, sea, seashore only
-                File outDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString());
-                String root = Environment.getExternalStorageDirectory().toString();
-                File myDir = new File(root + "/days_resample_images"); //
-                String days_moment_resample_image ;
-
-                days_moment_resample_image=resampleandsave_single(i, myDir, timelinePhotoFile);
-
-//                double [] temp_time = clusterEngine.timeFeatureExtract(timelinePhotoFile);
-
-                // Run neural network
-                // This is for classification
-                String DNN_test_path_resample =days_moment_resample_image;
-                String[] jargv =new String[7];
-                jargv[0] ="classifier_Class";
-                jargv[1] ="predictCustom";  // This is for classification
-                jargv[2] =DNN_path[0];
-                jargv[3] =DNN_path[1];
-                jargv[4] =DNN_path[2];
-                jargv[5] =DNN_test_path_resample;
-                jargv[6] = outDir+"/";
-
-                String class_predict = DnnEngineClassJNI(jargv);
-                 System.gc();
+//                File outDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString());
+//                String root = Environment.getExternalStorageDirectory().toString();
+//                File myDir = new File(root + "/days_resample_images"); //
+//                String days_moment_resample_image ;
+//
+//                days_moment_resample_image=resampleandsave_single(i, myDir, timelinePhotoFile);
+//
+////                double [] temp_time = clusterEngine.timeFeatureExtract(timelinePhotoFile);
+//
+//                // Run neural network
+//                // This is for classification
+//                String DNN_test_path_resample =days_moment_resample_image;
+//                String[] jargv =new String[7];
+//                jargv[0] ="classifier_Class";
+//                jargv[1] ="predictCustom";  // This is for classification
+//                jargv[2] =DNN_path[0];
+//                jargv[3] =DNN_path[1];
+//                jargv[4] =DNN_path[2];
+//                jargv[5] =DNN_test_path_resample;
+//                jargv[6] = outDir+"/";
+//
+//                String class_predict = DnnEngineClassJNI(jargv);
+//                 System.gc();
 
             }
 
