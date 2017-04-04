@@ -581,7 +581,7 @@ public class TimelineModel implements Parcelable {
 
 
         } else {
-            hash_string = hash_string + String.format("#Nothing much ~");
+//            hash_string = hash_string + String.format("#Nothing much ~");
         }
 
 

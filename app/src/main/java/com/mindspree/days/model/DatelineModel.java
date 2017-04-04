@@ -423,7 +423,7 @@ public class DatelineModel implements Parcelable {
 //
                         hashString_DNN="";
                         if(DNN_result.size()>0){
-                            for(int r=0;r<photoID_size;r++)
+                            for(int r=0;r<DNN_result.size();r++)
                                 hashString_DNN =hashString_DNN + String.format("\n #%s. ", DNN_result.get(r).toString());;
                         }
 //
@@ -677,10 +677,16 @@ public class DatelineModel implements Parcelable {
         String hash_string = "";
         String hash_string_DNN= "";
         int photoCount = PhotoList.size();
+        DnnModel dnnModel = new DnnModel();
+
+        Random generator = new Random();
+
 
         EngineDBInterface engineDBInterface = new EngineDBInterface();
 
         hash_string = hash_string + String.format("In %s ",poi_string);
+
+        int sentence_cnt =0;
 
             for (int i = offset; i < offset + size; i++){
                 String timelinePhotoFile = PhotoList.get(i).toString();
@@ -696,6 +702,9 @@ public class DatelineModel implements Parcelable {
                 int groupPhoto_cnt=0;
                 int nonhumanPhoto_cnt=0;
                 int smile_cnt=0;
+
+                int n = 10000;
+
 
                 // Face detectioin : Face number. Eye close. Smile probability
 
@@ -754,10 +763,12 @@ public class DatelineModel implements Parcelable {
                     // Selfie check
                     if (selfie_cnt > 0) {
                         // Smile detection
+                        n = generator.nextInt(dnnModel.FaceBasedPool_selfie_smile.length);
+
                         if (smile_cnt > 0) {
-                            hash_string = hash_string + String.format("%s %s ", "I took some nice selfie with beautifule smile", connection);
+                            hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_selfie_smile[n], connection);
                         } else {
-                            hash_string = hash_string + String.format("%s %s ", "I took some selfie", connection);
+                            hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_selfie_nosmile[n], connection);
                         }
                     }
 
@@ -765,10 +776,12 @@ public class DatelineModel implements Parcelable {
                     if (singlePhoto_cnt > 0) {
 
                         // Smile detection
+                        n = generator.nextInt(dnnModel.FaceBasedPool_single_smile.length);
+
                         if (smile_cnt > 0) {
-                            hash_string = hash_string + String.format("%s %s ", "I took some nice photo of my buddy with big smile", connection);
+                            hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_single_smile[n], connection);
                         } else {
-                            hash_string = hash_string + String.format("%s %s ", "I took some nice photo of my buddy", connection);
+                            hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_single_nosmile[n], connection);
 
                         }
                     }
@@ -776,10 +789,12 @@ public class DatelineModel implements Parcelable {
                     if (groupPhoto_cnt > 0) {
 
                         // Smile detection
+                        n = generator.nextInt(dnnModel.FaceBasedPool_group_smile.length);
+
                         if (smile_cnt > 0) {
-                            hash_string = hash_string + String.format("%s %s ", "I took some nice group photos. What a beautiful smile !", connection);
+                            hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_group_smile[n], connection);
                         } else {
-                            hash_string = hash_string + String.format("%s %s ", "I took some nice group photos.", connection);
+                            hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_group_nosmile[n], connection);
 
                         }
 
@@ -787,17 +802,18 @@ public class DatelineModel implements Parcelable {
 
                     if (groupSelfie_cnt > 0) {
                         // Smile detection
+                        n = generator.nextInt(dnnModel.FaceBasedPool_group_selfie.length);
+
                         if (smile_cnt > 0) {
-                            hash_string = hash_string + String.format("%s %s ", "I took some nice selfie with my buddies. Everybody happy", connection);
+                            hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_group_selfie[n], connection);
                         } else {
-                            hash_string = hash_string + String.format("%s %s ", "I took some nice selfie with my buddies", connection);
+                            hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_group_noselfie[n], connection);
                         }
 
                     }
 
 
                     // This is to interpret non humand photos such as food and landscape
-                    //if(nonhumanPhoto_cnt >0) {
                         // Do nothing at this point
                         //4. Deep learning engine
                         // It detects food, mountain, cliff, river, sea, seashore only
@@ -839,16 +855,21 @@ public class DatelineModel implements Parcelable {
                             if(pic_time>05 && pic_time< 10){
                                 //Breakfast
                                 hash_string_DNN = "I had breakfast. ";
-
-                            }else if(pic_time>11 && pic_time< 14){
+                                class_predict =String.format("#%s #%s","breakfast", poi_string);
+                            }else if(pic_time>=11 && pic_time< 14){
                                 //Lunch
-                                hash_string_DNN = "I had a lunch outside. It was nice food. ";
-                            }else if(pic_time>17 && pic_time< 19){
+                                hash_string_DNN = String.format("%s %s ", "I had a lunch in ", poi_string);
+                                class_predict =String.format("#%s #%s","lunch", poi_string);
+                            }else if(pic_time>=17 && pic_time< 19){
                                 //dinner
-                                hash_string_DNN = "I had dinner outside. It was nice food. ";
+                                hash_string_DNN = String.format("%s %s ", "I had a dinner in ", poi_string);
+
+                                class_predict =String.format("#%s #%s","dinner", poi_string);
                             }else if(pic_time>=19) {
                                 //Party
-                                hash_string_DNN = "I had party with my friends and colleagues. Awesome food. ";
+                                hash_string_DNN = String.format("%s %s %s", "I had party with my friends and colleagues in ", poi_string, ". Awesome food. ");
+
+                                class_predict =String.format("#%s #%s","dinner party", poi_string);
                             }
 
                             DNN_result.add(class_predict);
@@ -856,22 +877,25 @@ public class DatelineModel implements Parcelable {
                         }else if(WaterClass){
 
                             hash_string_DNN = "I went outside today and had fun in the water. ";
+                            class_predict =String.format("#%s #%s","fun in the water", poi_string);
                             DNN_result.add(class_predict);
+
 
                         }else if(MounatainClass){
 
                             hash_string_DNN = "I went to mountain today. It was great. ";
+                            class_predict =String.format("#%s #%s","hiking", poi_string);
                             DNN_result.add(class_predict);
                         }else if(PlayClass){
 
-                            hash_string_DNN = "I went to amusement part today. It was so fun with my family.";
+                            hash_string_DNN = "I went to amusement park today. It was so fun with my family.";
+                            class_predict =String.format("#%s #%s","amusement park", poi_string);
                             DNN_result.add(class_predict);
                         }
 
 
+                        sentence_cnt++;
 
-
-                    //}
 
 
 
@@ -892,12 +916,13 @@ public class DatelineModel implements Parcelable {
         boolean result=false;
 
         for(int i=0;i<Class_DB.length;i++){
+            String temp = Class_DB[i];
             if(class_predict.equals(Class_DB[i])){
                 result = true;
                 break;
             }else {
                 result = false;
-                break;
+
             }
 
         }
