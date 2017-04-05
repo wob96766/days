@@ -346,6 +346,10 @@ public class TimelineModel implements Parcelable {
         String POI = mName;
         hash_string =String.format("#%s ", mName);
 
+
+
+        mName ="집";
+
         // 2. Time
 
         setMeasureTime(mCreateDate);
@@ -355,7 +359,7 @@ public class TimelineModel implements Parcelable {
         // 3. Location
         if(weekend_days==0){
             // Weekdays
-            if(mName == "집"){
+            if(mName.equals("집") || mName.contains("집")){
 
                 if( Integer.parseInt(mMeasureTimeInHour) <9 ){
                     hash_string =hash_string + String.format("#%s ", "바쁜 아침");  // Busy morning
@@ -377,7 +381,7 @@ public class TimelineModel implements Parcelable {
         }
         else{
             // Weekend
-            if(mName == "집"){
+            if(mName.equals("집") || mName.contains("집")){
 
                 if( Integer.parseInt(mMeasureTimeInHour) <9 ){
                     hash_string =hash_string + String.format("#%s ", "이른 주말 아침");    // Early weekend moning

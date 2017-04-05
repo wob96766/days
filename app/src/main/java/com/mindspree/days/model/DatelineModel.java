@@ -317,13 +317,11 @@ public class DatelineModel implements Parcelable {
             // Garbage collection before any heavy load work
             System.gc();
 
+            Random generator = new Random();
             clusterEngine =new ClusterEngine();
 
             String [] DNN_path = MainActivity.DNN_path;
             DNN_result = new ArrayList();
-
-//        if(mSentence != null) {
-            //mDnnengine.execute();  Async task is not used in this model yet.
 
             rear_cam_width = Integer.parseInt(readFromFile("rear_camera_setting.txt", AppApplication.getAppInstance().getApplicationContext())) ;
             front_cam_width = Integer.parseInt(readFromFile("front_camera_setting.txt", AppApplication.getAppInstance().getApplicationContext())) ;
@@ -351,7 +349,7 @@ public class DatelineModel implements Parcelable {
             }
 
 
-            //3. Place
+
             ArrayList poiList = getPoiList();
             ArrayList poiCRDatesList = getPoiCRDatesList();
             int photoID_size=0;
@@ -391,7 +389,7 @@ public class DatelineModel implements Parcelable {
                     for (int j = 0; j < uniqKeys.size(); j++)
                       uniqKeysArray[j] = integerList.get(j); //
 
-
+                    //3. Place
                     // POI based sentence generation part
                     hash_string = POIbasedSentence(uniqKeysArray,poiList,hash_string);
 
@@ -408,6 +406,8 @@ public class DatelineModel implements Parcelable {
 
                         size = result.get(key_temp);          // This is the number of photos taken in this POI index
 
+
+                        //4. Face & Deep learning
                         hash_string_face=SentenceFromPhoto(offset,size,poiList.get(key_temp).toString(),photolist,front_cam_width,rear_cam_width, DNN_path);
 
                         if(hash_string_face.equals(hash_string_face_buf))
@@ -426,10 +426,6 @@ public class DatelineModel implements Parcelable {
                             for(int r=0;r<DNN_result.size();r++)
                                 hashString_DNN =hashString_DNN + String.format("\n #%s. ", DNN_result.get(r).toString());;
                         }
-//
-//                    }
-
-
 
 
                 }
@@ -443,12 +439,17 @@ public class DatelineModel implements Parcelable {
 
 
                 // 5. Measure how busy user was
-                if(poiList.size() < 4)
-                    hash_string = hash_string + "It was not that busy ";
-                else if(poiList.size() >= 4 && poiList.size() <= 6)
-                    hash_string = hash_string + "It was a little bit busy day ";
-                else if (poiList.size() > 6)
-                    hash_string = hash_string + "It was a super busy day ";
+                if(poiList.size() < 4) {
+                    int n = generator.nextInt(dnnModel.dailysummary_nobusy.length);
+                    hash_string = hash_string + String.format("%s ", dnnModel.dailysummary_nobusy[n]);
+
+                } else if(poiList.size() >= 4 && poiList.size() <= 6) {
+                    int n = generator.nextInt(dnnModel.dailysummary_lessbusy.length);
+                    hash_string = hash_string + String.format("%s ", dnnModel.dailysummary_lessbusy[n]);
+                } else if (poiList.size() > 6) {
+                    int n = generator.nextInt(dnnModel.dailysummary_busy.length);
+                    hash_string = hash_string + String.format("%s ", dnnModel.dailysummary_busy[n]);
+                }
 
 
                 if(mMood!=null)
@@ -480,9 +481,6 @@ public class DatelineModel implements Parcelable {
         }
 
 
-        //                    Random generator = new Random();
-//                    int n = 10000;
-//                    n = generator.nextInt(n);
 
     }
 
@@ -594,33 +592,80 @@ public class DatelineModel implements Parcelable {
 
     public String POIbasedSentence(Integer [] uniqKeysArray, ArrayList poiList , String hash_string){
 
+
+
         if(uniqKeysArray.length==1){
-            hash_string = hash_string + String.format("%s %s. ", "I didn't go anywhere. Just stayed in", poiList.get(uniqKeysArray[0]).toString());
-            hash_string = hash_string + String.format("%s.", " Here are some nice photos taken here");
+            if(uniqKeysArray[0].toString().contains("집")) {
+                hash_string = hash_string + String.format("%s %s. ", "I didn't go anywhere. Just stayed in my house", poiList.get(uniqKeysArray[0]).toString());
+            }else{
+                hash_string = hash_string + String.format("%s %s. ", "I didn't go anywhere. Just stayed in", poiList.get(uniqKeysArray[0]).toString());
+            }
+
         } else if(uniqKeysArray.length==2){
 //                        if( poiList.get(0).toString().equals(poiList.get(1).toString()) && poiList.size()==2)
 //                            hash_string = hash_string + String.format("%s. ", "I just quickly went outside and came back home soon.");
 
-            for (int k=0;k<2;k++){
-                if(k==0)
-                    hash_string = hash_string + String.format("I went to %s and ", poiList.get(uniqKeysArray[k]).toString());
-                else
-                    hash_string = hash_string + String.format("%s. ", poiList.get(uniqKeysArray[k]).toString());
-            }
+
+                if(uniqKeysArray[0].toString().contains("집") && uniqKeysArray[1].toString().contains("집")) {
+
+
+
+                }else if(uniqKeysArray[0].toString().contains("집") || !uniqKeysArray[1].toString().contains("집")){
+
+                    hash_string = hash_string + String.format("I went to %s and ", poiList.get(uniqKeysArray[1]).toString());
+
+                }else if(!uniqKeysArray[0].toString().contains("집") || !uniqKeysArray[1].toString().contains("집")){
+
+                    hash_string = hash_string + String.format("I went to %s and ", poiList.get(uniqKeysArray[0]).toString());
+
+                }else{
+                    for (int k=0;k<2;k++){
+                        if(k==0)
+                            hash_string = hash_string + String.format("I went to %s and ", poiList.get(uniqKeysArray[k]).toString());
+                        else
+                            hash_string = hash_string + String.format("%s. ", poiList.get(uniqKeysArray[k]).toString());
+                    }
+                }
+
+
+
 
         }else if(uniqKeysArray.length>2){
 
             // Later on, there might be some corner case such as home, home, home, school, school and home
             hash_string = hash_string + String.format("%s.", "I went to a couple of places. ");
 
+
             for (int l=0;l<uniqKeysArray.length;l++){
                 Integer temp_poiIndex = uniqKeysArray[l];
-                if(l==0)
-                    hash_string = hash_string + String.format("Here are some nice photos taken in %s", poiList.get(uniqKeysArray[l]).toString());
-                else if(l<uniqKeysArray.length-1)
-                    hash_string = hash_string + String.format(", %s ", poiList.get(uniqKeysArray[l]).toString());
-                else if(l==uniqKeysArray.length-1)
-                    hash_string = hash_string + String.format("and %s. ", poiList.get(uniqKeysArray[l]).toString());
+                if(l==0) {
+
+                    if(uniqKeysArray[0].toString().contains("집")){
+                        hash_string = hash_string + String.format("Here are some nice photos taken in my house");
+                    }else{
+                        hash_string = hash_string + String.format("Here are some nice photos taken in %s", poiList.get(uniqKeysArray[l]).toString());
+                    }
+
+
+                }else if(l<uniqKeysArray.length-1) {
+
+                    if(uniqKeysArray[l].toString().equals(uniqKeysArray[l-1].toString())){
+                        // Do nothing, overlapped .
+                    }else{
+                        hash_string = hash_string + String.format(", %s ", poiList.get(uniqKeysArray[l]).toString());
+                    }
+
+
+                }else if(l==uniqKeysArray.length-1) {
+
+                    if(uniqKeysArray[l].toString().equals(uniqKeysArray[l-1].toString())){
+                        // Do nothing, overlapped .
+                    }else{
+                        hash_string = hash_string + String.format("and %s. ", poiList.get(uniqKeysArray[l]).toString());
+                    }
+
+
+                }
             }
         }
 
@@ -676,15 +721,42 @@ public class DatelineModel implements Parcelable {
     {
         String hash_string = "";
         String hash_string_DNN= "";
+        String hash_string_POI= "";
         int photoCount = PhotoList.size();
         DnnModel dnnModel = new DnnModel();
-
         Random generator = new Random();
-
+        double avg_PhotoCreateTime =0;
 
         EngineDBInterface engineDBInterface = new EngineDBInterface();
 
-        hash_string = hash_string + String.format("In %s ",poi_string);
+
+        // POI context based string generation
+        //POI_DB1 : Coffe and tea
+        //POI_DB2 : 식당, Restaurant
+        //POI_DB3 : Park
+        //POI_DB4 : Cinema
+        //POI_DB5 : "shopping"
+        //POI_DB6 : "놀이공원"
+        for (int i = offset; i < offset + size; i++){
+            String timelinePhotoFile = PhotoList.get(i).toString();
+            double temp[] = clusterEngine.timeFeatureExtract(timelinePhotoFile);
+            avg_PhotoCreateTime=avg_PhotoCreateTime+temp[3];
+        }
+        avg_PhotoCreateTime=avg_PhotoCreateTime/size;
+
+        // POI context based sentence
+//        boolean POI_DB1_DETECT= poiclassDetect(poi_string,dnnModel.POI_DB1);
+        boolean POI_DB2_DETECT= poiclassDetect(poi_string,dnnModel.POI_DB2);
+//        boolean POI_DB3_DETECT= poiclassDetect(poi_string,dnnModel.POI_DB3);
+//        boolean POI_DB4_DETECT= poiclassDetect(poi_string,dnnModel.POI_DB4);
+//        boolean POI_DB5_DETECT= poiclassDetect(poi_string,dnnModel.POI_DB5);
+        boolean POI_DB6_DETECT= poiclassDetect(poi_string,dnnModel.POI_DB6);
+
+
+
+        hash_string_POI = getPOIstring(poi_string, dnnModel, avg_PhotoCreateTime);
+        hash_string=hash_string+hash_string_POI;
+
 
         int sentence_cnt =0;
 
@@ -824,7 +896,7 @@ public class DatelineModel implements Parcelable {
 
                         days_moment_resample_image=resampleandsave_single(i, myDir, timelinePhotoFile);
 
-                        double [] temp_time = clusterEngine.timeFeatureExtract(timelinePhotoFile);
+
 
                         // Run neural network
                         // This is for classification
@@ -848,10 +920,12 @@ public class DatelineModel implements Parcelable {
                         Boolean PlayClass = classDetect(class_predict, dnnModel.DNN_DB4);
 
 
-
+                        double [] temp_time = clusterEngine.timeFeatureExtract(timelinePhotoFile);
                         double pic_time = temp_time[3];
-                        if(foodClass)
+
+                        if(foodClass && pic_time!=1997 && !POI_DB2_DETECT)
                         {
+
                             if(pic_time>05 && pic_time< 10){
                                 //Breakfast
                                 hash_string_DNN = "I had breakfast. ";
@@ -886,7 +960,7 @@ public class DatelineModel implements Parcelable {
                             hash_string_DNN = "I went to mountain today. It was great. ";
                             class_predict =String.format("#%s #%s","hiking", poi_string);
                             DNN_result.add(class_predict);
-                        }else if(PlayClass){
+                        }else if(PlayClass && !POI_DB6_DETECT){
 
                             hash_string_DNN = "I went to amusement park today. It was so fun with my family.";
                             class_predict =String.format("#%s #%s","amusement park", poi_string);
@@ -911,6 +985,76 @@ public class DatelineModel implements Parcelable {
     }
 
 
+    public String  getPOIstring(String poi_string, DnnModel dnnModel, double avg_PhotoCreateTime){
+
+        // POI context based string generation
+        //POI_DB1 : Coffe and tea
+        //POI_DB2 : 식당, Restaurant
+        //POI_DB3 : Park
+        //POI_DB4 : Cinema
+        //POI_DB5 : "shopping"
+        //POI_DB6 : "놀이공원"
+
+        String hash_string_POI="";
+
+
+
+            if(poiclassDetect(poi_string,dnnModel.POI_DB1)){
+                hash_string_POI =  String.format("In %s ",poi_string);
+                hash_string_POI= hash_string_POI + String.format("%s. ","I had some coffee");
+            } else if(poiclassDetect(poi_string,dnnModel.POI_DB2)){
+                hash_string_POI =  String.format("In %s ",poi_string);
+
+                if(avg_PhotoCreateTime>05 && avg_PhotoCreateTime< 10){
+                    //Breakfast
+                    hash_string_POI = hash_string_POI + String.format("%s ", "I had a breakfast. ");
+
+                }else if(avg_PhotoCreateTime>=11 && avg_PhotoCreateTime< 14){
+                    //Lunch
+                    hash_string_POI = hash_string_POI +String.format("%s ", "I had a lunch. ");
+
+                }else if(avg_PhotoCreateTime>=10 && avg_PhotoCreateTime< 11){
+                    //Lunch
+                    hash_string_POI =hash_string_POI + String.format("%s %s ", "I had a brunch. ");
+
+                }else if(avg_PhotoCreateTime>=17 && avg_PhotoCreateTime< 19){
+                    //dinner
+                    hash_string_POI = hash_string_POI +String.format("%s %s ", "I had a dinner. ");
+                }else if(avg_PhotoCreateTime>=19) {
+                    //Party
+                    hash_string_POI = hash_string_POI +String.format("%s ", "I had a party with my friends and colleagues");
+                }
+
+            } else if(poiclassDetect(poi_string,dnnModel.POI_DB3)){
+                hash_string_POI =  String.format("In %s ",poi_string);
+                hash_string_POI= hash_string_POI + String.format("%s. ","I walked with my friends and took some rest");
+
+            } else if(poiclassDetect(poi_string,dnnModel.POI_DB4)){
+
+                hash_string_POI =  String.format("In %s ",poi_string);
+                hash_string_POI= hash_string_POI + String.format("%s. ","I watched movie with my friend");
+
+            } else if(poiclassDetect(poi_string,dnnModel.POI_DB5)){
+
+                hash_string_POI =  String.format("In %s ",poi_string);
+                hash_string_POI= hash_string_POI + String.format("%s. ","I did some shopping");
+
+            } else if(poiclassDetect(poi_string,dnnModel.POI_DB6)){
+
+                hash_string_POI =  String.format("In %s ",poi_string);
+                hash_string_POI= hash_string_POI + String.format("%s. ","I ");
+
+            }
+
+
+
+
+
+        return hash_string_POI;
+    }
+
+
+
     public boolean classDetect(String class_predict, String [] Class_DB){
 
         boolean result=false;
@@ -918,6 +1062,26 @@ public class DatelineModel implements Parcelable {
         for(int i=0;i<Class_DB.length;i++){
             String temp = Class_DB[i];
             if(class_predict.equals(Class_DB[i])){
+                result = true;
+                break;
+            }else {
+                result = false;
+
+            }
+
+        }
+
+        return result;
+
+    }
+
+    public boolean poiclassDetect(String poi_String, String [] Class_DB){
+
+        boolean result=false;
+
+        for(int i=0;i<Class_DB.length;i++){
+            String temp = Class_DB[i];
+            if(poi_String.contains(Class_DB[i])){
                 result = true;
                 break;
             }else {
