@@ -489,12 +489,19 @@ public class TimelineModel implements Parcelable {
                 int Im_width=0;
                 int Im_height=0;
 
-                // Face detectioin : Face number. Eye close. Smile probability
+
 
                 final BitmapFactory.Options options = new BitmapFactory.Options();
                 options.inJustDecodeBounds = true;
                 BitmapFactory.decodeFile(timelinePhotoFile, options);
-                int sample_size =32;
+                int imgHeight = options.outHeight;
+                int imgWidth = options.outWidth;
+
+                int sample_size =1;
+                if(imgHeight > 1000 && imgWidth>1000)
+                    sample_size =32;
+                else
+                    sample_size =1;
 
                 BitmapFactory.Options bitmap_options = new BitmapFactory.Options();
                 bitmap_options.inPreferredConfig = Bitmap.Config.RGB_565;

@@ -374,7 +374,42 @@ public class DatelineModel implements Parcelable {
 
                     // Get the unique POI index
                     Set<Integer> uniqKeys = new TreeSet<Integer>();
-                    uniqKeys.addAll(Arrays.asList(PhotoPoi_mapping_index));
+                    try {
+                        uniqKeys.addAll(Arrays.asList(PhotoPoi_mapping_index));
+                    } catch (Exception e) {
+
+                        Log.e("your app", e.toString());
+                        String temp = "ok";
+                        if(PhotoPoi_mapping_index==null)
+                        {
+                            temp =null;
+                        }
+
+
+                        String temp2="";
+                        for (int i=0;i<poiList.size();i++)
+                        {
+                            temp2=temp2 + String.format("#%s ", poiList.get(i).toString());
+                        }
+                        String temp3="";
+                        for (int i=0;i<poiList.size();i++)
+                        {
+                            temp3=temp3 + String.format("#%s ", poiCRDatesList.get(i).toString());
+                        }
+                        String temp4="";
+                        for (int i=0;i<photoID_size;i++)
+                        {
+                            temp4=temp4 + String.format("#%s ", photoinfos.toString());
+                        }
+
+                        hash_string = hash_string + temp2 + temp3+ temp4;
+                        hash_string = hash_string + String.format("\n #%s #%s #%s ", DateInMomeent,DateToday, temp);
+
+
+
+                        return hash_string;
+                    }
+
 
                     int[] possibleNumbers = new int[100];
                     Map<Integer, Integer> result = new HashMap<Integer, Integer>();
@@ -424,7 +459,7 @@ public class DatelineModel implements Parcelable {
                         hashString_DNN="";
                         if(DNN_result.size()>0){
                             for(int r=0;r<DNN_result.size();r++)
-                                hashString_DNN =hashString_DNN + String.format("\n #%s. ", DNN_result.get(r).toString());;
+                                hashString_DNN =hashString_DNN + String.format("\n #%s. ", DNN_result.get(r).toString());
                         }
 
 
