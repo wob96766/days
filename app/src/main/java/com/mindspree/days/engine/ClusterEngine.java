@@ -209,6 +209,19 @@ public class ClusterEngine {
 
     }
 
+
+    public static Boolean isValidInteger(String value) {
+        try {
+            Integer val = Integer.valueOf(value);
+            if (val != null)
+                return true;
+            else
+                return false;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
     public static double[] timeFeatureExtract(String fname)
     {
         ExifInterface exif = null;
@@ -236,6 +249,39 @@ public class ClusterEngine {
 
         if (exif_DATETIME != null) {
 
+
+
+//            if(isValidInteger(exif_DATETIME.substring(0, 4)))
+//                exif_year = Double.parseDouble(exif_DATETIME.substring(0, 4));
+//            else
+//                exif_year = 1997;
+//
+//            if(isValidInteger(exif_DATETIME.substring(5, 7)))
+//                exif_month = Double.parseDouble(exif_DATETIME.substring(5, 7));
+//            else
+//                exif_month = 11;
+//
+//            if(isValidInteger(exif_DATETIME.substring(8, 10)))
+//                exif_date = Double.parseDouble(exif_DATETIME.substring(8, 10));
+//            else
+//                exif_date = 11;
+//
+//            if(isValidInteger(exif_DATETIME.substring(11, 13)))
+//                exif_hour = Double.parseDouble(exif_DATETIME.substring(11, 13));
+//            else
+//                exif_hour = 11;
+//
+//            if(isValidInteger(exif_DATETIME.substring(14, 16)))
+//                exif_min = Double.parseDouble(exif_DATETIME.substring(14, 16));
+//            else
+//                exif_min = 11;
+//
+//            if(isValidInteger(exif_DATETIME.substring(17, 19)))
+//                exif_sec = Double.parseDouble(exif_DATETIME.substring(17, 19));
+//            else
+//                exif_sec = 11;
+
+
             try {
                 exif_year = Double.parseDouble(exif_DATETIME.substring(0, 4));
                 exif_month = Double.parseDouble(exif_DATETIME.substring(5, 7));
@@ -244,12 +290,12 @@ public class ClusterEngine {
                 exif_min = Double.parseDouble(exif_DATETIME.substring(14, 16));
                 exif_sec = Double.parseDouble(exif_DATETIME.substring(17, 19));
             } catch (Exception e) {
-                exif_year = Double.parseDouble(exif_DATETIME.substring(0, 4));
-                exif_month = Double.parseDouble(exif_DATETIME.substring(5, 7));
-                exif_date = Double.parseDouble(exif_DATETIME.substring(8, 10));
-                exif_hour = Double.parseDouble(exif_DATETIME.substring(11, 13));
-                exif_min = Double.parseDouble(exif_DATETIME.substring(14, 16));
-                exif_sec = Double.parseDouble(exif_DATETIME.substring(17, 19));
+                exif_year = 1997;
+                exif_month = 11;
+                exif_date = 11;
+                exif_hour = 11;
+                exif_min = 11;
+                exif_sec = 11;
             }
 
 

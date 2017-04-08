@@ -1,14 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 23
+    compileSdkVersion 24
     buildToolsVersion '25.0.0'
     defaultConfig {
         applicationId "com.mindspree.days"
         minSdkVersion 21
-        targetSdkVersion 23
+        targetSdkVersion 24
         versionCode 1
-        versionName "1.0.1"
+        versionName "1.0.4"
         multiDexEnabled true
         externalNativeBuild {
             cmake {

@@ -518,8 +518,11 @@ public class MainActivity extends BaseActivity {
 
         } catch (CameraAccessException e) {
             e.printStackTrace();
-            rear_cam_width =0;
-            front_cam_width=0;
+            rear_cam_width =5000;
+            front_cam_width=2500;
+            writeToFile(String.valueOf(rear_cam_width), "rear_camera_setting.txt" , getContext());
+            writeToFile(String.valueOf(front_cam_width), "front_camera_setting.txt" , getContext());
+
         }
 
 

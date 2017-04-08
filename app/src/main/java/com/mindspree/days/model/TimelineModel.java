@@ -223,7 +223,7 @@ public class TimelineModel implements Parcelable {
 
     private String readFromFile(String filename, Context context) {
 
-        String ret = "";
+        String ret = "0";
 
         try {
             InputStream inputStream = context.openFileInput(filename);
@@ -322,21 +322,25 @@ public class TimelineModel implements Parcelable {
 
     public String getSummarize(Context context) {
 
-
         DNN_path = MainActivity.DNN_path;
         DNN_result = new ArrayList();
         clusterEngine =new ClusterEngine();
 
         // Read Caemra Information (defined in Main Activity)
         int rear_cam_width =5000;
-        int front_cam_width =3000;
+        int front_cam_width =2500;
 
         rear_cam_width = Integer.parseInt(readFromFile("rear_camera_setting.txt", AppApplication.getAppInstance().getApplicationContext())) ;
         front_cam_width = Integer.parseInt(readFromFile("front_camera_setting.txt", AppApplication.getAppInstance().getApplicationContext())) ;
 
+        if(rear_cam_width==0)
+            rear_cam_width = 5000;
+
+        if(front_cam_width==0)
+            front_cam_width = 2500;
+
         mCurrentLocation.setLatitude(getLatitude());
         mCurrentLocation.setLongitude(getLongitude());
-
 
         String hash_string = "";
         // Check date
@@ -347,9 +351,7 @@ public class TimelineModel implements Parcelable {
         hash_string =String.format("#%s ", mName);
 
 
-
         mName ="집";
-
         // 2. Time
 
         setMeasureTime(mCreateDate);
