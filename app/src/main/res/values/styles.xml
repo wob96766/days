@@ -245,6 +245,11 @@
         <item name="android:textSize">12sp</item>
     </style>
 
+    <style name="font_orange_12sp">
+        <item name="android:textColor">@color/orange</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
     <style name="font_pink_12sp">
         <item name="android:textColor">@color/pink</item>
         <item name="android:textSize">12sp</item>

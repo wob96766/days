@@ -20,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.mindspree.days.AppApplication;
+import com.mindspree.days.R;
 import com.mindspree.days.data.DBWrapper;
 import com.mindspree.days.engine.ClusterEngine;
 import com.mindspree.days.lib.AppPreference;
@@ -91,6 +92,7 @@ public class TimelineModel implements Parcelable {
     public String [] DNN_path ;
 
     private MainActivity mainActivity =new MainActivity();
+    public DnnModel dnnModel = new DnnModel();
 
     public TimelineModel(){
     }
@@ -325,6 +327,9 @@ public class TimelineModel implements Parcelable {
         DNN_path = MainActivity.DNN_path;
         DNN_result = new ArrayList();
         clusterEngine =new ClusterEngine();
+        double avg_PhotoCreateTime =0;
+        ArrayList PhotoList = getPhotoList();  // getExtraFeatWithPhotoURL(PhotoString);
+
 
         // Read Caemra Information (defined in Main Activity)
         int rear_cam_width =5000;
@@ -351,70 +356,92 @@ public class TimelineModel implements Parcelable {
         hash_string =String.format("#%s ", mName);
 
 
-        mName ="집";
-        // 2. Time
 
+        // 2. Time
         setMeasureTime(mCreateDate);
         setMeasureTimeInHour(mCreateDate);
         hash_string =hash_string + String.format("#%s ", mMeasureTime);
 
+
+
         // 3. Location
-        if(weekend_days==0){
-            // Weekdays
-            if(mName.equals("집") || mName.contains("집")){
+        if(mName !=null)
+        {
+            String homeLocationText = AppUtils.getAppText(R.string.text_location_home);
+            if(weekend_days==0){
+                // Weekdays
+                if(mName.equals(homeLocationText) || mName.contains(homeLocationText)){
 
-                if( Integer.parseInt(mMeasureTimeInHour) <9 ){
-                    hash_string =hash_string + String.format("#%s ", "바쁜 아침");  // Busy morning
-                }else if ( Integer.parseInt(mMeasureTimeInHour) >= 10 && Integer.parseInt(mMeasureTimeInHour) <= 12){
-                    hash_string =hash_string + String.format("#%s ", "여유있는 아침");   // Lazy morning
-                }else if ( Integer.parseInt(mMeasureTimeInHour) > 18 && Integer.parseInt(mMeasureTimeInHour) < 24){
-                    hash_string =hash_string + String.format("#%s ", "다시 집");   // Lazy morning
+                    if( Integer.parseInt(mMeasureTimeInHour) <9 ){
+                        hash_string =hash_string + String.format("#%s ", "바쁜 아침");  // Busy morning
+                    }else if ( Integer.parseInt(mMeasureTimeInHour) >= 10 && Integer.parseInt(mMeasureTimeInHour) <= 12){
+                        hash_string =hash_string + String.format("#%s ", "여유있는 아침");   // Lazy morning
+                    }else if ( Integer.parseInt(mMeasureTimeInHour) > 18 && Integer.parseInt(mMeasureTimeInHour) < 24){
+                        hash_string =hash_string + String.format("#%s ", "다시 집");   // Lazy morning
+                    }
+
+
                 }
-
-
-            }
-            else
-            {
-                if( Integer.parseInt(mMeasureTimeInHour) <6 ) {
-                    hash_string = hash_string + String.format("#%s ", "외박 ~");
-                }
-            }
-
-        }
-        else{
-            // Weekend
-            if(mName.equals("집") || mName.contains("집")){
-
-                if( Integer.parseInt(mMeasureTimeInHour) <9 ){
-                    hash_string =hash_string + String.format("#%s ", "이른 주말 아침");    // Early weekend moning
-                }else if ( Integer.parseInt(mMeasureTimeInHour) >= 9 && Integer.parseInt(mMeasureTimeInHour) <= 12){
-                    hash_string =hash_string + String.format("#%s ", "한가로운 주말 아침");   // Cozy weekend mornign
-                }else if ( Integer.parseInt(mMeasureTimeInHour) > 18 && Integer.parseInt(mMeasureTimeInHour) < 24){
-                    hash_string =hash_string + String.format("#%s ", "다시 집");   // Lazy morning
+                else
+                {
+                    if( Integer.parseInt(mMeasureTimeInHour) <6 ) {
+                        hash_string = hash_string + String.format("#%s ", "외박 ~");
+                    }
                 }
 
             }
-            else
-            {
-                // junyong - add "null checking"
-                if (mHomeLocation !=null && mCurrentLocation != null){
-                    if( mHomeLocation.distanceTo(mCurrentLocation) <5000 ){
-                        hash_string =hash_string + String.format("#%s ", "잠시 외출");   // Temporary out
-                    }else if( mHomeLocation.distanceTo(mCurrentLocation) >= 5000 && mHomeLocation.distanceTo(mCurrentLocation) < 20000 ){
-                        hash_string =hash_string + String.format("#%s ", "일상 탈출");      // Esapce from town
-                    }else if( mHomeLocation.distanceTo(mCurrentLocation) > 20000 ){
-                        hash_string =hash_string + String.format("#%s ", "오늘 외박 ~");     // Stay outside ~
+            else{
+                // Weekend
+                if(mName.equals(homeLocationText) || mName.contains(homeLocationText)){
 
+                    if( Integer.parseInt(mMeasureTimeInHour) <9 ){
+                        hash_string =hash_string + String.format("#%s ", "이른 주말 아침");    // Early weekend moning
+                    }else if ( Integer.parseInt(mMeasureTimeInHour) >= 9 && Integer.parseInt(mMeasureTimeInHour) <= 12){
+                        hash_string =hash_string + String.format("#%s ", "한가로운 주말 아침");   // Cozy weekend mornign
+                    }else if ( Integer.parseInt(mMeasureTimeInHour) > 18 && Integer.parseInt(mMeasureTimeInHour) < 24){
+                        hash_string =hash_string + String.format("#%s ", "다시 집");   // Lazy morning
+                    }
+
+                }
+                else
+                {
+                    // junyong - add "null checking"
+                    if (mHomeLocation !=null && mCurrentLocation != null){
+                        if( mHomeLocation.distanceTo(mCurrentLocation) <5000 ){
+                            hash_string =hash_string + String.format("#%s ", "잠시 외출");   // Temporary out
+                        }else if( mHomeLocation.distanceTo(mCurrentLocation) >= 5000 && mHomeLocation.distanceTo(mCurrentLocation) < 20000 ){
+                            hash_string =hash_string + String.format("#%s ", "일상 탈출");      // Esapce from town
+                        }else if( mHomeLocation.distanceTo(mCurrentLocation) > 20000 ){
+                            hash_string =hash_string + String.format("#%s ", "오늘 외박 ~");     // Stay outside ~
+
+                        }
                     }
                 }
             }
+
+
+            // 3. POI context based string.
+            for (int i = 0; i < PhotoList.size(); i++){
+                String timelinePhotoFile = PhotoList.get(i).toString();
+                double temp[] = clusterEngine.timeFeatureExtract(timelinePhotoFile);
+                avg_PhotoCreateTime=avg_PhotoCreateTime+temp[3];
+            }
+            avg_PhotoCreateTime=avg_PhotoCreateTime/PhotoList.size();
+            hash_string=hash_string + dnnModel.getPOIhash(mName, dnnModel, avg_PhotoCreateTime);
+
+            // 4. Face detectoion/ Smile score
+
+
+//        hash_string = hash_string+hashFromFace(PhotoList, front_cam_width, rear_cam_width);
+            hash_string = hash_string + dnnModel.hashFromFace(PhotoList,front_cam_width,rear_cam_width);
+
+
+
         }
 
 
-        // 4. Face detectoion/ Smile score
-        ArrayList PhotoList = getPhotoList();  // getExtraFeatWithPhotoURL(PhotoString);
 
-        hash_string = hash_string+hashFromFace(PhotoList, front_cam_width, rear_cam_width);
+
 
         return String.format("%s", hash_string);
 
@@ -576,7 +603,7 @@ public class TimelineModel implements Parcelable {
             }
 
             if(groupPhoto_cnt > 0){
-                hash_string = hash_string + String.format("#%d %s", groupPhoto_cnt, "Group photos" ,"Best People !");
+                hash_string = hash_string + String.format("#%d %s", groupPhoto_cnt, "Group photos");
                 hash_string = hash_string + String.format("#%s ", "Best People !");
             }
 
@@ -600,6 +627,10 @@ public class TimelineModel implements Parcelable {
 
         return hash_string;
     }
+
+
+
+
 
     public String getDateFormat() {
         return AppUtils.getTime(mCreateDate);

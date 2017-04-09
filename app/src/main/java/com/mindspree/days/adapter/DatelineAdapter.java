@@ -62,6 +62,7 @@ public class DatelineAdapter extends RecyclerView.Adapter<DatelineAdapter.MyView
             /*Picasso.with(mContext).load(R.drawable.background_white_round).into(holder.mThumnail);*/
         }
         holder.mTextContent.setText(mDataSource.get(position).getSummarize());
+//        holder.mTextContenth.setText(mDataSource.get(position).getSummarize());
 //        holder.mTextTitle.setText(mDataSource.get(position).getDateFormat());
         holder.mTextDay.setText(mDataSource.get(position).getDayFormat());
         holder.mTextMonth.setText(mDataSource.get(position).getMonthFormat());

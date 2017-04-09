@@ -3,6 +3,7 @@
     <color name="colorPrimary">#84c2fd</color>
     <!--<color name="colorPrimary">#3399ff</color>-->
     <color name="colorPrimaryDark">#135b94</color>
+    <color name="colorToolbar">#42a5f5</color>
     <color name="colorAccent">#3399ff</color>
 
     <color name="textColorPrimary">#FFFFFF</color>
@@ -23,6 +24,7 @@
     <color name="green_600">#69F0AE</color>
 
     <color name="yellow">#FFEE58</color>
+    <color name="orange">#ff9100</color>
     <color name="dialog_bg_trans">#8c000000</color>
     <color name="dashboard_text_back">#757575</color>
 

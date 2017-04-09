@@ -516,7 +516,9 @@ public class ClusterEngine {
 
         int sample_size =4;
 
-        if(imgHeight <=1000)
+        if(imgHeight <=300)
+            sample_size =1 ;
+        else if(imgHeight <=1000)
             sample_size =4 ;
         else if(imgHeight >1000 && imgHeight<2000)
             sample_size =6 ;

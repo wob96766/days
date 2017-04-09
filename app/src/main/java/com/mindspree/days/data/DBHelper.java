@@ -516,7 +516,7 @@ public class DBHelper extends SQLiteOpenHelper {
                         ContentValues cv = new ContentValues();
                         cv.put(COLUMN_SENTENCE, sentence);
                         database.update(TABLE_DAILY, cv, COLUMN_DAILY_INDEX + " =? ", new String[]{String.format("%d", dailyIndex)});
-                        break;
+                        //break;
                     } while (cursor.moveToNext());
                 }
 

@@ -346,6 +346,7 @@ public class DatelineModel implements Parcelable {
                 hash_string = hash_string + "Not sure about the weather.\n";
             }else{
                 hash_string = hash_string + String.format("It is %s. ", getWeatherEnglish());
+                DNN_result.add(String.format("#%s",mWeather));
             }
 
 
@@ -458,8 +459,16 @@ public class DatelineModel implements Parcelable {
 //
                         hashString_DNN="";
                         if(DNN_result.size()>0){
-                            for(int r=0;r<DNN_result.size();r++)
-                                hashString_DNN =hashString_DNN + String.format("\n #%s. ", DNN_result.get(r).toString());
+                            hashString_DNN =hashString_DNN + "\n";
+                            for(int r=0;r<DNN_result.size();r++) {
+                                if (r == 0)
+                                    hashString_DNN = hashString_DNN + String.format("%s ", DNN_result.get(r).toString());
+                                else {
+                                    if (!DNN_result.get(r).toString().equals(DNN_result.get(r - 1).toString()))
+                                        hashString_DNN = hashString_DNN + String.format("%s ", DNN_result.get(r).toString());
+                                }
+                            }
+
                         }
 
 
@@ -477,19 +486,35 @@ public class DatelineModel implements Parcelable {
                 if(poiList.size() < 4) {
                     int n = generator.nextInt(dnnModel.dailysummary_nobusy.length);
                     hash_string = hash_string + String.format("%s ", dnnModel.dailysummary_nobusy[n]);
+                    DNN_result.add(String.format("#%s","Not busy"));
 
                 } else if(poiList.size() >= 4 && poiList.size() <= 6) {
                     int n = generator.nextInt(dnnModel.dailysummary_lessbusy.length);
                     hash_string = hash_string + String.format("%s ", dnnModel.dailysummary_lessbusy[n]);
+                    DNN_result.add(String.format("#%s","A bit busy"));
                 } else if (poiList.size() > 6) {
                     int n = generator.nextInt(dnnModel.dailysummary_busy.length);
                     hash_string = hash_string + String.format("%s ", dnnModel.dailysummary_busy[n]);
+                    DNN_result.add(String.format("#%s","Busy"));
                 }
 
 
-                if(mMood!=null)
+                if(mMood!=null) {
                     hash_string = hash_string + String.format("\n I think today was %s day in general. ", mMood);
+                    DNN_result.add(String.format("#%s",mMood));
+                }
 
+                if(DNN_result.size()>0){
+                    for(int r=0;r<DNN_result.size();r++) {
+                        if (r == 0)
+                            hashString_DNN = hashString_DNN + String.format("%s ", DNN_result.get(r).toString());
+                        else {
+                            if (!DNN_result.get(r).toString().equals(DNN_result.get(r - 1).toString()))
+                                hashString_DNN = hashString_DNN + String.format("%s ", DNN_result.get(r).toString());
+                        }
+                    }
+
+                }
 
             }
             else{
@@ -630,7 +655,7 @@ public class DatelineModel implements Parcelable {
 
 
         if(uniqKeysArray.length==1){
-            if(uniqKeysArray[0].toString().contains("집")) {
+            if(uniqKeysArray[0].toString().contains(AppUtils.getAppText(R.string.text_location_home))) {
                 hash_string = hash_string + String.format("%s %s. ", "I didn't go anywhere. Just stayed in my house", poiList.get(uniqKeysArray[0]).toString());
             }else{
                 hash_string = hash_string + String.format("%s %s. ", "I didn't go anywhere. Just stayed in", poiList.get(uniqKeysArray[0]).toString());
@@ -641,15 +666,15 @@ public class DatelineModel implements Parcelable {
 //                            hash_string = hash_string + String.format("%s. ", "I just quickly went outside and came back home soon.");
 
 
-                if(uniqKeysArray[0].toString().contains("집") && uniqKeysArray[1].toString().contains("집")) {
+                if(uniqKeysArray[0].toString().contains(AppUtils.getAppText(R.string.text_location_home)) && uniqKeysArray[1].toString().contains(AppUtils.getAppText(R.string.text_location_home))) {
 
 
 
-                }else if(uniqKeysArray[0].toString().contains("집") || !uniqKeysArray[1].toString().contains("집")){
+                }else if(uniqKeysArray[0].toString().contains(AppUtils.getAppText(R.string.text_location_home)) || !uniqKeysArray[1].toString().contains(AppUtils.getAppText(R.string.text_location_home))){
 
                     hash_string = hash_string + String.format("I went to %s and ", poiList.get(uniqKeysArray[1]).toString());
 
-                }else if(!uniqKeysArray[0].toString().contains("집") || !uniqKeysArray[1].toString().contains("집")){
+                }else if(!uniqKeysArray[0].toString().contains(AppUtils.getAppText(R.string.text_location_home)) || !uniqKeysArray[1].toString().contains(AppUtils.getAppText(R.string.text_location_home))){
 
                     hash_string = hash_string + String.format("I went to %s and ", poiList.get(uniqKeysArray[0]).toString());
 
@@ -675,7 +700,7 @@ public class DatelineModel implements Parcelable {
                 Integer temp_poiIndex = uniqKeysArray[l];
                 if(l==0) {
 
-                    if(uniqKeysArray[0].toString().contains("집")){
+                    if(uniqKeysArray[0].toString().contains(AppUtils.getAppText(R.string.text_location_home))){
                         hash_string = hash_string + String.format("Here are some nice photos taken in my house");
                     }else{
                         hash_string = hash_string + String.format("Here are some nice photos taken in %s", poiList.get(uniqKeysArray[l]).toString());
@@ -810,7 +835,7 @@ public class DatelineModel implements Parcelable {
                 int nonhumanPhoto_cnt=0;
                 int smile_cnt=0;
 
-                int n = 10000;
+                int n = 0;
 
 
                 // Face detectioin : Face number. Eye close. Smile probability
@@ -874,10 +899,14 @@ public class DatelineModel implements Parcelable {
 
                         if (smile_cnt > 0) {
                             hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_selfie_smile[n], connection);
+                            DNN_result.add(String.format("#%s", "Selfie with smile"));
                         } else {
                             hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_selfie_nosmile[n], connection);
+                            DNN_result.add(String.format("#%s", "Selfie"));
                         }
+
                     }
+
 
                     // Group photo, single photo check
                     if (singlePhoto_cnt > 0) {
@@ -902,8 +931,8 @@ public class DatelineModel implements Parcelable {
                             hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_group_smile[n], connection);
                         } else {
                             hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_group_nosmile[n], connection);
-
                         }
+                        DNN_result.add(String.format("#%s", "Group photo"));
 
                     }
 
@@ -913,8 +942,10 @@ public class DatelineModel implements Parcelable {
 
                         if (smile_cnt > 0) {
                             hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_group_selfie[n], connection);
+                            DNN_result.add(String.format("#%s", "Group selfie with smile"));
                         } else {
                             hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_group_noselfie[n], connection);
+                            DNN_result.add(String.format("#%s", "Group selfie"));
                         }
 
                     }
@@ -1037,47 +1068,54 @@ public class DatelineModel implements Parcelable {
             if(poiclassDetect(poi_string,dnnModel.POI_DB1)){
                 hash_string_POI =  String.format("In %s ",poi_string);
                 hash_string_POI= hash_string_POI + String.format("%s. ","I had some coffee");
+                DNN_result.add(String.format("#%s #%s", poi_string, "Coffee"));
             } else if(poiclassDetect(poi_string,dnnModel.POI_DB2)){
                 hash_string_POI =  String.format("In %s ",poi_string);
 
                 if(avg_PhotoCreateTime>05 && avg_PhotoCreateTime< 10){
                     //Breakfast
                     hash_string_POI = hash_string_POI + String.format("%s ", "I had a breakfast. ");
-
+                    DNN_result.add(String.format("#%s #%s", poi_string, "Breakfast"));
                 }else if(avg_PhotoCreateTime>=11 && avg_PhotoCreateTime< 14){
                     //Lunch
                     hash_string_POI = hash_string_POI +String.format("%s ", "I had a lunch. ");
-
+                    DNN_result.add(String.format("#%s #%s", poi_string, "Lunch"));
                 }else if(avg_PhotoCreateTime>=10 && avg_PhotoCreateTime< 11){
                     //Lunch
-                    hash_string_POI =hash_string_POI + String.format("%s %s ", "I had a brunch. ");
-
+                    hash_string_POI =hash_string_POI + String.format("%s ", "I had a brunch. ");
+                    DNN_result.add(String.format("#%s #%s", poi_string, "Brunch"));
                 }else if(avg_PhotoCreateTime>=17 && avg_PhotoCreateTime< 19){
                     //dinner
-                    hash_string_POI = hash_string_POI +String.format("%s %s ", "I had a dinner. ");
+                    hash_string_POI = hash_string_POI +String.format("%s ", "I had a dinner. ");
+                    DNN_result.add(String.format("#%s #%s", poi_string, "Dinner"));
                 }else if(avg_PhotoCreateTime>=19) {
                     //Party
                     hash_string_POI = hash_string_POI +String.format("%s ", "I had a party with my friends and colleagues");
+                    DNN_result.add(String.format("#%s #%s", poi_string, "Party"));
                 }
 
             } else if(poiclassDetect(poi_string,dnnModel.POI_DB3)){
                 hash_string_POI =  String.format("In %s ",poi_string);
                 hash_string_POI= hash_string_POI + String.format("%s. ","I walked with my friends and took some rest");
+                DNN_result.add(String.format("#%s #%s", poi_string, "Walking"));
 
             } else if(poiclassDetect(poi_string,dnnModel.POI_DB4)){
 
                 hash_string_POI =  String.format("In %s ",poi_string);
                 hash_string_POI= hash_string_POI + String.format("%s. ","I watched movie with my friend");
+                DNN_result.add(String.format("#%s #%s", poi_string, "Movie"));
 
             } else if(poiclassDetect(poi_string,dnnModel.POI_DB5)){
 
                 hash_string_POI =  String.format("In %s ",poi_string);
                 hash_string_POI= hash_string_POI + String.format("%s. ","I did some shopping");
+                DNN_result.add(String.format("#%s #%s", poi_string, "Shopping"));
 
             } else if(poiclassDetect(poi_string,dnnModel.POI_DB6)){
 
                 hash_string_POI =  String.format("In %s ",poi_string);
-                hash_string_POI= hash_string_POI + String.format("%s. ","I ");
+                hash_string_POI= hash_string_POI + String.format("%s. ","I went to amusement park");
+                DNN_result.add(String.format("#%s #%s", poi_string, "Amusement park"));
 
             }
 
@@ -1160,97 +1198,6 @@ public class DatelineModel implements Parcelable {
         return ret;
     }
 
-
-//    // Async Task Class : This method is not currently used in this model.
-//    public class DnnEngine extends AsyncTask<String, String, String> {
-//
-//
-//
-//        public String [] DNN_path = MainActivity.DNN_path;
-//
-//        // Show Progress bar before downloading Music
-//        @Override
-//        protected void onPreExecute() {
-//
-//
-//
-//            super.onPreExecute();
-//
-//            hashString_DNN ="";
-//
-//            String [] DNN_path =MainActivity.DNN_path;
-//
-//            // Garbage collection before any heavy load work
-//            System.gc();
-//
-//            File outDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString());
-//            String DNN_test = "IMG_7543.JPG"; // Seashore
-//            String DNN_test_path = outDir + "/data/" + DNN_test;
-//
-//            // This is for classification
-//
-//            jargv[0] ="classifier_Class";
-//            jargv[1] ="predictCustom";  // This is for classification
-//            jargv[2] =DNN_path[0];
-//            jargv[3] =DNN_path[1];
-//            jargv[4] =DNN_path[2];
-//            jargv[5] =DNN_test_path;
-//            jargv[6] = outDir+"/";
-//            asynctask_flag = true;
-//
-//
-//        }
-//
-//
-//        // Download Music File from Internet
-//        @Override
-//        protected String doInBackground(String... f_url) {
-//
-//            try {
-//
-//
-//
-//
-//                DNN_result = DnnEngineClassJNI(jargv);
-//
-//
-//
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//
-//            return null;
-//        }
-//
-//        @Override
-//        protected void onProgressUpdate(String... progress) {
-//            super.onProgressUpdate(progress);
-//
-//            try {
-//                int percent = Integer.parseInt(progress[0]);
-//                Log.v("mp3dropboxsync", "Hi progressing - " + percent + "%");
-//
-//
-//            } catch (NumberFormatException e) {
-//                // TODO Auto-generated catch block
-//                e.printStackTrace();
-//            }
-//
-//        }
-//
-//
-//        @Override
-//        protected void onPostExecute(String file_url) {
-//
-//            hashString_DNN=DNN_result;
-//
-//
-//            asynctask_flag =false;
-//
-//        }
-//
-//
-//    }
 
     public native static String DnnEngineClassJNI(String[] jargv);
 

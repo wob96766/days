@@ -118,7 +118,7 @@
 
 
                     <TextView
-                        style="@style/font_greydark_12sp"
+                        style="@style/font_orange_12sp"
                         android:id="@+id/text_content"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
