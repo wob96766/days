@@ -248,6 +248,7 @@
     <style name="font_orange_12sp">
         <item name="android:textColor">@color/orange</item>
         <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="font_pink_12sp">

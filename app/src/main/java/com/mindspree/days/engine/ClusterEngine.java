@@ -533,6 +533,21 @@ public class ClusterEngine {
         Bitmap bMap_temp = BitmapFactory.decodeFile(fname, bitmap_options);
 
         //Bitmap bMap = BitmapFactory.decodeFile(fname, bitmap_options);
+
+        double[][] garray_row_temp;
+        if(imgHeight<200)
+        {
+            garray_row_temp = new double[4][10 * 10];
+            for(int k=0;k<4;k++)
+                for(int g=0;g<100;g++)
+                    garray_row_temp[k][g]=0;
+
+            return garray_row_temp;
+
+        }
+
+
+
         Bitmap bMap = Bitmap.createBitmap(bMap_temp, bMap_temp.getWidth() / 6, bMap_temp.getHeight() / 6, bMap_temp.getWidth() / 6 * 5, bMap_temp.getHeight() / 6*5);
 
         /////////////////////////////////////////////////////////
