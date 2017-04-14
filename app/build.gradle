@@ -5,10 +5,10 @@ android {
     buildToolsVersion '25.0.0'
     defaultConfig {
         applicationId "com.mindspree.days"
-        minSdkVersion 21
+        minSdkVersion 19
         targetSdkVersion 24
         versionCode 1
-        versionName "1.0.8"
+        versionName "1.0.10"
         multiDexEnabled true
         externalNativeBuild {
             cmake {

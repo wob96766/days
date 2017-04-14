@@ -14,6 +14,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.androidquery.AQuery;
@@ -23,6 +24,7 @@ import com.mindspree.days.adapter.TimelineAdapter;
 import com.mindspree.days.data.DBWrapper;
 import com.mindspree.days.interfaces.OnItemClickListener;
 import com.mindspree.days.lib.AppConfig;
+import com.mindspree.days.lib.AppUtils;
 import com.mindspree.days.model.DailyModel;
 import com.mindspree.days.model.TimelineModel;
 import com.mindspree.days.model.SentenceModel;
@@ -31,7 +33,11 @@ import com.mindspree.days.network.AsyncHttpResponse;
 import com.mindspree.days.network.RequestCode;
 
 import java.lang.reflect.Field;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -50,11 +56,16 @@ public class TodayFragment extends BaseFragment{
 
     private ArrayList<TimelineModel> mDataList;
     private TextView mTextSentence;
+    private TextView mTextLocationcount;
+    private TextView mTextPhotocount;
+    private ImageView mImageWeather;
     private TextView mTextMood;
+    private TextView mTextDate;
 
     AlertDialog mMoodDialog = null;
     private BroadcastReceiver mRefreshCast;
     private SentenceModel mSentence;
+
 
 
     @Override
@@ -160,7 +171,11 @@ public class TodayFragment extends BaseFragment{
             }
         });
         mTextSentence = aq.id(R.id.text_sentence).getTextView();
+        mTextPhotocount= aq.id(R.id.textPhotocount).getTextView();
+        mTextLocationcount= aq.id(R.id.textLocationcount).getTextView();
+        mImageWeather =aq.id(R.id.imageWeather).getImageView();
         mTextMood = aq.id(R.id.text_mood).clicked(mOnClickListener).getTextView();
+        mTextDate = aq.id(R.id.text_date).getTextView();
         aq.dismiss();
     }
 
@@ -169,6 +184,8 @@ public class TodayFragment extends BaseFragment{
         mAdapter.setDataSource(mDataList);
 
     }
+
+
 
     public void requestSentence() {
         String weather = "";
@@ -179,6 +196,49 @@ public class TodayFragment extends BaseFragment{
         mSentence.mWeather = weather;
         mTextSentence.setText(mSentence.getSummarize());
         mTextMood.setText(mSentence.mMood);
+        mTextPhotocount.setText(String.format("%d",mSentence.mPhotoCount));
+        mTextLocationcount.setText(String.format("%d",mSentence.mLocationCount));
+
+        SimpleDateFormat sdf = new SimpleDateFormat("EEEE");
+        Date d = new Date();
+        String dayOfTheWeek = sdf.format(d);
+
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -1);
+        String DateToday = dateFormat.format(cal.getTime()); //your formatted date here
+
+        mTextDate.setText(String.format("%s %s", DateToday,dayOfTheWeek));
+
+        if(weather.equals(AppUtils.getAppText(R.string.text_weather_clear)))
+        {
+            mImageWeather.setImageResource(R.mipmap.ic_cloud_2x);
+        }else if(weather.equals(AppUtils.getAppText(R.string.text_weather_clouds)))
+        {
+            mImageWeather.setImageResource(R.mipmap.ic_cloud_2x);
+        }else if(weather.equals(AppUtils.getAppText(R.string.text_weather_dust)))
+        {
+            mImageWeather.setImageResource(R.mipmap.ic_cloud_2x);
+        }else if(weather.equals(AppUtils.getAppText(R.string.text_weather_haze)))
+        {
+            mImageWeather.setImageResource(R.mipmap.ic_cloud_2x);
+        }else if(weather.equals(AppUtils.getAppText(R.string.text_weather_mist)))
+        {
+            mImageWeather.setImageResource(R.mipmap.ic_cloud_2x);
+        }else if(weather.equals(AppUtils.getAppText(R.string.text_weather_fog)))
+        {
+            mImageWeather.setImageResource(R.mipmap.ic_cloud_2x);
+        }else if(weather.equals(AppUtils.getAppText(R.string.text_weather_rain)))
+        {
+            mImageWeather.setImageResource(R.mipmap.ic_rain_2x);
+        }else
+        {
+            mImageWeather.setImageResource(R.mipmap.ic_sun_2x);
+        }
+
+//        if(weather.equals())
+
+
         int iconId = DailyModel.getIcon(mSentence.mMood);
         if(iconId>0) {
             mTextMood.setCompoundDrawablesWithIntrinsicBounds(iconId, 0, 0, 0);
@@ -329,6 +389,38 @@ public class TodayFragment extends BaseFragment{
                             WeatherModel model = WeatherModel.parseData(data);
                             mSentence.mWeather = model.getWeather();
                             mTextSentence.setText(mSentence.getSummarize());
+                            mTextPhotocount.setText(mSentence.mPhotoCount);
+                            mTextLocationcount.setText(mSentence.mLocationCount);
+
+                            if(model.mWeather.equals("Clear"))
+                            {
+                                mImageWeather.setImageResource(R.mipmap.ic_sun_2x);
+                            }else if(model.mWeather.equals("Clouds"))
+                            {
+                                mImageWeather.setImageResource(R.mipmap.ic_cloud_2x);
+                            }else if(model.mWeather.equals("Dust"))
+                            {
+                                mImageWeather.setImageResource(R.mipmap.ic_cloud_2x);
+                            }else if(model.mWeather.equals("Haze"))
+                            {
+                                mImageWeather.setImageResource(R.mipmap.ic_cloud_2x);
+                            }else if(model.mWeather.equals("Mist"))
+                            {
+                                mImageWeather.setImageResource(R.mipmap.ic_cloud_2x);
+                            }else if(model.mWeather.equals("Fog"))
+                            {
+                                mImageWeather.setImageResource(R.mipmap.ic_cloud_2x);
+                            }else if(model.mWeather.equals("Rain"))
+                            {
+                                mImageWeather.setImageResource(R.mipmap.ic_rain_2x);
+                            }else
+                            {
+                                mImageWeather.setImageResource(R.mipmap.ic_sun_2x);
+                            }
+
+
+
+
                         } catch (Exception e) {
                             //showToast(getString(R.string.message_network_error));
                         }

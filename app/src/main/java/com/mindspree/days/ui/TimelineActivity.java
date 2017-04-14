@@ -39,6 +39,8 @@ public class TimelineActivity extends BaseActivity {
 
     private ArrayList<TimelineModel> mDataList;
     private TextView mTextSentence;
+    private TextView mTextLocationcount;
+    private TextView mTextPhotocount;
     private DatelineModel mDateline;
 
     public SentenceModel sentenceModel;
@@ -132,6 +134,9 @@ public class TimelineActivity extends BaseActivity {
         });
         mAdapter.setOnItemClickListener(mOnItemClickListener);
         mTextSentence = aq.id(R.id.text_sentence).getTextView();
+        mTextPhotocount= aq.id(R.id.textPhotocount).getTextView();
+        mTextLocationcount= aq.id(R.id.textLocationcount).getTextView();
+
         aq.id(R.id.text_edit).clicked(mOnClickListener);
         aq.dismiss();
     }
@@ -146,6 +151,8 @@ public class TimelineActivity extends BaseActivity {
         SentenceModel sentence = mPhotoWrapper.getSentence(mSelectedDate);
         sentenceModel = sentence;
         mTextSentence.setText(sentence.getSummarize());
+//        mTextPhotocount.setText(sentence.mPhotoCount);
+//        mTextLocationcount.setText(sentence.mLocationCount);
     }
 
     public void finishView() {

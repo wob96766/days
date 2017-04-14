@@ -123,7 +123,7 @@ public class ShareDialog extends Dialog {
                             count++;
                         }
                         builder.setShareHashtag(new ShareHashtag.Builder()
-                                .setHashtag("#"+mDateline.getSummarize().replace(" ",""))
+                                .setHashtag("#"+mDateline.getSummarize("sentence").replace(" ",""))
                                 .build());
 
                         ShareContent shareContent =  builder.build();
@@ -146,7 +146,7 @@ public class ShareDialog extends Dialog {
 
                                         final KakaoTalkLinkMessageBuilder kakaoTalkLinkMessageBuilder = kakaoLink.createKakaoTalkLinkMessageBuilder();
                                         kakaoTalkLinkMessageBuilder
-                                                .addText(mDateline.getSummarize())
+                                                .addText(mDateline.getSummarize("sentence"))
                                                 .addImage(imageUrl, 320, 280);
 
                                         kakaoLink.sendMessage(kakaoTalkLinkMessageBuilder, mActivity);
@@ -195,7 +195,7 @@ public class ShareDialog extends Dialog {
 
                                                     final KakaoTalkLinkMessageBuilder kakaoTalkLinkMessageBuilder = kakaoLink.createKakaoTalkLinkMessageBuilder();
                                                     kakaoTalkLinkMessageBuilder
-                                                            .addText(mDateline.getSummarize())
+                                                            .addText(mDateline.getSummarize("sentence"))
                                                             .addImage(stringUrl, width, height);
 
                                                     kakaoLink.sendMessage(kakaoTalkLinkMessageBuilder, mActivity);
@@ -213,7 +213,7 @@ public class ShareDialog extends Dialog {
                                     KakaoLink kakaoLink = KakaoLink.getKakaoLink(mActivity);
                                     final KakaoTalkLinkMessageBuilder kakaoTalkLinkMessageBuilder = kakaoLink.createKakaoTalkLinkMessageBuilder();
                                     kakaoLink.sendMessage(kakaoTalkLinkMessageBuilder, mActivity);
-                                    kakaoTalkLinkMessageBuilder.addText(mDateline.getSummarize());
+                                    kakaoTalkLinkMessageBuilder.addText(mDateline.getSummarize("sentence"));
                                 } catch (KakaoParameterException e) {
                                     e.printStackTrace();
                                 }
@@ -236,7 +236,7 @@ public class ShareDialog extends Dialog {
                         String imageUrl = mDateline.getPhotoList().get(0);
                         share.setType("image/*");
                         share.putExtra(Intent.EXTRA_SUBJECT, AppUtils.getAppText(R.string.app_name));
-                        share.putExtra(Intent.EXTRA_TEXT, mDateline.getSummarize());
+                        share.putExtra(Intent.EXTRA_TEXT, mDateline.getSummarize("sentence"));
                         share.putExtra(Intent.EXTRA_TITLE, AppUtils.getAppText(R.string.app_name));
                         if(imageUrl.contains("http") || imageUrl.contains("https")) {
                             share.putExtra(Intent.EXTRA_STREAM, Uri.parse(imageUrl));
@@ -246,7 +246,7 @@ public class ShareDialog extends Dialog {
                     } else {
                         share.setType("text/plain");
                         share.putExtra(Intent.EXTRA_SUBJECT, AppUtils.getAppText(R.string.app_name));
-                        share.putExtra(Intent.EXTRA_TEXT, mDateline.getSummarize());
+                        share.putExtra(Intent.EXTRA_TEXT, mDateline.getSummarize("sentence"));
                         share.putExtra(Intent.EXTRA_TITLE, AppUtils.getAppText(R.string.app_name));
                     }
                     mActivity.startActivity(Intent.createChooser(share, AppUtils.getAppText(R.string.text_share)));

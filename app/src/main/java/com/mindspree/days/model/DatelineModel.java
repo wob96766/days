@@ -300,7 +300,11 @@ public class DatelineModel implements Parcelable {
         return AppUtils.getDate(mUpdateDate, "yyyy-MM-dd");
     }
 
-    public String getSummarize() {
+    // sentence_mode
+    // hash --> return only hash
+    // return --> only sentence
+    public String getSummarize(String sentence_mode) {
+
 
         dnnModel = new DnnModel();
         String DateInMomeent= getDate();
@@ -313,6 +317,10 @@ public class DatelineModel implements Parcelable {
 
 //        if(mSentence == null || mSentence.equals("") || DateInMomeent.equals(DateToday) ) {
         if(mSentence == null || mSentence.equals("")  ) {
+
+            if (sentence_mode.equals("hash"))
+                return "";
+
 
             // Garbage collection before any heavy load work
             System.gc();
@@ -522,22 +530,43 @@ public class DatelineModel implements Parcelable {
                 hash_string =hash_string + "I stayed at home whole day. I think I didn't do anything special. What a boring day. I will go out somewhere tomorrow";
             }
 
-            hash_string = hash_string + hashString_DNN;
+
+
+            hash_string = hash_string +  hashString_DNN;
 
 
             // This saves sentense to DB
-
-
-//            if (!DateInMomeent.equals(DateToday))
+            // if (!DateInMomeent.equals(DateToday))
                 mDBWrapper.setSentence(DateInMomeent,hash_string);
 
 
-            return hash_string;
+                return hash_string;
+
+
 
 
         } else {
 
-            return mSentence;
+            ArrayList sentenceHash;
+            sentenceHash = new ArrayList<String>(Arrays.asList(mSentence.split("#")));
+            String sentenceOnly = sentenceHash.get(0).toString();
+            String hashOnly ="";
+
+            if(sentenceHash.size()>=2)
+            {
+
+                for(int i=1;i<sentenceHash.size();i++)
+                    hashOnly = hashOnly + "#" + sentenceHash.get(i).toString();
+            }
+
+
+            if (sentence_mode.equals("sentence")) {
+                return sentenceOnly;
+            }else{
+                return hashOnly;
+            }
+
+
         }
 
 
@@ -843,7 +872,17 @@ public class DatelineModel implements Parcelable {
                 final BitmapFactory.Options options = new BitmapFactory.Options();
                 options.inJustDecodeBounds = true;
                 BitmapFactory.decodeFile(timelinePhotoFile, options);
-                int sample_size =32;
+                int imgHeight = options.outHeight;
+                int sample_size =1;
+
+                if(imgHeight <=300)
+                    sample_size =1 ;
+                else if(imgHeight <=1000)
+                    sample_size =4 ;
+                else if(imgHeight >1000 && imgHeight<2000)
+                    sample_size =6 ;
+                else if(imgHeight >=2000)
+                    sample_size =8 ;
 
                 BitmapFactory.Options bitmap_options = new BitmapFactory.Options();
                 bitmap_options.inPreferredConfig = Bitmap.Config.RGB_565;

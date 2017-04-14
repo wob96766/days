@@ -255,7 +255,7 @@ public class DnnModel {
 
                 int sample_size =1;
                 if(imgHeight > 1000 && imgWidth>1000)
-                    sample_size =32;
+                    sample_size =16;
                 else
                     sample_size =1;
 
@@ -335,7 +335,7 @@ public class DnnModel {
 //            hash_string = hash_string + String.format("#Nothing much ~");
         }
 
-
+        System.gc();
         return hash_string;
     }
 

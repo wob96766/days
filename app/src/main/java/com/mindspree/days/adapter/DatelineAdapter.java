@@ -61,9 +61,10 @@ public class DatelineAdapter extends RecyclerView.Adapter<DatelineAdapter.MyView
             // for default image
             /*Picasso.with(mContext).load(R.drawable.background_white_round).into(holder.mThumnail);*/
         }
-        holder.mTextContent.setText(mDataSource.get(position).getSummarize());
+        holder.mTextContent.setText(mDataSource.get(position).getSummarize("sentence"));
+        holder.mTextContent_hash.setText(mDataSource.get(position).getSummarize("hash"));
 //        holder.mTextContenth.setText(mDataSource.get(position).getSummarize());
-//        holder.mTextTitle.setText(mDataSource.get(position).getDateFormat());
+
         holder.mTextDay.setText(mDataSource.get(position).getDayFormat());
         holder.mTextMonth.setText(mDataSource.get(position).getMonthFormat());
     }
@@ -105,6 +106,7 @@ public class DatelineAdapter extends RecyclerView.Adapter<DatelineAdapter.MyView
         public ImageView mThumnail3;
         public TextView mTextTitle;
         public TextView mTextContent;
+        public TextView mTextContent_hash;
         public TextView mTextDay;
         public TextView mTextMonth;
         public ViewGroup mViewPhoto;
@@ -133,6 +135,8 @@ public class DatelineAdapter extends RecyclerView.Adapter<DatelineAdapter.MyView
             mTextDay = aq.id(R.id.text_day).clicked(mOnClickListener).getTextView();
             mTextMonth = aq.id(R.id.text_month).clicked(mOnClickListener).getTextView();
             mTextContent = aq.id(R.id.text_content).getTextView();
+            mTextContent_hash = aq.id(R.id.text_content_hash).getTextView();
+
             mLikeCount = aq.id(R.id.text_like).getTextView();
             mCommentCount = aq.id(R.id.text_comment).getTextView();
 

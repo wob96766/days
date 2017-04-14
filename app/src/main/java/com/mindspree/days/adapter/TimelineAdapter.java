@@ -86,6 +86,9 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
         holder.mTextTitle.setText(mDataSource.get(position).getDateFormat());
         holder.mTextSubTitle.setText(mDataSource.get(position).getName());
         holder.mTextContent.setText(mDataSource.get(position).getSummarize(mContext));
+
+
+
     }
 
 
@@ -131,6 +134,10 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
         public TextView mTextTitle;
         public TextView mTextSubTitle;
         public TextView mTextContent;
+
+        public TextView mTextLocationcount;
+        public TextView mTextPhotocount;
+
         public ImageView mImageLocation;
         public ViewGroup mViewPhoto;
 
@@ -163,6 +170,9 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
             mTextContent = aq.id(R.id.text_content).getTextView();
             mLikeCount = aq.id(R.id.text_like).getTextView();
             mCommentCount = aq.id(R.id.text_comment).getTextView();
+
+            mTextLocationcount = aq.id(R.id.textLocationcount).getTextView();
+            mTextPhotocount = aq.id(R.id.textPhotocount).getTextView();
 
             aq.id(R.id.cell).clicked(mOnClickListener);
             aq.dismiss();

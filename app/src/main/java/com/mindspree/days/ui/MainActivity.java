@@ -32,6 +32,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.androidquery.AQuery;
 import com.google.android.gms.common.ConnectionResult;
@@ -92,6 +93,7 @@ public class MainActivity extends BaseActivity {
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
     private View mViewToday;
+    private TextView mViewTitle;
     private View mViewSummarize;
     private View mViewJournal;
     private View mViewSetting;
@@ -139,8 +141,7 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_search, menu);
+    public boolean onCreateOptionsMenu(Menu menu) {        getMenuInflater().inflate(R.menu.menu_search, menu);
         return true;
     }
 
@@ -362,6 +363,9 @@ public class MainActivity extends BaseActivity {
         mViewJournal = aq.id(R.id.view_journal).clicked(mOnClickListener).getView();
         mViewSetting = aq.id(R.id.view_setting).clicked(mOnClickListener).getView();
 
+        mViewTitle = (TextView) findViewById(R.id.toolbar_logo);
+        mViewTitle.setText("Today");
+
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         mViewPager = (ViewPager) aq.id(R.id.container).getView();
         mViewPager.setAdapter(mSectionsPagerAdapter);
@@ -375,6 +379,7 @@ public class MainActivity extends BaseActivity {
 
         switch (position) {
             case 0:
+                mViewTitle.setText("Today");
                 mViewToday.setSelected(true);
                 mViewSummarize.setSelected(false);
                 mViewJournal.setSelected(false);
@@ -382,6 +387,7 @@ public class MainActivity extends BaseActivity {
                 mViewPager.setCurrentItem(position);
                 break;
             case 1:
+                mViewTitle.setText("Calendar");
                 mViewToday.setSelected(false);
                 mViewSummarize.setSelected(true);
                 mViewJournal.setSelected(false);
@@ -389,6 +395,7 @@ public class MainActivity extends BaseActivity {
                 mViewPager.setCurrentItem(position);
                 break;
             case 2:
+                mViewTitle.setText("Moment");
                 mViewToday.setSelected(false);
                 mViewSummarize.setSelected(false);
                 mViewJournal.setSelected(true);
@@ -396,6 +403,7 @@ public class MainActivity extends BaseActivity {
                 mViewPager.setCurrentItem(position);
                 break;
             case 3:
+                mViewTitle.setText("Setting");
                 mViewToday.setSelected(false);
                 mViewSummarize.setSelected(false);
                 mViewJournal.setSelected(false);
@@ -490,27 +498,36 @@ public class MainActivity extends BaseActivity {
             characteristics = manager.getCameraCharacteristics(camera_ID[0]);
 
             StreamConfigurationMap config =characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-
             android.util.Size[] temp1 =   config.getOutputSizes(32);
-            rear_cam_width = temp1[0].getWidth();
+            if(temp1==null)
+                rear_cam_width=5000;
+            else
+                rear_cam_width = temp1[0].getWidth();
+
 
 
             characteristics = manager.getCameraCharacteristics(camera_ID[1]);
             StreamConfigurationMap config2 =characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
             android.util.Size[] temp2 =   config2.getOutputSizes(32);
-            front_cam_width = temp2[0].getWidth();
-
-
-
-            if(temp1[0].getWidth() > temp2[0].getWidth()) {
-                rear_cam_width = temp1[0].getWidth();
-                front_cam_width = temp2[0].getWidth();
-            }
+            if(temp2==null)
+                front_cam_width=2500;
             else
+                front_cam_width = temp2[0].getWidth();
+
+
+            if(temp1!=null && temp2!=null)
             {
-                rear_cam_width = temp2[0].getWidth();
-                front_cam_width = temp1[0].getWidth();
+                if(temp1[0].getWidth() > temp2[0].getWidth()) {
+                    rear_cam_width = temp1[0].getWidth();
+                    front_cam_width = temp2[0].getWidth();
+                }
+                else
+                {
+                    rear_cam_width = temp2[0].getWidth();
+                    front_cam_width = temp1[0].getWidth();
+                }
             }
+
             //android.util.Size[] temp4 =   config2.getOutputSizes(4);
 
             writeToFile(String.valueOf(rear_cam_width), "rear_camera_setting.txt" , getContext());
@@ -906,6 +923,7 @@ public class MainActivity extends BaseActivity {
         }catch(Exception e){
             e.printStackTrace();
         }
+//        sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://" + Environment.getExternalStorageDirectory())));
     }
 
     FirebaseAuth.AuthStateListener mAuthListener = new FirebaseAuth.AuthStateListener() {

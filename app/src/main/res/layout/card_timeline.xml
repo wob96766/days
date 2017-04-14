@@ -117,11 +117,7 @@
                     </LinearLayout>
 
 
-                    <TextView
-                        style="@style/font_orange_12sp"
-                        android:id="@+id/text_content"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+
 
                     <LinearLayout
                         android:id="@+id/view_photo"
@@ -148,6 +144,12 @@
                             android:layout_height="60dp"
                             android:gravity="center_vertical"/>
                     </LinearLayout>
+                    <TextView
+                        style="@style/font_orange_12sp"
+                        android:id="@+id/text_content"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
                 </LinearLayout>
 
 

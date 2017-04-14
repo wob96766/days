@@ -4,63 +4,129 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/light_grey"
+    android:background="@color/black_100"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="@dimen/middle"
+            android:layout_height="79dp"
+            android:orientation="horizontal"
             android:paddingBottom="@dimen/middle"
             android:paddingLeft="@dimen/large"
             android:paddingRight="@dimen/large"
-            android:orientation="horizontal">
+            android:paddingTop="@dimen/middle">
+
             <LinearLayout
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center_vertical">
+                android:layout_height="match_parent"
+                android:layout_weight="0.92"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
                 <TextView
-                    style="@style/font_black_12sp"
                     android:id="@+id/text_sentence"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-                <TextView
                     style="@style/font_black_12sp"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp" />
+
+                <TextView
                     android:id="@+id/text_weather"
+                    style="@style/font_black_12sp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="left"
-                    android:visibility="gone"
-                    android:hint="weather" />
+                    android:hint="weather"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/text_date"
+                    style="@style/font_black_30sp"
+                    android:layout_width="147dp"
+                    android:layout_height="match_parent"
+                    android:textSize="20sp" />
             </LinearLayout>
+
             <TextView
-                style="@style/font_black_12sp"
                 android:id="@+id/text_mood"
+                style="@style/font_black_12sp"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center"
+                android:layout_height="wrap_content"
                 android:drawablePadding="@dimen/small"
+                android:gravity="center"
                 android:hint="mood" />
 
         </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/middle"
+            android:paddingLeft="@dimen/large"
+            android:paddingRight="@dimen/large"
+            android:paddingTop="@dimen/middle">
+
+            <ImageView
+                android:id="@+id/imageWeather"
+                android:layout_width="wrap_content"
+                android:layout_height="23dp"
+                android:gravity="left"
+                app:srcCompat="@mipmap/ic_cloud_2x" />
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.13" />
+
+            <ImageView
+                android:id="@+id/imageLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="23dp"
+                android:gravity="right"
+                app:srcCompat="@mipmap/ic_place_2x" />
+
+            <TextView
+                android:id="@+id/textLocationcount"
+                android:layout_width="38dp"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text="0"
+                android:textSize="14sp" />
+
+            <ImageView
+                android:id="@+id/imagePhotocount"
+                android:layout_width="wrap_content"
+                android:layout_height="23dp"
+                android:gravity="right"
+                app:srcCompat="@mipmap/ic_photo_2x" />
+
+            <TextView
+                android:id="@+id/textPhotocount"
+                android:layout_width="43dp"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text="0"
+                 />
+
+
+        </LinearLayout>
+
         <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/view_refresh"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            >
+            android:layout_height="match_parent">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/view_recycler"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingLeft="@dimen/large"
-                android:paddingRight="@dimen/large"/>
+                android:layout_height="427dp"
+                android:paddingLeft="@dimen/zero"
+                android:paddingRight="@dimen/zero" />
 
         </android.support.v4.widget.SwipeRefreshLayout>
     </LinearLayout>

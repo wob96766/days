@@ -1,5 +1,7 @@
 package com.mindspree.days.model;
 
+import android.widget.TextView;
+
 import com.mindspree.days.R;
 import com.mindspree.days.lib.AppUtils;
 import com.mindspree.days.engine.EngineDBInterface;
@@ -26,6 +28,9 @@ public class SentenceModel{
     }
 
     public String getSummarize(){
+
+
+
         if(mSentence == null || mSentence.equals("")) {
             if (mWeather.equals("")) {
                 return String.format(AppUtils.getAppText(R.string.format_summarize_date), mLocationCount, mPhotoCount);
