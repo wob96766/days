@@ -14,25 +14,20 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="79dp"
+            android:layout_height="60dp"
             android:orientation="horizontal"
-            android:paddingBottom="@dimen/middle"
+            android:gravity="center_vertical"
             android:paddingLeft="@dimen/large"
-            android:paddingRight="@dimen/large"
-            android:paddingTop="@dimen/middle">
+            android:paddingRight="@dimen/large">
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="0.92"
-                android:gravity="center_vertical"
+                android:layout_weight="0.11"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="20dp"
+                android:gravity="top"
                 android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/text_sentence"
-                    style="@style/font_black_12sp"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp" />
 
                 <TextView
                     android:id="@+id/text_weather"
@@ -44,18 +39,35 @@
                     android:visibility="gone" />
 
                 <TextView
+                    android:id="@+id/text_yearmonth"
+                    style="@style/font_black_30sp"
+                    android:layout_width="123dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="top"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/text_sentence"
+                    style="@style/font_black_12sp"
+                    android:layout_width="123dp"
+                    android:gravity="top"
+                    android:layout_height="0dp" />
+
+                <TextView
                     android:id="@+id/text_date"
                     style="@style/font_black_30sp"
-                    android:layout_width="147dp"
+                    android:layout_width="94dp"
+                    android:gravity="top"
                     android:layout_height="match_parent"
-                    android:textSize="20sp" />
+                    android:textSize="15sp" />
             </LinearLayout>
 
             <TextView
                 android:id="@+id/text_mood"
-                style="@style/font_black_12sp"
+                style="@style/font_black_14sp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="36dp"
+                android:layout_marginRight="10dp"
                 android:drawablePadding="@dimen/small"
                 android:gravity="center"
                 android:hint="mood" />
@@ -66,6 +78,43 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingBottom="@dimen/middle"
+            android:paddingLeft="@dimen/large"
+            android:paddingRight="@dimen/large"
+            android:paddingTop="@dimen/middle">
+
+
+            <ImageView
+                android:id="@+id/imageSwipeLeft"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.23"
+                android:gravity="left"
+                app:srcCompat="@mipmap/ic_swipe_left_2x" />
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.39" />
+
+            <ImageView
+                android:id="@+id/imageSwipeRight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.23"
+                android:gravity="right"
+                app:srcCompat="@mipmap/ic_swipe_right_2x" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="10dp"
             android:paddingBottom="@dimen/middle"
             android:paddingLeft="@dimen/large"
             android:paddingRight="@dimen/large"
@@ -74,19 +123,19 @@
             <ImageView
                 android:id="@+id/imageWeather"
                 android:layout_width="wrap_content"
-                android:layout_height="23dp"
+                android:layout_height="24dp"
                 android:gravity="left"
                 app:srcCompat="@mipmap/ic_cloud_2x" />
 
             <Space
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.13" />
+                android:layout_weight="0.01" />
 
             <ImageView
                 android:id="@+id/imageLocation"
                 android:layout_width="wrap_content"
-                android:layout_height="23dp"
+                android:layout_height="24dp"
                 android:gravity="right"
                 app:srcCompat="@mipmap/ic_place_2x" />
 
@@ -96,12 +145,13 @@
                 android:layout_height="wrap_content"
                 android:gravity="left"
                 android:text="0"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
             <ImageView
                 android:id="@+id/imagePhotocount"
                 android:layout_width="wrap_content"
-                android:layout_height="23dp"
+                android:layout_height="24dp"
                 android:gravity="right"
                 app:srcCompat="@mipmap/ic_photo_2x" />
 
@@ -111,7 +161,8 @@
                 android:layout_height="wrap_content"
                 android:gravity="left"
                 android:text="0"
-                 />
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
 
         </LinearLayout>
@@ -123,8 +174,8 @@
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/view_recycler"
-                android:layout_width="match_parent"
-                android:layout_height="427dp"
+                android:layout_width="302dp"
+                android:layout_height="406dp"
                 android:paddingLeft="@dimen/zero"
                 android:paddingRight="@dimen/zero" />
 

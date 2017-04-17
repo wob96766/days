@@ -315,7 +315,7 @@ public class DatelineModel implements Parcelable {
         cal.add(Calendar.DATE, -1);
         String DateYesterday = dateFormat.format(cal.getTime()); //your formatted date here
 
-//        if(mSentence == null || mSentence.equals("") || DateInMomeent.equals(DateToday) ) {
+//        if(mSentence == null || mSentence.equals("") || DateInMomeent.equals(DateToday) ) {   // This is only for debugging
         if(mSentence == null || mSentence.equals("")  ) {
 
             if (sentence_mode.equals("hash"))
@@ -335,13 +335,6 @@ public class DatelineModel implements Parcelable {
             front_cam_width = Integer.parseInt(readFromFile("front_camera_setting.txt", AppApplication.getAppInstance().getApplicationContext())) ;
 
             mDBWrapper = new DBWrapper(AppPreference.getInstance().getUserUid());
-
-//            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-//            Calendar cal = Calendar.getInstance();
-//            cal.add(Calendar.DATE, -1);
-//            String DateToday = dateFormat.format(cal.getTime()); //your formatted date here
-//            cal.add(Calendar.DATE, -1);
-//            String DateYesterday = dateFormat.format(cal.getTime()); //your formatted date here
 
             doDayOfWeek();
             String hash_string ="";
@@ -843,7 +836,7 @@ public class DatelineModel implements Parcelable {
 
 
 
-        hash_string_POI = getPOIstring(poi_string, dnnModel, avg_PhotoCreateTime);
+        hash_string_POI = dnnModel.getPOIstring(poi_string, dnnModel, avg_PhotoCreateTime, weekend_days);
         hash_string=hash_string+hash_string_POI;
 
 

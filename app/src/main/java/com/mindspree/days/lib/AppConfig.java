@@ -20,6 +20,8 @@ public class AppConfig {
     public static final String OS_TYPE = "ANDROID";
     public static final int CAMERA_DONE_STEP = 2;
 
+    public static final int LANGUAGE_MODE = 2; // 1: English, 2: Korean
+
 
     public static final class RestUrl {
         public static final String SAMPLE       			    = SERVER_URL+"v1/sample";

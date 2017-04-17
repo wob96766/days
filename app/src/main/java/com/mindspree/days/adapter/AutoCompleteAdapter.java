@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mindspree.days.R;
@@ -54,6 +55,7 @@ public class AutoCompleteAdapter extends BaseAdapter {
             holder = new CustomHolder();
             holder.mTextTitle = (TextView) convertView.findViewById(R.id.text_title);
             holder.mTextSubTitle = (TextView) convertView.findViewById(R.id.text_subtitle);
+            holder.mImagePlace =(ImageView) convertView.findViewById(R.id.image_place);
             convertView.setTag(holder);
         }else{
             holder = (CustomHolder) convertView.getTag();
@@ -79,6 +81,7 @@ public class AutoCompleteAdapter extends BaseAdapter {
     private class CustomHolder {
         TextView mTextTitle;
         TextView mTextSubTitle;
+        ImageView mImagePlace;
     }
 
 }

@@ -5,12 +5,18 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableString;
+import android.text.TextUtils;
+import android.text.style.AbsoluteSizeSpan;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +47,8 @@ import java.util.Date;
 
 import cz.msebera.android.httpclient.Header;
 
+import static android.text.Spanned.SPAN_INCLUSIVE_INCLUSIVE;
+
 
 public class TodayFragment extends BaseFragment{
 
@@ -61,6 +69,8 @@ public class TodayFragment extends BaseFragment{
     private ImageView mImageWeather;
     private TextView mTextMood;
     private TextView mTextDate;
+    private TextView mTextDay;
+    private TextView mTextYearMonth;
 
     AlertDialog mMoodDialog = null;
     private BroadcastReceiver mRefreshCast;
@@ -175,6 +185,8 @@ public class TodayFragment extends BaseFragment{
         mTextLocationcount= aq.id(R.id.textLocationcount).getTextView();
         mImageWeather =aq.id(R.id.imageWeather).getImageView();
         mTextMood = aq.id(R.id.text_mood).clicked(mOnClickListener).getTextView();
+        mTextYearMonth = aq.id(R.id.text_yearmonth).getTextView();
+        mTextDay = aq.id(R.id.text_day).getTextView();
         mTextDate = aq.id(R.id.text_date).getTextView();
         aq.dismiss();
     }
@@ -199,20 +211,44 @@ public class TodayFragment extends BaseFragment{
         mTextPhotocount.setText(String.format("%d",mSentence.mPhotoCount));
         mTextLocationcount.setText(String.format("%d",mSentence.mLocationCount));
 
-        SimpleDateFormat sdf = new SimpleDateFormat("EEEE");
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE");
         Date d = new Date();
         String dayOfTheWeek = sdf.format(d);
 
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        DateFormat dateFormat1 = new SimpleDateFormat("yyyy/MM");
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, -1);
-        String DateToday = dateFormat.format(cal.getTime()); //your formatted date here
+        cal.add(Calendar.DATE, 0);
+        String DateToday1 = dateFormat1.format(cal.getTime()); //your formatted date here
 
-        mTextDate.setText(String.format("%s %s", DateToday,dayOfTheWeek));
+        DateFormat dateFormat2 = new SimpleDateFormat("dd");
+        String DateToday2 = dateFormat2.format(cal.getTime()); //your formatted date here
+
+
+        mTextYearMonth.setText(String.format("%s", DateToday1));
+
+//        SpannableString ss1=  new SpannableString(String.format("%s %s", DateToday2,dayOfTheWeek));
+//        ss1.setSpan(new RelativeSizeSpan(2f), 0,5, 0); // set size
+//        ss1.setSpan(new ForegroundColorSpan(Color.RED), 0, 5, 0);// set color
+
+
+        int textSize1 = getResources().getDimensionPixelSize(R.dimen.text_15)*2;
+        int textSize2 = getResources().getDimensionPixelSize(R.dimen.text_15);
+
+        String text1 = DateToday2;
+        String text2 = dayOfTheWeek;
+
+        SpannableString span1 = new SpannableString(text1);
+        span1.setSpan(new AbsoluteSizeSpan(textSize1), 0, text1.length(), SPAN_INCLUSIVE_INCLUSIVE);
+
+        SpannableString span2 = new SpannableString(text2);
+        span2.setSpan(new AbsoluteSizeSpan(textSize2), 0, text2.length(), SPAN_INCLUSIVE_INCLUSIVE);
+        CharSequence finalText = TextUtils.concat(span1, " ", span2);
+        mTextDate.setText(finalText);
+
 
         if(weather.equals(AppUtils.getAppText(R.string.text_weather_clear)))
         {
-            mImageWeather.setImageResource(R.mipmap.ic_cloud_2x);
+            mImageWeather.setImageResource(R.mipmap.ic_sun_2x);
         }else if(weather.equals(AppUtils.getAppText(R.string.text_weather_clouds)))
         {
             mImageWeather.setImageResource(R.mipmap.ic_cloud_2x);
@@ -400,16 +436,16 @@ public class TodayFragment extends BaseFragment{
                                 mImageWeather.setImageResource(R.mipmap.ic_cloud_2x);
                             }else if(model.mWeather.equals("Dust"))
                             {
-                                mImageWeather.setImageResource(R.mipmap.ic_cloud_2x);
+                                mImageWeather.setImageResource(R.mipmap.ic_dust_2x);
                             }else if(model.mWeather.equals("Haze"))
                             {
-                                mImageWeather.setImageResource(R.mipmap.ic_cloud_2x);
+                                mImageWeather.setImageResource(R.mipmap.ic_mist_2x);
                             }else if(model.mWeather.equals("Mist"))
                             {
-                                mImageWeather.setImageResource(R.mipmap.ic_cloud_2x);
+                                mImageWeather.setImageResource(R.mipmap.ic_mist_2x);
                             }else if(model.mWeather.equals("Fog"))
                             {
-                                mImageWeather.setImageResource(R.mipmap.ic_cloud_2x);
+                                mImageWeather.setImageResource(R.mipmap.ic_mist_2x);
                             }else if(model.mWeather.equals("Rain"))
                             {
                                 mImageWeather.setImageResource(R.mipmap.ic_rain_2x);

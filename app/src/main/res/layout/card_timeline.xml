@@ -55,6 +55,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
+                        android:layout_marginTop="5dp"
                         android:src="@mipmap/ic_timeline" />
 
                     <LinearLayout
@@ -93,27 +94,38 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:weightSum="1">
+
+                        <TextView
+                            android:id="@+id/text_title"
+                            style="@style/font_black_12sp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:maxLines="1" />
+
+
+                        <ImageView
+                            android:id="@+id/image_place"
+                            android:layout_marginLeft="@dimen/middle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="20dp"
+                            android:gravity="right"
+                            android:layout_alignParentRight="true"
+                            app:srcCompat="@mipmap/ic_place" />
 
                         <TextView
                             style="@style/font_black_12sp"
                             android:id="@+id/text_subtitle"
-                            android:layout_width="0dp"
+                            android:layout_width="60dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:textStyle="bold"
                             android:layout_centerVertical="true"
                             android:hint="정확한 위치를 설정해보세요."
-                            android:maxLines="1" />
+                            android:maxLines="1"
+                            android:layout_weight="0.77" />
 
-                        <TextView
-                            style="@style/font_black_12sp"
-                            android:id="@+id/text_title"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_alignParentRight="true"
-                            android:maxLines="1" />
                     </LinearLayout>
 
 
