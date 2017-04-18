@@ -34,11 +34,11 @@
             <LinearLayout
                 android:id="@+id/body"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="156dp"
                 android:orientation="horizontal">
 
                 <LinearLayout
-                    android:layout_width="75dp"
+                    android:layout_width="61dp"
                     android:layout_height="match_parent"
                     android:paddingLeft="@dimen/middle"
                     android:orientation="vertical"
@@ -59,37 +59,40 @@
                         android:src="@mipmap/ic_timeline" />
 
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:layout_width="53dp"
                         android:layout_height="match_parent"
-                        android:orientation="vertical"
-                        android:gravity="center_horizontal">
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical">
+
                         <View
                             android:layout_width="@dimen/stroke"
                             android:layout_height="0dp"
                             android:layout_weight="1"
-                            android:background="@color/light_black"/>
+                            android:background="@color/light_black" />
+
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@mipmap/ic_timeline_small"/>
+                            android:src="@mipmap/ic_timeline_small" />
+
                         <View
                             android:id="@+id/view_bottomline"
-                            android:layout_width="@dimen/stroke"
+                            android:layout_width="1dp"
                             android:layout_height="0dp"
-                            android:layout_weight="1"
-                            android:background="@color/light_black"/>
+                            android:layout_weight="0.08"
+                            android:background="@color/light_black" />
                     </LinearLayout>
-
 
 
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:paddingTop="@dimen/middle"
                     android:paddingRight="@dimen/middle"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:weightSum="1">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -99,7 +102,7 @@
 
                         <TextView
                             android:id="@+id/text_title"
-                            style="@style/font_black_12sp"
+                            style="@style/font_black_14sp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
@@ -117,7 +120,7 @@
                             app:srcCompat="@mipmap/ic_place" />
 
                         <TextView
-                            style="@style/font_black_12sp"
+                            style="@style/font_black_14sp"
                             android:id="@+id/text_subtitle"
                             android:layout_width="60dp"
                             android:layout_height="wrap_content"
@@ -135,30 +138,30 @@
                         android:id="@+id/view_photo"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/middle"
-                        android:layout_marginBottom="@dimen/middle"
-                        android:orientation="horizontal" >
+                        android:orientation="horizontal"
+                        android:layout_weight="0.56">
                         <ImageView
                             android:id="@+id/image_thumnail1"
-                            android:layout_width="60dp"
-                            android:layout_height="60dp"
+                            android:layout_width="90dp"
+                            android:layout_height="90dp"
                             android:gravity="center_vertical"/>
                         <ImageView
                             android:id="@+id/image_thumnail2"
                             android:layout_marginLeft="@dimen/middle"
                             android:layout_marginRight="@dimen/middle"
-                            android:layout_width="60dp"
-                            android:layout_height="60dp"
+                            android:layout_width="90dp"
+                            android:layout_height="90dp"
                             android:gravity="center_vertical"/>
                         <ImageView
                             android:id="@+id/image_thumnail3"
-                            android:layout_width="60dp"
-                            android:layout_height="60dp"
+                            android:layout_width="90dp"
+                            android:layout_height="90dp"
                             android:gravity="center_vertical"/>
                     </LinearLayout>
+
                     <TextView
-                        style="@style/font_orange_12sp"
                         android:id="@+id/text_content"
+                        style="@style/font_orange_14sp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
 

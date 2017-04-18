@@ -231,7 +231,7 @@ public class TodayFragment extends BaseFragment{
 //        ss1.setSpan(new ForegroundColorSpan(Color.RED), 0, 5, 0);// set color
 
 
-        int textSize1 = getResources().getDimensionPixelSize(R.dimen.text_15)*2;
+        int textSize1 = getResources().getDimensionPixelSize(R.dimen.text_13)*2;
         int textSize2 = getResources().getDimensionPixelSize(R.dimen.text_15);
 
         String text1 = DateToday2;
@@ -254,16 +254,16 @@ public class TodayFragment extends BaseFragment{
             mImageWeather.setImageResource(R.mipmap.ic_cloud_2x);
         }else if(weather.equals(AppUtils.getAppText(R.string.text_weather_dust)))
         {
-            mImageWeather.setImageResource(R.mipmap.ic_cloud_2x);
+            mImageWeather.setImageResource(R.mipmap.ic_dust_2x);
         }else if(weather.equals(AppUtils.getAppText(R.string.text_weather_haze)))
         {
-            mImageWeather.setImageResource(R.mipmap.ic_cloud_2x);
+            mImageWeather.setImageResource(R.mipmap.ic_mist_2x);
         }else if(weather.equals(AppUtils.getAppText(R.string.text_weather_mist)))
         {
-            mImageWeather.setImageResource(R.mipmap.ic_cloud_2x);
+            mImageWeather.setImageResource(R.mipmap.ic_mist_2x);
         }else if(weather.equals(AppUtils.getAppText(R.string.text_weather_fog)))
         {
-            mImageWeather.setImageResource(R.mipmap.ic_cloud_2x);
+            mImageWeather.setImageResource(R.mipmap.ic_mist_2x);
         }else if(weather.equals(AppUtils.getAppText(R.string.text_weather_rain)))
         {
             mImageWeather.setImageResource(R.mipmap.ic_rain_2x);

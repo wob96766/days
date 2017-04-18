@@ -1,7 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary"
+    android:background="@color/colorPrimaryWhite"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -19,9 +19,10 @@
     </RelativeLayout>
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_weight="2.60">
         <TextView
-            style="@style/font_white_30sp"
+            style="@style/font_primary_40sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
@@ -42,7 +43,7 @@
             android:layout_marginRight="20dp"
             android:text="HashTag"
             android:textSize="24sp"
-            android:textColor="@color/white"
+            android:textColor="@color/light_blue"
             android:textStyle="bold"
             android:layout_gravity="center" />
 
@@ -59,7 +60,7 @@
                 android:layout_height="wrap_content"
                 android:text="Blog SNS Weather"
                 android:textSize="10sp"
-                android:textColor="@color/white"
+                android:textColor="@color/light_blue"
                 android:textStyle="bold" />
             <TextView
                 android:layout_width="wrap_content"
@@ -67,7 +68,7 @@
 
                 android:text="Emoji"
                 android:textSize="20sp"
-                android:textColor="@color/white"
+                android:textColor="@color/light_blue"
                 android:layout_gravity="center" />
         </LinearLayout>
 
@@ -88,7 +89,7 @@
                     android:layout_height="wrap_content"
                     android:text="Selfie"
                     android:textSize="24sp"
-                    android:textColor="@color/white"
+                    android:textColor="@color/light_blue"
                     android:layout_gravity="right|bottom" />
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -101,7 +102,7 @@
                         android:layout_height="wrap_content"
                         android:text="Kids"
                         android:textSize="10sp"
-                        android:textColor="@color/white"
+                        android:textColor="@color/light_blue"
                         android:textStyle="bold" />
                     <TextView
                         android:layout_width="wrap_content"
@@ -109,7 +110,7 @@
                         android:layout_marginLeft="5dp"
                         android:text="Baby"
                         android:textSize="18sp"
-                        android:textColor="@color/white"
+                        android:textColor="@color/light_blue"
                         android:textStyle="bold" />
                 </LinearLayout>
             </LinearLayout>
@@ -118,7 +119,7 @@
                 android:layout_height="wrap_content"
                 android:text="Awesome"
                 android:textSize="40sp"
-                android:textColor="@color/white"
+                android:textColor="@color/light_blue"
                 android:textStyle="bold"
                 android:layout_gravity="center" />
             <LinearLayout
@@ -140,7 +141,7 @@
                         android:layout_height="wrap_content"
                         android:text="Dialy"
                         android:textSize="10sp"
-                        android:textColor="@color/white"
+                        android:textColor="@color/light_blue"
                         android:textStyle="bold" />
                     <TextView
                         android:layout_width="wrap_content"
@@ -148,7 +149,7 @@
                         android:layout_marginLeft="5dp"
                         android:text="Fun"
                         android:textSize="22sp"
-                        android:textColor="@color/white"
+                        android:textColor="@color/light_blue"
                         android:textStyle="bold" />
                 </LinearLayout>
                 <LinearLayout
@@ -161,14 +162,14 @@
                         android:layout_height="wrap_content"
                         android:text="Angry"
                         android:textSize="12sp"
-                        android:textColor="@color/white" />
+                        android:textColor="@color/light_blue" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="5dp"
                         android:text="Sad"
                         android:textSize="12sp"
-                        android:textColor="@color/white" />
+                        android:textColor="@color/light_blue" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
@@ -185,7 +186,7 @@
                 android:layout_margin="@dimen/xsmall"
                 android:text="Family"
                 android:textSize="14sp"
-                android:textColor="@color/white" />
+                android:textColor="@color/light_blue" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -195,14 +196,14 @@
                 android:text="Love"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                android:textColor="@color/white" />
+                android:textColor="@color/light_blue" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/xsmall"
                 android:text="#mindspree"
                 android:textSize="14sp"
-                android:textColor="@color/white"
+                android:textColor="@color/light_blue"
                 android:layout_gravity="center" />
             <TextView
                 android:layout_width="wrap_content"
@@ -210,7 +211,7 @@
                 android:layout_margin="@dimen/xsmall"
                 android:text="DataMining"
                 android:textSize="14sp"
-                android:textColor="@color/white" />
+                android:textColor="@color/light_blue" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -218,7 +219,7 @@
                 android:text="Happy"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                android:textColor="@color/white"
+                android:textColor="@color/light_blue"
                 android:layout_gravity="top"/>
         </LinearLayout>
         <TextView
@@ -227,7 +228,7 @@
             android:layout_marginTop="46dp"
             android:text="DeepLearning"
             android:textSize="24sp"
-            android:textColor="@color/white"
+            android:textColor="@color/light_blue"
             android:layout_gravity="center" />
     </FrameLayout>
 

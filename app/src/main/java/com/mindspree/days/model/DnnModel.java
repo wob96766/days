@@ -391,7 +391,7 @@ public class DnnModel {
         }
         else if(language_mode ==2){
             if(poiclassDetect(poi_string,dnnModel.POI_DB1)){
-                hash_string_POI=   String.format("%s %s","#커피, #Coffee ");
+                hash_string_POI=   String.format("%s %s","#커피", "#Coffee");
             } else if(poiclassDetect(poi_string,dnnModel.POI_DB2)){
 
                 if(avg_PhotoCreateTime>05 && avg_PhotoCreateTime< 10){

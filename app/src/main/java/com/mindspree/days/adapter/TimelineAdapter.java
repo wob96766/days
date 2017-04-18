@@ -156,9 +156,9 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
             mViewPhoto = (ViewGroup)aq.id(R.id.view_photo).getView();
             mTopLine = aq.id(R.id.view_topline).getView();
             mBottomLine = aq.id(R.id.view_bottomline).getView();
-            mThumnail1 = aq.id(R.id.image_thumnail1).width(metrics.widthPixels * 2 / 10, false).height(metrics.widthPixels * 2 / 10, false).clicked(mOnClickListener).getImageView();
-            mThumnail2 = aq.id(R.id.image_thumnail2).width(metrics.widthPixels * 2 / 10, false).height(metrics.widthPixels * 2 / 10, false).clicked(mOnClickListener).getImageView();
-            mThumnail3 = aq.id(R.id.image_thumnail3).width(metrics.widthPixels * 2 / 10, false).height(metrics.widthPixels * 2 / 10, false).clicked(mOnClickListener).getImageView();
+            mThumnail1 = aq.id(R.id.image_thumnail1).width(metrics.widthPixels * 2 / 8, false).height(metrics.widthPixels * 2 / 8, false).clicked(mOnClickListener).getImageView();
+            mThumnail2 = aq.id(R.id.image_thumnail2).width(metrics.widthPixels * 2 / 8, false).height(metrics.widthPixels * 2 / 8, false).clicked(mOnClickListener).getImageView();
+            mThumnail3 = aq.id(R.id.image_thumnail3).width(metrics.widthPixels * 2 / 8, false).height(metrics.widthPixels * 2 / 8, false).clicked(mOnClickListener).getImageView();
             /*fit screen size
             if(contentHeight > 0) {
                 aq.id(R.id.image_container).height(contentHeight);

@@ -358,8 +358,8 @@ public class TimelineModel implements Parcelable {
 
 
 //        // 2. Time
-//        setMeasureTime(mCreateDate);
-//        setMeasureTimeInHour(mCreateDate);
+        setMeasureTime(mCreateDate);
+        setMeasureTimeInHour(mCreateDate);
 //        hash_string =hash_string + String.format("#%s ", mMeasureTime);
 
 

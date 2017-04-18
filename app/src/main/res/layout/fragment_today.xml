@@ -23,7 +23,7 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="0.11"
+                android:layout_weight="0.06"
                 android:layout_marginLeft="40dp"
                 android:layout_marginRight="20dp"
                 android:gravity="top"
@@ -62,15 +62,35 @@
                     android:textSize="15sp" />
             </LinearLayout>
 
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.03"
+                android:gravity="right"
+                android:orientation="vertical"
+                android:weightSum="1">
             <TextView
-                android:id="@+id/text_mood"
-                style="@style/font_black_14sp"
-                android:layout_width="wrap_content"
-                android:layout_height="36dp"
-                android:layout_marginRight="10dp"
-                android:drawablePadding="@dimen/small"
-                android:gravity="center"
-                android:hint="mood" />
+                android:id="@+id/text_dummy"
+                style="@style/font_black_30sp"
+                android:layout_width="57dp"
+                android:gravity="top"
+                android:layout_height="10dp"
+                android:textSize="15sp"
+                android:layout_weight="0.78" />
+
+                <TextView
+                    android:id="@+id/text_mood"
+                    style="@style/font_black_14sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="27dp"
+                    android:paddingLeft="@dimen/small"
+                    android:layout_marginRight="21dp"
+                    android:gravity="center"
+                    android:hint="mood"
+                    android:orientation="vertical"
+                    android:layout_weight="0.02" />
+            </LinearLayout>
 
         </LinearLayout>
 
@@ -79,30 +99,28 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:paddingBottom="@dimen/middle"
             android:paddingLeft="@dimen/large"
-            android:paddingRight="@dimen/large"
-            android:paddingTop="@dimen/middle">
+            android:paddingRight="@dimen/large">
 
 
             <ImageView
                 android:id="@+id/imageSwipeLeft"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.23"
+                android:layout_weight="0.14"
                 android:gravity="left"
                 app:srcCompat="@mipmap/ic_swipe_left_2x" />
 
             <Space
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1.39" />
+                android:layout_weight="1.46" />
 
             <ImageView
                 android:id="@+id/imageSwipeRight"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.23"
+                android:layout_weight="0.14"
                 android:gravity="right"
                 app:srcCompat="@mipmap/ic_swipe_right_2x" />
         </LinearLayout>
@@ -115,15 +133,14 @@
             android:gravity="center_vertical"
             android:layout_marginLeft="40dp"
             android:layout_marginRight="10dp"
-            android:paddingBottom="@dimen/middle"
             android:paddingLeft="@dimen/large"
             android:paddingRight="@dimen/large"
-            android:paddingTop="@dimen/middle">
+            android:paddingBottom="3dp">
 
             <ImageView
                 android:id="@+id/imageWeather"
                 android:layout_width="wrap_content"
-                android:layout_height="24dp"
+                android:layout_height="21dp"
                 android:gravity="left"
                 app:srcCompat="@mipmap/ic_cloud_2x" />
 
@@ -135,7 +152,7 @@
             <ImageView
                 android:id="@+id/imageLocation"
                 android:layout_width="wrap_content"
-                android:layout_height="24dp"
+                android:layout_height="21dp"
                 android:gravity="right"
                 app:srcCompat="@mipmap/ic_place_2x" />
 
@@ -151,7 +168,7 @@
             <ImageView
                 android:id="@+id/imagePhotocount"
                 android:layout_width="wrap_content"
-                android:layout_height="24dp"
+                android:layout_height="21dp"
                 android:gravity="right"
                 app:srcCompat="@mipmap/ic_photo_2x" />
 
@@ -176,6 +193,7 @@
                 android:id="@+id/view_recycler"
                 android:layout_width="302dp"
                 android:layout_height="406dp"
+                android:background="@color/white"
                 android:paddingLeft="@dimen/zero"
                 android:paddingRight="@dimen/zero" />
 
