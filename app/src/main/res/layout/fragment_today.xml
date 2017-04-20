@@ -87,7 +87,7 @@
                     android:paddingLeft="@dimen/small"
                     android:layout_marginRight="21dp"
                     android:gravity="center"
-                    android:hint="mood"
+                    android:hint="  mood"
                     android:orientation="vertical"
                     android:layout_weight="0.02" />
             </LinearLayout>

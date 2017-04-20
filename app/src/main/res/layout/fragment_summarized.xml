@@ -25,6 +25,7 @@
                 android:drawableTop="@mipmap/ic_happy_2x"
                 android:gravity="center"
                 android:textStyle="bold"
+                android:textColor="@color/textColorCalendar_happy"
                 android:text="@string/text_emoji_happy"/>
             <TextView
                 style="@style/font_black_12sp"
@@ -34,6 +35,7 @@
                 android:drawableTop="@mipmap/ic_angry_2x"
                 android:gravity="center"
                 android:textStyle="bold"
+                android:textColor="@color/textColorCalendar_angry"
                 android:text="@string/text_emoji_angry"/>
             <TextView
                 style="@style/font_black_12sp"
@@ -43,6 +45,7 @@
                 android:drawableTop="@mipmap/ic_sad_2x"
                 android:gravity="center"
                 android:textStyle="bold"
+                android:textColor="@color/textColorCalendar_sad"
                 android:text="@string/text_emoji_sad"/>
             <TextView
                 style="@style/font_black_12sp"
@@ -52,6 +55,7 @@
                 android:drawableTop="@mipmap/ic_busy_2x"
                 android:gravity="center"
                 android:textStyle="bold"
+                android:textColor="@color/textColorCalendar_busy"
                 android:text="@string/text_emoji_busy"/>
             <TextView
                 style="@style/font_black_12sp"
@@ -61,6 +65,7 @@
                 android:drawableTop="@mipmap/ic_default_2x"
                 android:gravity="center"
                 android:textStyle="bold"
+                android:textColor="@color/textColorCalendar_default"
                 android:text="@string/text_emoji_default"/>
         </LinearLayout>
         <android.support.v4.widget.SwipeRefreshLayout

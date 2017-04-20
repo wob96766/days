@@ -445,7 +445,7 @@ public class DatelineModel implements Parcelable {
 
 
                         //4. Face & Deep learning
-                        hash_string_face=SentenceFromPhoto(offset,size,poiList.get(key_temp).toString(),photolist,front_cam_width,rear_cam_width, DNN_path);
+                        hash_string_face=SentenceFromPhoto(offset,size,poiList.get(key_temp).toString(),photolist,front_cam_width,rear_cam_width, DNN_path, weekend_days);
 
                         if(hash_string_face.equals(hash_string_face_buf))
                             hash_string_face=""; // This is to prevent the duplication
@@ -799,7 +799,7 @@ public class DatelineModel implements Parcelable {
     }
 
 
-    public String SentenceFromPhoto(int offset,int size,String poi_string, ArrayList PhotoList,  int front_cam_width, int rear_cam_width, String [] DNN_path)
+    public String SentenceFromPhoto(int offset,int size,String poi_string, ArrayList PhotoList,  int front_cam_width, int rear_cam_width, String [] DNN_path, int weekend_days)
     {
         String hash_string = "";
         String hash_string_DNN= "";

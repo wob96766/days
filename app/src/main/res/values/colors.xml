@@ -11,6 +11,11 @@
     <color name="windowBackground">#FFFFFF</color>
     <color name="navigationBarColor">#000000</color>
 
+    <color name="textColorCalendar_happy">#ffb300</color>
+    <color name="textColorCalendar_angry">#ff7043</color>
+    <color name="textColorCalendar_sad">#607d8b</color>
+    <color name="textColorCalendar_busy">#7e57c2</color>
+    <color name="textColorCalendar_default">#a0a0a0</color>
 
 
     <color name="black_100">#F5F5F5</color>

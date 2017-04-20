@@ -381,10 +381,10 @@ public class MainActivity extends BaseActivity {
         switch (position) {
             case 0:
                 mViewTitle.setText("Today");
-//                mViewToday.setBackgroundColor(Color.parseColor("#84c2fd"));
-//                mViewSummarize.setBackgroundColor(Color.parseColor("#48afff"));
-//                mViewJournal.setBackgroundColor(Color.parseColor("#48afff"));
-//                mViewSetting.setBackgroundColor(Color.parseColor("#48afff"));
+                mViewToday.setBackgroundColor(Color.parseColor("#84c2fd"));
+                mViewSummarize.setBackgroundColor(Color.parseColor("#48afff"));
+                mViewJournal.setBackgroundColor(Color.parseColor("#48afff"));
+                mViewSetting.setBackgroundColor(Color.parseColor("#48afff"));
 
                 mViewToday.setSelected(true);
                 mViewSummarize.setSelected(false);
@@ -394,10 +394,10 @@ public class MainActivity extends BaseActivity {
                 break;
             case 1:
                 mViewTitle.setText("Calendar");
-//                mViewToday.setBackgroundColor(Color.parseColor("#48afff"));
-//                mViewSummarize.setBackgroundColor(Color.parseColor("#84c2fd"));
-//                mViewJournal.setBackgroundColor(Color.parseColor("#48afff"));
-//                mViewSetting.setBackgroundColor(Color.parseColor("#48afff"));
+                mViewToday.setBackgroundColor(Color.parseColor("#48afff"));
+                mViewSummarize.setBackgroundColor(Color.parseColor("#84c2fd"));
+                mViewJournal.setBackgroundColor(Color.parseColor("#48afff"));
+                mViewSetting.setBackgroundColor(Color.parseColor("#48afff"));
 
                 mViewToday.setSelected(false);
                 mViewSummarize.setSelected(true);
@@ -407,10 +407,10 @@ public class MainActivity extends BaseActivity {
                 break;
             case 2:
                 mViewTitle.setText("Moment");
-//                mViewToday.setBackgroundColor(Color.parseColor("#48afff"));
-//                mViewSummarize.setBackgroundColor(Color.parseColor("#48afff"));
-//                mViewJournal.setBackgroundColor(Color.parseColor("#84c2fd"));
-//                mViewSetting.setBackgroundColor(Color.parseColor("#48afff"));
+                mViewToday.setBackgroundColor(Color.parseColor("#48afff"));
+                mViewSummarize.setBackgroundColor(Color.parseColor("#48afff"));
+                mViewJournal.setBackgroundColor(Color.parseColor("#84c2fd"));
+                mViewSetting.setBackgroundColor(Color.parseColor("#48afff"));
 
                 mViewToday.setSelected(false);
                 mViewSummarize.setSelected(false);
@@ -420,10 +420,10 @@ public class MainActivity extends BaseActivity {
                 break;
             case 3:
                 mViewTitle.setText("Setting");
-//                mViewToday.setBackgroundColor(Color.parseColor("#48afff"));
-//                mViewSummarize.setBackgroundColor(Color.parseColor("#48afff"));
-//                mViewJournal.setBackgroundColor(Color.parseColor("#48afff"));
-//                mViewSetting.setBackgroundColor(Color.parseColor("#84c2fd"));
+                mViewToday.setBackgroundColor(Color.parseColor("#48afff"));
+                mViewSummarize.setBackgroundColor(Color.parseColor("#48afff"));
+                mViewJournal.setBackgroundColor(Color.parseColor("#48afff"));
+                mViewSetting.setBackgroundColor(Color.parseColor("#84c2fd"));
 
                 mViewToday.setSelected(false);
                 mViewSummarize.setSelected(false);

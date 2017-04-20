@@ -198,7 +198,6 @@
     <style name="font_greydark_14sp">
         <item name="android:textColor">@color/dark_grey</item>
         <item name="android:textSize">14sp</item>
-        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="font_black_30sp">
