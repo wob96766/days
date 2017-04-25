@@ -312,10 +312,10 @@ public class DatelineModel implements Parcelable {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -1);
         String DateToday = dateFormat.format(cal.getTime()); //your formatted date here
-        cal.add(Calendar.DATE, -1);
+        cal.add(Calendar.DATE, -2);
         String DateYesterday = dateFormat.format(cal.getTime()); //your formatted date here
 
-//        if(mSentence == null || mSentence.equals("") || DateInMomeent.equals(DateToday) ) {   // This is only for debugging
+//        if(mSentence == null || mSentence.equals("") || DateInMomeent.equals(DateYesterday) ) {   // This is only for debugging
         if(mSentence == null || mSentence.equals("")  ) {
 
             if (sentence_mode.equals("hash"))
@@ -694,18 +694,33 @@ public class DatelineModel implements Parcelable {
 
                 }else if(uniqKeysArray[0].toString().contains(AppUtils.getAppText(R.string.text_location_home)) || !uniqKeysArray[1].toString().contains(AppUtils.getAppText(R.string.text_location_home))){
 
-                    hash_string = hash_string + String.format("I went to %s and ", poiList.get(uniqKeysArray[1]).toString());
+                       int index_key= uniqKeysArray[1];
+                       if(index_key >= poiList.size())
+                           index_key = poiList.size()-1;
 
-                }else if(!uniqKeysArray[0].toString().contains(AppUtils.getAppText(R.string.text_location_home)) || !uniqKeysArray[1].toString().contains(AppUtils.getAppText(R.string.text_location_home))){
+                        hash_string = hash_string + String.format("I went to %s ", poiList.get(index_key).toString());
 
-                    hash_string = hash_string + String.format("I went to %s and ", poiList.get(uniqKeysArray[0]).toString());
+
+                }else if(!uniqKeysArray[0].toString().contains(AppUtils.getAppText(R.string.text_location_home)) || uniqKeysArray[1].toString().contains(AppUtils.getAppText(R.string.text_location_home))){
+                        int index_key= uniqKeysArray[0];
+                        if(index_key >= poiList.size())
+                        index_key = poiList.size()-1;
+
+                        hash_string = hash_string + String.format("I went to %s ", poiList.get(index_key).toString());
 
                 }else{
                     for (int k=0;k<2;k++){
+                        int index_key= uniqKeysArray[k];
+                        if(index_key >= poiList.size())
+                            index_key = poiList.size()-1;
+
                         if(k==0)
-                            hash_string = hash_string + String.format("I went to %s and ", poiList.get(uniqKeysArray[k]).toString());
-                        else
-                            hash_string = hash_string + String.format("%s. ", poiList.get(uniqKeysArray[k]).toString());
+                            hash_string = hash_string + String.format("I went to %s and ", poiList.get(index_key).toString());
+                        else{
+                            if(poiList.size() > k)
+                                hash_string = hash_string + String.format("%s. ", poiList.get(index_key).toString());
+
+                        }
                     }
                 }
 
@@ -719,13 +734,17 @@ public class DatelineModel implements Parcelable {
 
 
             for (int l=0;l<uniqKeysArray.length;l++){
-                Integer temp_poiIndex = uniqKeysArray[l];
+
+                int index_key= uniqKeysArray[l];
+                if(index_key >= poiList.size())
+                    index_key = poiList.size()-1;
+
                 if(l==0) {
 
-                    if(uniqKeysArray[0].toString().contains(AppUtils.getAppText(R.string.text_location_home))){
+                    if(uniqKeysArray[l].toString().contains(AppUtils.getAppText(R.string.text_location_home))){
                         hash_string = hash_string + String.format("Here are some nice photos taken in my house");
                     }else{
-                        hash_string = hash_string + String.format("Here are some nice photos taken in %s", poiList.get(uniqKeysArray[l]).toString());
+                        hash_string = hash_string + String.format("Here are some nice photos taken in %s", poiList.get(index_key).toString());
                     }
 
 
@@ -734,7 +753,7 @@ public class DatelineModel implements Parcelable {
                     if(uniqKeysArray[l].toString().equals(uniqKeysArray[l-1].toString())){
                         // Do nothing, overlapped .
                     }else{
-                        hash_string = hash_string + String.format(", %s ", poiList.get(uniqKeysArray[l]).toString());
+                        hash_string = hash_string + String.format(", %s ", poiList.get(index_key).toString());
                     }
 
 
@@ -743,7 +762,7 @@ public class DatelineModel implements Parcelable {
                     if(uniqKeysArray[l].toString().equals(uniqKeysArray[l-1].toString())){
                         // Do nothing, overlapped .
                     }else{
-                        hash_string = hash_string + String.format("and %s. ", poiList.get(uniqKeysArray[l]).toString());
+                        hash_string = hash_string + String.format("and %s. ", poiList.get(index_key).toString());
                     }
 
 
