@@ -15,6 +15,7 @@ public abstract class RequestCode
 
 	public static final int GET_WEATHER					= 201;
 	public static final int GET_POI						= 202;
+	public static final int POST_ANALYTICS				= 901;
 
 
 

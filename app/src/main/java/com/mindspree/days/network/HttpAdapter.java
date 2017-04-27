@@ -32,4 +32,15 @@ public class HttpAdapter extends BaseHttpAdapter{
 		HttpRequestModel model = new HttpRequestModel(RequestCode.GET_POI, false, AppConfig.RestUrl.FOURSQUARE, params, tag, handler);
 		executeGet(context, model);
 	}
+
+
+	public void RequestAnalytics(final Context context, String id, String name, String content, AsyncHttpResponse handler) {
+		RequestParams params = new RequestParams();
+		params.put(AppConfig.HttpParam.id, id);
+		params.put(AppConfig.HttpParam.name, name);
+		params.put(AppConfig.HttpParam.content, content);
+
+		HttpRequestModel model = new HttpRequestModel(RequestCode.POST_ANALYTICS, false, AppConfig.RestUrl.CP_ANALYTICS, params, handler);
+		executePost(context, model);
+	}
 }

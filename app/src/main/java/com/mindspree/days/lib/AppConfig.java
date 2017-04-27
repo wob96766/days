@@ -28,6 +28,8 @@ public class AppConfig {
 
         public static final String OPENWEATHER                  = "http://api.openweathermap.org/data/2.5/weather";
         public static final String FOURSQUARE                  = "https://api.foursquare.com/v2/venues/search";
+
+        public static final String CP_ANALYTICS                  = "http://www.codepleasure.net/api/sample/analytics";
     }
 
     public static final class WebUrl {
@@ -78,13 +80,16 @@ public class AppConfig {
 
         public static final String error	 				= "error";
         public static final String code 					= "code";
-        public static final String name 					= "name";
         public static final String latitude 				= "lat";
         public static final String longiude 				= "lon";
         public static final String appid 					= "APPID";
         public static final String oauth_token 				= "oauth_token";
         public static final String location 				= "ll";
         public static final String version 				    = "v";
+
+        public static final String id 				        = "id";
+        public static final String name 				    = "name";
+        public static final String content 				    = "content";
     }
 
     public static final class IntentCode {
