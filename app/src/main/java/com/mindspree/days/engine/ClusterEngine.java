@@ -225,19 +225,6 @@ public class ClusterEngine {
     public static double[] timeFeatureExtract(String fname)
     {
         ExifInterface exif = null;
-//        try {
-//            exif = new ExifInterface(fname);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-        try {
-            exif = new ExifInterface(fname);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        String exif_DATETIME = exif.getAttribute(ExifInterface.TAG_DATETIME);
-
         double exif_year = 0;
         double exif_month = 0;
         double exif_date = 0;
@@ -245,79 +232,54 @@ public class ClusterEngine {
         double exif_min = 0;
         double exif_sec = 0;
 
+        try {
+            exif = new ExifInterface(fname);
+            String exif_DATETIME = exif.getAttribute(ExifInterface.TAG_DATETIME);
+            exif_year = Double.parseDouble(exif_DATETIME.substring(0, 4));
+            exif_month = Double.parseDouble(exif_DATETIME.substring(5, 7));
+            exif_date = Double.parseDouble(exif_DATETIME.substring(8, 10));
+            exif_hour = Double.parseDouble(exif_DATETIME.substring(11, 13));
+            exif_min = Double.parseDouble(exif_DATETIME.substring(14, 16));
+            exif_sec = Double.parseDouble(exif_DATETIME.substring(17, 19));
+
+            double[] time_feature =new double[6];
+
+            time_feature[0]=exif_year;
+            time_feature[1]=exif_month;
+            time_feature[2]=exif_date;
+            time_feature[3]=exif_hour;
+            time_feature[4]=exif_min;
+            time_feature[5]=exif_sec;
+
+            return time_feature;
 
 
-        if (exif_DATETIME != null) {
-
-
-
-//            if(isValidInteger(exif_DATETIME.substring(0, 4)))
-//                exif_year = Double.parseDouble(exif_DATETIME.substring(0, 4));
-//            else
-//                exif_year = 1997;
-//
-//            if(isValidInteger(exif_DATETIME.substring(5, 7)))
-//                exif_month = Double.parseDouble(exif_DATETIME.substring(5, 7));
-//            else
-//                exif_month = 11;
-//
-//            if(isValidInteger(exif_DATETIME.substring(8, 10)))
-//                exif_date = Double.parseDouble(exif_DATETIME.substring(8, 10));
-//            else
-//                exif_date = 11;
-//
-//            if(isValidInteger(exif_DATETIME.substring(11, 13)))
-//                exif_hour = Double.parseDouble(exif_DATETIME.substring(11, 13));
-//            else
-//                exif_hour = 11;
-//
-//            if(isValidInteger(exif_DATETIME.substring(14, 16)))
-//                exif_min = Double.parseDouble(exif_DATETIME.substring(14, 16));
-//            else
-//                exif_min = 11;
-//
-//            if(isValidInteger(exif_DATETIME.substring(17, 19)))
-//                exif_sec = Double.parseDouble(exif_DATETIME.substring(17, 19));
-//            else
-//                exif_sec = 11;
-
-
-            try {
-                exif_year = Double.parseDouble(exif_DATETIME.substring(0, 4));
-                exif_month = Double.parseDouble(exif_DATETIME.substring(5, 7));
-                exif_date = Double.parseDouble(exif_DATETIME.substring(8, 10));
-                exif_hour = Double.parseDouble(exif_DATETIME.substring(11, 13));
-                exif_min = Double.parseDouble(exif_DATETIME.substring(14, 16));
-                exif_sec = Double.parseDouble(exif_DATETIME.substring(17, 19));
-            } catch (Exception e) {
-                exif_year = 1997;
-                exif_month = 11;
-                exif_date = 11;
-                exif_hour = 11;
-                exif_min = 11;
-                exif_sec = 11;
-            }
-
-
-        } else {
+        } catch (Exception e) {
             exif_year = 1997;
             exif_month = 11;
             exif_date = 11;
             exif_hour = 11;
             exif_min = 11;
             exif_sec = 11;
+
+
+            double[] time_feature =new double[6];
+
+            time_feature[0]=exif_year;
+            time_feature[1]=exif_month;
+            time_feature[2]=exif_date;
+            time_feature[3]=exif_hour;
+            time_feature[4]=exif_min;
+            time_feature[5]=exif_sec;
+            e.printStackTrace();
+
+            return time_feature;
+
+
         }
 
-        double[] time_feature =new double[6];
 
-        time_feature[0]=exif_year;
-        time_feature[1]=exif_month;
-        time_feature[2]=exif_date;
-        time_feature[3]=exif_hour;
-        time_feature[4]=exif_min;
-        time_feature[5]=exif_sec;
 
-        return time_feature;
 
     }
 

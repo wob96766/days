@@ -900,7 +900,14 @@ public class DatelineModel implements Parcelable {
                 bitmap_options.inPreferredConfig = Bitmap.Config.RGB_565;
                 bitmap_options.inSampleSize = sample_size;
                 Bitmap bMap_temp = BitmapFactory.decodeFile(timelinePhotoFile, bitmap_options);
-                Im_width = bMap_temp.getWidth() * sample_size ;
+
+
+
+               if(bMap_temp==null)
+                   Im_width = 500 ;
+               else
+                   Im_width = bMap_temp.getWidth() * sample_size ;
+
 
                 Num_Face =  engineDBInterface.getExtraFeatWithPhotoURL(timelinePhotoFile);
                 Smile_Prob =  engineDBInterface.getWeightCoeffWithPhotoURL(timelinePhotoFile);

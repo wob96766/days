@@ -2,6 +2,7 @@ package com.mindspree.days.model;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.ExifInterface;
 import android.os.Environment;
 
 import com.mindspree.days.R;
@@ -830,7 +831,19 @@ public class DnnModel {
             jargv[5] =DNN_test_path_resample;
             jargv[6] = outDir+"/";
 
-            String class_predict = DnnEngineClassJNI(jargv);
+            String class_predict;
+
+
+
+            try {
+                class_predict= DnnEngineClassJNI(jargv);
+
+            } catch (Exception e) {
+
+                class_predict="0";
+                e.printStackTrace();
+            }
+
             System.gc();
 
 
