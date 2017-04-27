@@ -80,14 +80,6 @@ public class DatelineModel implements Parcelable {
 
 
     public ClusterEngine clusterEngine;
-
-    // DNN related classes
-    //public DnnEngine mDnnengine ;
-//    public String [] DNN_DB1 = {"Dutch oven","wok","caldron","frying pan","Crock Pot","plate","restaurant","groom","bakery"};
-//    public String [] DNN_DB2 = {"lakeside","seashore","lakefront"};
-//    public String [] DNN_DB3 = {"volcano","cliff","valley","mountainside","alp"};
-//    public String [] DNN_DB4 = {"amusement park","playground"};
-
     public DnnModel dnnModel;
 
     public ArrayList DNN_result;
@@ -903,11 +895,12 @@ public class DatelineModel implements Parcelable {
 
 
 
-               if(bMap_temp==null)
+               if(bMap_temp==null){
                    Im_width = 500 ;
-               else
-                   Im_width = bMap_temp.getWidth() * sample_size ;
-
+                   return hash_string;
+               }else {
+                   Im_width = bMap_temp.getWidth() * sample_size;
+               }
 
                 Num_Face =  engineDBInterface.getExtraFeatWithPhotoURL(timelinePhotoFile);
                 Smile_Prob =  engineDBInterface.getWeightCoeffWithPhotoURL(timelinePhotoFile);
