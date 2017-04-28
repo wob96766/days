@@ -167,11 +167,11 @@ public class LocationLoggingService extends Service {
         PendingIntent sender = PendingIntent.getBroadcast(LocationLoggingService.this, 0, intent, 0);
 
         long firstTime = SystemClock.elapsedRealtime();
-        firstTime += 1 * 6000;
+        firstTime += 3 * 6000;
 
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
-        alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, firstTime, 1 * 6000, sender);
+        alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, firstTime, 3 * 6000, sender);
     }
 
     /**
@@ -260,15 +260,21 @@ public class LocationLoggingService extends Service {
                 if(now.after(weatherTime)){
                     mPreference.setWeatherDate(dayFormat.format(now));
                     Random random = new Random();
-                    int randomSecond = random.nextInt(7200);
-                    //int randomSecond = random.nextInt(1);
-                    mRunnable = new Runnable() {
+                    //int randomSecond = random.nextInt(7200);
+                    int randomSecond = random.nextInt(10);
+                    /*mRunnable = new Runnable() {
                         @Override
                         public void run() {
                             RequestWeather();
                         }
                     };
-                    mHandler.postDelayed(mRunnable, randomSecond * 1000);
+                    mHandler.postDelayed(mRunnable, randomSecond * 1000);*/
+                    Intent intent = new Intent(LocationLoggingService.this, WeatherServiceReciever.class);
+                    intent.setAction("ACTION.REQUEST.WeatherService");
+                    PendingIntent sender = PendingIntent.getBroadcast(LocationLoggingService.this, 0, intent, 0);
+                    AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+                    alarmManager.set(AlarmManager.RTC_WAKEUP, randomSecond * 1000, sender);
+
                 }
             }
             // location logging
