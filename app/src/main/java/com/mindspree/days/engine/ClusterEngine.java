@@ -8,8 +8,10 @@ import android.media.ExifInterface;
 import android.util.Log;
 import android.util.SparseArray;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.face.Face;
@@ -222,6 +224,34 @@ public class ClusterEngine {
         }
     }
 
+    private static String getTakenTime(String fname){
+        String dateString = "";
+        File file = new File(fname);
+        if(file.exists()) //Extra check, Just to validate the given path
+        {
+            ExifInterface intf = null;
+            try
+            {
+                intf = new ExifInterface(fname);
+                if(intf != null)
+                {
+                    dateString = intf.getAttribute(ExifInterface.TAG_DATETIME);
+                }
+            }
+            catch(Exception e)
+            {
+
+                e.printStackTrace();
+            }
+            if(intf == null)
+            {
+                Date lastModDate = new Date(file.lastModified());
+                dateString = lastModDate.toString();
+            }
+        }
+        return dateString;
+    }
+
     public static double[] timeFeatureExtract(String fname)
     {
         ExifInterface exif = null;
@@ -234,7 +264,8 @@ public class ClusterEngine {
 
         try {
             exif = new ExifInterface(fname);
-            String exif_DATETIME = exif.getAttribute(ExifInterface.TAG_DATETIME);
+            String exif_DATETIME = getTakenTime(fname);// exif.getAttribute(ExifInterface.TAG_DATETIME);
+
             exif_year = Double.parseDouble(exif_DATETIME.substring(0, 4));
             exif_month = Double.parseDouble(exif_DATETIME.substring(5, 7));
             exif_date = Double.parseDouble(exif_DATETIME.substring(8, 10));
