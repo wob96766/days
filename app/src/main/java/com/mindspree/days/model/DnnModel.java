@@ -216,49 +216,49 @@ public class DnnModel {
         if(language_mode==1) // Englinsh
         {
             if(poiclassDetect(poi_string,dnnModel.POI_DB1)){
-                hash_string_POI =  String.format("In %s ",poi_string);
-                hash_string_POI= hash_string_POI + String.format("%s. ","I had some coffee");
+                hash_string_POI =  String.format("%s 에서 ",poi_string);
+                hash_string_POI= hash_string_POI + String.format("%s. ","커피를 한잔 마셨다. ");
             } else if(poiclassDetect(poi_string,dnnModel.POI_DB2)){
-                hash_string_POI =  String.format("In %s ",poi_string);
+                hash_string_POI =  String.format("%s 에서 ",poi_string);
 
                 if(avg_PhotoCreateTime>05 && avg_PhotoCreateTime< 10){
                     //Breakfast
-                    hash_string_POI = hash_string_POI + String.format("%s ", "I had a breakfast. ");
+                    hash_string_POI = hash_string_POI + String.format("%s ", "아침을 먹었다. ");
 
                 }else if(avg_PhotoCreateTime>=11 && avg_PhotoCreateTime< 14){
                     //Lunch
-                    hash_string_POI = hash_string_POI +String.format("%s ", "I had a lunch. ");
+                    hash_string_POI = hash_string_POI +String.format("%s ", "점심을 먹었다. ");
 
                 }else if(avg_PhotoCreateTime>=10 && avg_PhotoCreateTime< 11){
                     //Lunch
-                    hash_string_POI =hash_string_POI + String.format("%s %s ", "I had a brunch. ");
+                    hash_string_POI =hash_string_POI + String.format("%s ", "브런치를 먹었다. ");
 
                 }else if(avg_PhotoCreateTime>=17 && avg_PhotoCreateTime< 19){
                     //dinner
-                    hash_string_POI = hash_string_POI +String.format("%s %s ", "I had a dinner. ");
+                    hash_string_POI = hash_string_POI +String.format("%s ", "저녁을 먹었다. ");
                 }else if(avg_PhotoCreateTime>=19) {
                     //Party
-                    hash_string_POI = hash_string_POI +String.format("%s ", "I had a party with my friends and colleagues");
+                    hash_string_POI = hash_string_POI +String.format("%s ", "친구 동료들과 저녁 회식 모임을 했다. ");
                 }
 
             } else if(poiclassDetect(poi_string,dnnModel.POI_DB3)){
-                hash_string_POI =  String.format("In %s ",poi_string);
-                hash_string_POI= hash_string_POI + String.format("%s. ","I walked with my friends and took some rest");
+                hash_string_POI =  String.format("%s 에서 ",poi_string);
+                hash_string_POI= hash_string_POI + String.format("%s. ","산책도 하면서 쉬었다. ");
 
             } else if(poiclassDetect(poi_string,dnnModel.POI_DB4)){
 
-                hash_string_POI =  String.format("In %s ",poi_string);
-                hash_string_POI= hash_string_POI + String.format("%s. ","I watched movie with my friend");
+                hash_string_POI =  String.format("%s 에서 ",poi_string);
+                hash_string_POI= hash_string_POI + String.format("%s. ","영화를 관람했다 ");
 
             } else if(poiclassDetect(poi_string,dnnModel.POI_DB5)){
 
-                hash_string_POI =  String.format("In %s ",poi_string);
-                hash_string_POI= hash_string_POI + String.format("%s. ","I did some shopping");
+                hash_string_POI =  String.format("%s 에서 ",poi_string);
+                hash_string_POI= hash_string_POI + String.format("%s. ","쇼핑을 했다 ");
 
             } else if(poiclassDetect(poi_string,dnnModel.POI_DB6)){
 
-                hash_string_POI =  String.format("In %s ",poi_string);
-                hash_string_POI= hash_string_POI + String.format("%s. ","I went to amusement park");
+                hash_string_POI =  String.format("%s ",poi_string);
+                hash_string_POI= hash_string_POI + String.format("%s. ","공원에 놀러 갔다 ");
 
             }
         }
@@ -294,7 +294,7 @@ public class DnnModel {
                 }
 
             } else if (poiclassDetect(poi_string, dnnModel.POI_DB3)) {
-                hash_string_POI = String.format("In %s ", poi_string);
+                hash_string_POI = String.format("%s 에서 ", poi_string);
                 if (weekend_days == 1)  // Weekend
                     hash_string_POI = hash_string_POI + String.format("%s. ", "주말에 공원에서 산책을 했다.");
 
