@@ -342,12 +342,13 @@ public class EngineDBInterface {
         Cursor c = db.rawQuery(" SELECT extra_feat " +
                 " FROM PHOTOS " +
                 " WHERE file_location = '" + file_location_name + "';", null);
+        if(c.getCount() > 0) {
+            if (c.moveToFirst()) {
+                do {
+                    Extra_Feat = c.getFloat(0);
 
-        if(c.moveToFirst()){
-            do{
-                Extra_Feat = c.getFloat(0);
-
-            }while(c.moveToNext());
+                } while (c.moveToNext());
+            }
         }
 
         c.close();

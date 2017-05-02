@@ -437,20 +437,21 @@ public class DatelineModel implements Parcelable {
                     {
                         // key is unique poi index
                         Integer key_temp = uniqKeysArray[m];  //This is POI index which is key
+                        if(result.size() > key_temp) {
+                            size = result.get(key_temp);          // This is the number of photos taken in this POI index
 
-                        size = result.get(key_temp);          // This is the number of photos taken in this POI index
 
+                            //4. Face & Deep learning
+                            hash_string_face = SentenceFromPhoto(offset, size, poiList.get(key_temp).toString(), photolist, front_cam_width, rear_cam_width, DNN_path, weekend_days);
 
-                        //4. Face & Deep learning
-                        hash_string_face=SentenceFromPhoto(offset,size,poiList.get(key_temp).toString(),photolist,front_cam_width,rear_cam_width, DNN_path, weekend_days);
+                            if (hash_string_face.equals(hash_string_face_buf))
+                                hash_string_face = ""; // This is to prevent the duplication
 
-                        if(hash_string_face.equals(hash_string_face_buf))
-                            hash_string_face=""; // This is to prevent the duplication
+                            hash_string = hash_string + hash_string_face;
+                            hash_string_face_buf = hash_string_face;
 
-                        hash_string =hash_string+hash_string_face;
-                        hash_string_face_buf = hash_string_face;
-
-                        offset=offset+size;
+                            offset = offset + size;
+                        }
                     }
 
 
@@ -1090,9 +1091,11 @@ public class DatelineModel implements Parcelable {
                         n = generator.nextInt(dnnModel.FaceBasedPool_single_smile.length);
 
                         if (smile_cnt > 0) {
-                            hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_single_smile[n], connection);
+                            if(dnnModel.FaceBasedPool_single_smile.length > n)
+                                hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_single_smile[n], connection);
                         } else {
-                            hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_single_nosmile[n], connection);
+                            if(dnnModel.FaceBasedPool_single_nosmile.length > n)
+                                hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_single_nosmile[n], connection);
 
                         }
                     }
@@ -1103,9 +1106,11 @@ public class DatelineModel implements Parcelable {
                         n = generator.nextInt(dnnModel.FaceBasedPool_group_smile.length);
 
                         if (smile_cnt > 0) {
-                            hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_group_smile[n], connection);
+                            if(dnnModel.FaceBasedPool_group_smile.length > n)
+                                hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_group_smile[n], connection);
                         } else {
-                            hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_group_nosmile[n], connection);
+                            if(dnnModel.FaceBasedPool_group_nosmile.length > n)
+                                hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_group_nosmile[n], connection);
                         }
                         DNN_result.add(String.format("#%s", "Group photo"));
 
@@ -1116,11 +1121,15 @@ public class DatelineModel implements Parcelable {
                         n = generator.nextInt(dnnModel.FaceBasedPool_group_selfie.length);
 
                         if (smile_cnt > 0) {
-                            hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_group_selfie[n], connection);
-                            DNN_result.add(String.format("#%s", "Group selfie with smile"));
+                            if(dnnModel.FaceBasedPool_group_selfie.length > n) {
+                                hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_group_selfie[n], connection);
+                                DNN_result.add(String.format("#%s", "Group selfie with smile"));
+                            }
                         } else {
-                            hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_group_noselfie[n], connection);
-                            DNN_result.add(String.format("#%s", "Group selfie"));
+                            if(dnnModel.FaceBasedPool_group_noselfie.length > n) {
+                                hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_group_noselfie[n], connection);
+                                DNN_result.add(String.format("#%s", "Group selfie"));
+                            }
                         }
 
                     }
