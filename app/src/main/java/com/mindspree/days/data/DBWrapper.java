@@ -1,5 +1,7 @@
 package com.mindspree.days.data;
 
+import android.database.Cursor;
+
 import com.google.firebase.database.DataSnapshot;
 import com.mindspree.days.AppApplication;
 import com.mindspree.days.model.Daily;
@@ -139,6 +141,12 @@ public class DBWrapper {
     }
 
     // update the set location information.
+    public void setLocation(int locationId, String title, String category) {
+        mDbHelper.setLocation(mUserUid, locationId, title, category);
+    }
+
+
+    // update the set location information.
     public void setLocationLog(int locationId , int islock) {
         mDbHelper.setLocationLog(mUserUid, islock, locationId);
     }
@@ -213,6 +221,13 @@ public class DBWrapper {
         return mDbHelper.getCreateTime(mUserUid, name);
     }
 
+    public int getNewPhotoCount() {
+        return mDbHelper.getNewPhotoCount(mUserUid);
+    }
+
+    public int updateNewPhotoFlag() {
+        return mDbHelper.updateNewPhotoFlag(mUserUid);
+    }
 
 
 }

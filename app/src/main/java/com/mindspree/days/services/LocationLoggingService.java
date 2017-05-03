@@ -260,15 +260,8 @@ public class LocationLoggingService extends Service {
                 if(now.after(weatherTime)){
                     mPreference.setWeatherDate(dayFormat.format(now));
                     Random random = new Random();
-                    //int randomSecond = random.nextInt(7200);
-                    int randomSecond = random.nextInt(10);
-                    /*mRunnable = new Runnable() {
-                        @Override
-                        public void run() {
-                            RequestWeather();
-                        }
-                    };
-                    mHandler.postDelayed(mRunnable, randomSecond * 1000);*/
+                    int randomSecond = random.nextInt(72);
+                    //int randomSecond = random.nextInt(10);
                     Intent intent = new Intent(LocationLoggingService.this, WeatherServiceReciever.class);
                     intent.setAction("ACTION.REQUEST.WeatherService");
                     PendingIntent sender = PendingIntent.getBroadcast(LocationLoggingService.this, 0, intent, 0);
@@ -301,39 +294,53 @@ public class LocationLoggingService extends Service {
                         //}
                     } else {
                         model = mDBWrapper.getLastTimelineToday();
-                        Location dbLocation = new Location("dbLocation");
-                        dbLocation.setLatitude(model.getMeasureLatitude());
-                        dbLocation.setLongitude(model.getMeasureLogitude());
-                        if (AppUtils.datediffinminutes(now, dateFormat.parse(model.getMeasureDate())) >= mPreference.getDuration()) {
+                        int newPhotoCount = mDBWrapper.getNewPhotoCount();
+                        if(newPhotoCount > 0){
+                            mDBWrapper.updateNewPhotoFlag();
+                            Location dbLocation = new Location("dbLocation");
+                            dbLocation.setLatitude(model.getMeasureLatitude());
+                            dbLocation.setLongitude(model.getMeasureLogitude());
                             if (dbLocation.distanceTo(location) > mPreference.getDistance()) {
-                                if (model.mLock == 1) {
-                                    sendAnalyticsEvent(mPreference.getUserUid(), "location", String.format("%f,%f",location.getLatitude(), location.getLongitude()));
-                                    mDBWrapper.insertLocation(location.getLatitude(), location.getLongitude());
-                                    sendBroadcast(new Intent(AppConfig.Broadcast.REFRESH_DATA));
-                                } else {
-                                    mDBWrapper.updateLocation(location.getLatitude(), location.getLongitude());
-                                    mDBWrapper.updateMeasureLocation(location.getLatitude(), location.getLongitude());
-                                }
-                            } else {
-                                if (model.mLock != 1) {
-                                    mDBWrapper.updateMeasureLocation(location.getLatitude(), location.getLongitude());
-                                    if (mHomeLocation != null && mHomeLocation.distanceTo(location) < 300) {
-                                        mDBWrapper.setLocationLog(model.mLocationId, AppUtils.getAppText(R.string.text_location_home), mHomeLocation.getLatitude(), mHomeLocation.getLongitude());
-                                    } else if (mOtherLocation != null && mOtherLocation.distanceTo(location) < 300) {
-                                        mDBWrapper.setLocationLog(model.mLocationId, AppUtils.getAppText(R.string.text_location_other), mOtherLocation.getLatitude(), mOtherLocation.getLongitude());
-                                    } else {
-                                        mDBWrapper.setLocationLog(model.mLocationId, 1);
-                                    }
-                                    sendBroadcast(new Intent(AppConfig.Broadcast.REFRESH_DATA));
-                                } else {
-                                    mDBWrapper.updateMeasureLocation(location.getLatitude(), location.getLongitude());
-                                }
+                                sendAnalyticsEvent(mPreference.getUserUid(), "location", String.format("%f,%f",location.getLatitude(), location.getLongitude()));
+                                mDBWrapper.insertLocation(location.getLatitude(), location.getLongitude());
+                                sendBroadcast(new Intent(AppConfig.Broadcast.REFRESH_DATA));
                             }
                         } else {
-                            if (dbLocation.distanceTo(location) > 10) {
-                                mDBWrapper.updateLocation(location.getLatitude(), location.getLongitude());
+                            Location dbLocation = new Location("dbLocation");
+                            dbLocation.setLatitude(model.getMeasureLatitude());
+                            dbLocation.setLongitude(model.getMeasureLogitude());
+                            if (AppUtils.datediffinminutes(now, dateFormat.parse(model.getMeasureDate())) >= mPreference.getDuration()) {
+                                if (dbLocation.distanceTo(location) > mPreference.getDistance()) {
+                                    if (model.mLock == 1) {
+                                        sendAnalyticsEvent(mPreference.getUserUid(), "location", String.format("%f,%f",location.getLatitude(), location.getLongitude()));
+                                        mDBWrapper.insertLocation(location.getLatitude(), location.getLongitude());
+                                        sendBroadcast(new Intent(AppConfig.Broadcast.REFRESH_DATA));
+                                    } else {
+                                        mDBWrapper.updateLocation(location.getLatitude(), location.getLongitude());
+                                        mDBWrapper.updateMeasureLocation(location.getLatitude(), location.getLongitude());
+                                    }
+                                } else {
+                                    if (model.mLock != 1) {
+                                        mDBWrapper.updateMeasureLocation(location.getLatitude(), location.getLongitude());
+                                        if (mHomeLocation != null && mHomeLocation.distanceTo(location) < 300) {
+                                            mDBWrapper.setLocationLog(model.mLocationId, AppUtils.getAppText(R.string.text_location_home), mHomeLocation.getLatitude(), mHomeLocation.getLongitude());
+                                        } else if (mOtherLocation != null && mOtherLocation.distanceTo(location) < 300) {
+                                            mDBWrapper.setLocationLog(model.mLocationId, AppUtils.getAppText(R.string.text_location_other), mOtherLocation.getLatitude(), mOtherLocation.getLongitude());
+                                        } else {
+                                            mDBWrapper.setLocationLog(model.mLocationId, 1);
+                                        }
+                                        sendBroadcast(new Intent(AppConfig.Broadcast.REFRESH_DATA));
+                                    } else {
+                                        mDBWrapper.updateMeasureLocation(location.getLatitude(), location.getLongitude());
+                                    }
+                                }
+                            } else {
+                                if (dbLocation.distanceTo(location) > 10) {
+                                    mDBWrapper.updateLocation(location.getLatitude(), location.getLongitude());
+                                }
                             }
                         }
+
                     }
                     mPreference.setLoggingOnOff(true);
                 } catch (Exception e)  {

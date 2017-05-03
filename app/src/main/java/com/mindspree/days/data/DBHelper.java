@@ -37,7 +37,7 @@ import java.util.Date;
 public class DBHelper extends SQLiteOpenHelper {
 
     private final String TAG = getClass().getSimpleName();
-    private final int VERSION = 1;
+    private final int VERSION = 2;
     private Context context;
     private SQLiteDatabase database;
     private String DATABASE_PATH = "";
@@ -80,6 +80,8 @@ public class DBHelper extends SQLiteOpenHelper {
     private String COLUMN_LOCATION_INDEX = "location_index";
     private String COLUMN_CREATE_DATE = "create_date";
     private String COLUMN_CREATED = "created";
+    private String COLUMN_CATEGORY = "category";
+    private String COLUMN_FLAG = "flag";
 
     private String COLUMN_DAILY_INDEX = "daily_index";
     private String COLUMN_MOOD = "mood";
@@ -93,7 +95,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @SuppressLint("SdCardPath")
     public DBHelper(Context context) {
-        super(context, context.getResources().getString(R.string.db_name), null, 1);
+        super(context, context.getResources().getString(R.string.db_name), null, 2);
         this.context = context;
         DATABASE_PATH = "/data/data/" + context.getPackageName() + "/databases/";
         DB_NAME = context.getResources().getString(R.string.db_name);
@@ -120,6 +122,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 + COLUMN_DELETE_CHECK + " INTEGER,"
                 + COLUMN_UPDATE_DATE + " TEXT,"
                 + COLUMN_PHOTO_SIZE + " TEXT,"
+                + COLUMN_FLAG + " INT DEFAULT 1,"
                 + COLUMN_SORTSEQ + " INTEGER DEFAULT 100,"
                 + COLUMN_USER_ID + " TEXT DEFAULT '1'" + ")";
         db.execSQL(CREATE_PHOTO_TABLE);
@@ -134,6 +137,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 + COLUMN_MEASURELONGITUDE+ " DOUBLE,"
                 + COLUMN_DISTANCE + " FLOAT,"
                 + COLUMN_LOCK + " INT,"
+                + COLUMN_CATEGORY  + " TEXT,"
                 + COLUMN_MEASURE_DATE + " TEXT,"
                 + COLUMN_CREATE_DATE + " TEXT,"
                 + COLUMN_UPDATE_DATE + " TEXT)";
@@ -200,7 +204,20 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        switch (oldVersion) {
+            case 1 :
+                try {
+                    db.beginTransaction();
+                    db.execSQL("ALTER TABLE " + TABLE_LOCATIONS + " ADD COLUMN " + COLUMN_CATEGORY + " TEXT DEFAULT ''");
+                    db.execSQL("ALTER TABLE " + TABLE_PHOTOS + " ADD COLUMN " + COLUMN_FLAG + " INT DEFAULT 1");
+                    db.setTransactionSuccessful();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    db.endTransaction();
+                };
+                break;
+        }
     }
 
     /**
@@ -302,8 +319,30 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(COLUMN_FILE_NAME, fileName);
         values.put(COLUMN_UPDATE_DATE, fileUpdateDate);
         values.put(COLUMN_PHOTO_SIZE, photo_size);
+        values.put(COLUMN_FLAG, 0);
 
         return database.insert(TABLE_PHOTOS, null, values);
+    }
+
+    public int getNewPhotoCount(final String user_uid) {
+        int photoCount = 0;
+
+        Cursor cursor = database.query(TABLE_PHOTOS, null, String.format(" %s = 0 and %s = ? ", COLUMN_FLAG, COLUMN_USER_ID), new String[]{user_uid}, null, null, COLUMN_UPDATE_DATE+ " DESC", null);
+        try {
+            photoCount = cursor.getCount();
+            if (cursor != null)
+                cursor.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return photoCount;
+    }
+
+    public int updateNewPhotoFlag(final String userUid) {
+
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_FLAG, 1);
+        return database.update(TABLE_PHOTOS, cv,  String.format(" %s = 0 and %s = ? ", COLUMN_FLAG, COLUMN_USER_ID), new String[]{userUid});
     }
 
     public long updateLocation(final String user_uid, final double latitude, final double longitude) {
@@ -554,6 +593,16 @@ public class DBHelper extends SQLiteOpenHelper {
 
         database.update(TABLE_LOCATIONS, values, COLUMN_LOCATION_INDEX + " =? ", new String[]{String.format("%d", locationId)});
     }
+
+    public void setLocation(String userUid, int locationId, String title, String category) {
+        final ContentValues values = new ContentValues();
+
+        values.put(COLUMN_NAME, title);
+        values.put(COLUMN_CATEGORY, category);
+
+        database.update(TABLE_LOCATIONS, values, COLUMN_LOCATION_INDEX + " =? ", new String[]{String.format("%d", locationId)});
+    }
+
 
     public void setLocationLog(String userUid, int islock, int locationId) {
 

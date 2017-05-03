@@ -11,6 +11,7 @@ import org.json.JSONObject;
 public class FoursquareModel {
 
     public String mName = "";
+    public String mCategory = "";
     /*
     {"meta":{"code":200,"requestId":"586ef232dd57977a2d32a646"},
     "notifications":[{"type":"notificationTray","item":{"unreadCount":0}}],
@@ -34,6 +35,17 @@ public class FoursquareModel {
                         if(!item.isNull("name")){
                             model.mName = item.getString("name");
                         }
+                        if(!item.isNull("categories")) {
+                            JSONArray categories = item.getJSONArray("categories");
+                            for (int j = 0; j < categories.length(); j++) {
+                                JSONObject category = categories.getJSONObject(j);
+                                if (!category.isNull("name")) {
+                                    model.mCategory = category.getString("name");
+                                }
+                                break;
+                            }
+                        }
+
                         break;
                     }
                 }
