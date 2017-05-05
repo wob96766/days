@@ -57,6 +57,12 @@ public class DBWrapper {
     public void insertLocation(double latitude, double longitude) {
         mDbHelper.insertLocation(mUserUid, latitude, longitude);
     }
+
+    // create user's location
+    public void insertLocationAminute(double latitude, double longitude) {
+        mDbHelper.insertLocation(mUserUid, latitude, longitude);
+    }
+
     // create user's location
     public void updateLocation(double latitude, double longitude) {
         mDbHelper.updateLocation(mUserUid, latitude, longitude);
@@ -130,9 +136,13 @@ public class DBWrapper {
         mDbHelper.setMood(mUserUid, mood);
     }
 
-    //update the mood of the day.
+    //update the weather of the day.
     public void setWeather(String weather){
         mDbHelper.setWeather(mUserUid, weather);
+    }
+
+    public String getWeatherToday(){
+        return mDbHelper.getWeatherToday(mUserUid);
     }
 
     // update the set location information.

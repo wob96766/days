@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -433,6 +434,47 @@ public class DBHelper extends SQLiteOpenHelper {
         return database.insert(TABLE_LOCATIONS, null, values);
     }
 
+    public long insertLocationAminute(final String user_uid, final double latitude, final double longitude) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        Date date = new Date();
+        Calendar cal = Calendar.getInstance();
+
+        cal.setTime(date);
+        // 10분 더하기
+        cal.add(Calendar.MINUTE, -1);
+
+
+        Cursor cursor = database.query(TABLE_LOCATIONS, null, null, null, null, null, COLUMN_CREATE_DATE+ " DESC", null);
+        try {
+            if (cursor.moveToFirst()) {
+                do {
+                    int locationIndex = cursor.getInt(cursor.getColumnIndex(COLUMN_LOCATION_INDEX));
+                    ContentValues cv = new ContentValues();
+                    cv.put(COLUMN_UPDATE_DATE, dateFormat.format(date));
+                    database.update(TABLE_LOCATIONS, cv, COLUMN_LOCATION_INDEX + " =? ", new String[]{String.format("%d", locationIndex)});
+                    break;
+                } while (cursor.moveToNext());
+            }
+            if (cursor != null)
+                cursor.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        final ContentValues values = new ContentValues();
+
+        values.put(COLUMN_USER_ID, user_uid);
+        values.put(COLUMN_LATITUDE, latitude);
+        values.put(COLUMN_LONGITUDE, longitude);
+        values.put(COLUMN_MEASURELATITUDE, latitude);
+        values.put(COLUMN_MEASURELONGITUDE, longitude);
+        values.put(COLUMN_CREATE_DATE, dateFormat.format(cal.getTime()));
+        values.put(COLUMN_MEASURE_DATE, dateFormat.format(cal.getTime()));
+
+        return database.insert(TABLE_LOCATIONS, null, values);
+    }
+
     public void setMood(final String userUid, final String mood) {
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
@@ -501,6 +543,33 @@ public class DBHelper extends SQLiteOpenHelper {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public String getWeatherToday(final String userUid) {
+        String weather = "";
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        //dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+        Date date = new Date();
+
+        Cursor cursor = database.query(TABLE_DAILY, null,  String.format("date(%s) = date('now') and %s =? ", COLUMN_CREATE_DATE, COLUMN_USER_ID), new String[]{userUid}, null, null, COLUMN_CREATE_DATE+ " DESC", null);
+        try {
+            if(cursor.getCount() > 0){
+                if (cursor.moveToFirst()) {
+                    do {
+                        weather = cursor.getString(cursor.getColumnIndex(COLUMN_WEATHER));
+
+                        break;
+                    } while (cursor.moveToNext());
+                }
+
+            }
+            if (cursor != null)
+                cursor.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return weather;
     }
 
     public void setSentence(final String userUid, final String sentence) {
@@ -939,8 +1008,8 @@ public class DBHelper extends SQLiteOpenHelper {
         try {
             Cursor cursor = database.rawQuery(
                     "select a.create_date, "
-                            + "(select group_concat(ifnull(b.file_location, b.file_location_url)) from (select * from PHOTOS where date(update_date) = date(a.create_date) and user_id = '" + userUid + "' order by quality_rank desc) b )  as files,"
-                            + "(select group_concat(b.file_index) from (select * from PHOTOS where date(update_date) = date(a.create_date) and user_id = '" + userUid + "' order by quality_rank desc) b )  as ids,"
+                            + "(select group_concat(ifnull(b.file_location, b.file_location_url)) from (select * from PHOTOS where date(update_date) = date(a.create_date) and user_id = '" + userUid + "' group by cluster_id order by quality_rank desc) b )  as files,"
+                            + "(select group_concat(b.file_index) from (select * from PHOTOS where date(update_date) = date(a.create_date) and user_id = '" + userUid + "' group by cluster_id order by quality_rank desc) b )  as ids,"
                             + "(select count(*) from PHOTOS where date(a.create_date) = date(update_date) and user_id = '" + userUid + "')  as photo_count, "
                             + "(select count(*) from LOCATIONS where date(a.create_date) = date(create_date) and user_id = '" + userUid + "')  as location_count,"
                             + "(select sentence from DAILY where date(create_date) = date(a.create_date)) as sentence ,"
@@ -1009,7 +1078,7 @@ public class DBHelper extends SQLiteOpenHelper {
         try {
             Cursor cursor = database.rawQuery(
                     "select a.create_date, "
-                            + "(select group_concat(ifnull(b.file_location, b.file_location_url)) from (select * from PHOTOS where date(update_date) = date(a.create_date) and user_id = '" + userUid + "' order by quality_rank desc) b )  as files,"
+                            + "(select group_concat(ifnull(b.file_location, b.file_location_url)) from (select * from PHOTOS where date(update_date) = date(a.create_date) and user_id = '" + userUid + "' group by cluster_id order by quality_rank desc) b )  as files,"
                             + "(select count(*) from PHOTOS where date(a.create_date) = date(update_date) and user_id = '" + userUid + "')  as photo_count, "
                             + "(select count(*) from LOCATIONS where date(a.create_date) = date(create_date) and user_id = '" + userUid + "')  as location_count,"
                             + "(select sentence from DAILY where date(create_date) = date(a.create_date)) as sentence,"
@@ -1052,7 +1121,7 @@ public class DBHelper extends SQLiteOpenHelper {
         try {
             Cursor cursor = database.rawQuery(
                     "select a.create_date, "
-                            + "(select group_concat(ifnull(b.file_location, b.file_location_url)) from (select * from PHOTOS where date(update_date) = date(a.create_date) and user_id = '" + userUid + "' order by quality_rank desc) b )  as files,"
+                            + "(select group_concat(ifnull(b.file_location, b.file_location_url)) from (select * from PHOTOS where date(update_date) = date(a.create_date) and user_id = '" + userUid + "' group by cluster_id order by quality_rank desc) b )  as files,"
                             + "(select group_concat(b.file_index) from (select * from PHOTOS where date(update_date) = date(a.create_date) and user_id = '" + userUid + "' order by quality_rank desc) b )  as ids,"
                             + "(select count(*) from PHOTOS where date(a.create_date) = date(update_date) and user_id = '" + userUid + "')  as photo_count, "
                             + "(select count(*) from LOCATIONS where date(a.create_date) = date(create_date) and user_id = '" + userUid + "')  as location_count,"

@@ -29,6 +29,9 @@ public class SplashActivity extends BaseActivity {
     final int REQUEST_READ_EXTERNAL_STORAGE = 4;
     final int REQUEST_ACCESS_FINE_LOCATION = 8;
     final int REQUEST_ACCESS_COARSE_LOCATION = 16;
+    final int REQUEST_CAMERA = 32;
+    final int REQUEST_IMAGE_CAPTURE = 64;
+
 
     public static void startActivity(Context context) {
         Intent intent = new Intent(context, SplashActivity.class);
@@ -67,6 +70,8 @@ public class SplashActivity extends BaseActivity {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_ACCESS_FINE_LOCATION);
         } else if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_ACCESS_COARSE_LOCATION);
+        } else if(ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA);
         } else {
             afterPermission();
         }
@@ -106,6 +111,14 @@ public class SplashActivity extends BaseActivity {
                 }
                 return;
             }case REQUEST_ACCESS_COARSE_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA);
+                } else {
+                    finish();
+                }
+                return;
+            } case REQUEST_CAMERA: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     afterPermission();
