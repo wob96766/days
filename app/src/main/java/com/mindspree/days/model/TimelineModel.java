@@ -147,20 +147,41 @@ public class TimelineModel implements Parcelable {
         dest.writeString(mImageGroup);
     }
 
+    //junyong  - get the 3 representing photo URL
     public ArrayList<String> getPhotoList() {
+        ArrayList<String> result = new ArrayList<String>();
         if(mPhotoGroup != null) {
-            return new ArrayList<String>(Arrays.asList(mPhotoGroup.split(",")));
-        } else {
-            return new ArrayList<>();
+            ArrayList<String> temp = new ArrayList<String>(Arrays.asList(mPhotoGroup.split(",")));
+            for(int i=0;i<temp.size() ; i++){
+                if(!temp.get(i).contains("http://") && !temp.get(i).contains("https://")) {
+                    File file = new File(temp.get(i));
+                    if (file.exists()) {
+                        result.add(temp.get(i));
+                    } else {
+                        result.add(temp.get(i));
+                    }
+                }
+            }
         }
+        return result;
     }
 
     public ArrayList<String> getImageList() {
+        ArrayList<String> result = new ArrayList<String>();
         if(mPhotoGroup != null) {
-            return new ArrayList<String>(Arrays.asList(mImageGroup.split(",")));
-        } else {
-            return new ArrayList<>();
+            ArrayList<String> temp = new ArrayList<String>(Arrays.asList(mImageGroup.split(",")));
+            for(int i=0;i<temp.size() ; i++){
+                if(!temp.get(i).contains("http://") && !temp.get(i).contains("https://")) {
+                    File file = new File(temp.get(i));
+                    if (file.exists()) {
+                        result.add(temp.get(i));
+                    } else {
+                        result.add(temp.get(i));
+                    }
+                }
+            }
         }
+        return result;
     }
 
     public void setCreateDate(String formatDate){

@@ -152,24 +152,40 @@ public class DatelineModel implements Parcelable {
     }
     //junyong  - get the 3 representing photo URL
     public ArrayList<String> getPhotoList() {
+        ArrayList<String> result = new ArrayList<String>();
         if(mPhotoGroup != null) {
-            return new ArrayList<String>(Arrays.asList(mPhotoGroup.split(",")));
-        } else {
-            return new ArrayList<>();
+            ArrayList<String> temp = new ArrayList<String>(Arrays.asList(mPhotoGroup.split(",")));
+            for(int i=0;i<temp.size() ; i++){
+                if(!temp.get(i).contains("http://") && !temp.get(i).contains("https://")) {
+                    File file = new File(temp.get(i));
+                    if (file.exists()) {
+                        result.add(temp.get(i));
+                    }
+                } else {
+                    result.add(temp.get(i));
+                }
+            }
         }
+        return result;
     }
     //junyong - get image's "photo_index" to be displayed on the screen
     public ArrayList<String> getDisplayPhotoIds() {
+        ArrayList<String> result = new ArrayList<String>();
+        ArrayList<String> ids = new ArrayList<String>(Arrays.asList(mPhotoIds.split(",")));
         if(mPhotoGroup != null) {
-            ArrayList<String> photoids = new ArrayList<String>(Arrays.asList(mPhotoIds.split(",")));
-            if(photoids.size() > 3){
-                return new ArrayList<String>(photoids.subList(0, 3));
-            } else {
-                return new ArrayList<String>(Arrays.asList(mPhotoIds.split(",")));
+            ArrayList<String> temp = new ArrayList<String>(Arrays.asList(mPhotoGroup.split(",")));
+            for(int i=0;i<temp.size() ; i++){
+                if(!temp.get(i).contains("http://") && !temp.get(i).contains("https://")) {
+                    File file = new File(temp.get(i));
+                    if (file.exists()) {
+                        result.add(ids.get(i));
+                    }
+                } else {
+                    result.add(ids.get(i));
+                }
             }
-        } else {
-            return new ArrayList<>();
         }
+        return result;
     }
     //junyong - get weather
     public String getWeather(){
