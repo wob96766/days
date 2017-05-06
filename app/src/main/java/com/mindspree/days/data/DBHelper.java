@@ -441,7 +441,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         cal.setTime(date);
         // 10분 더하기
-        cal.add(Calendar.MINUTE, -1);
+        cal.add(Calendar.MINUTE, -2);
 
 
         Cursor cursor = database.query(TABLE_LOCATIONS, null, null, null, null, null, COLUMN_CREATE_DATE+ " DESC", null);

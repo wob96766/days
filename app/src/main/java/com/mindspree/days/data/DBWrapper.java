@@ -60,7 +60,7 @@ public class DBWrapper {
 
     // create user's location
     public void insertLocationAminute(double latitude, double longitude) {
-        mDbHelper.insertLocation(mUserUid, latitude, longitude);
+        mDbHelper.insertLocationAminute(mUserUid, latitude, longitude);
     }
 
     // create user's location
