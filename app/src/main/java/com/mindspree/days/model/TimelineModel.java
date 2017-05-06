@@ -157,9 +157,9 @@ public class TimelineModel implements Parcelable {
                     File file = new File(temp.get(i));
                     if (file.exists()) {
                         result.add(temp.get(i));
-                    } else {
-                        result.add(temp.get(i));
                     }
+                } else {
+                    result.add(temp.get(i));
                 }
             }
         }
@@ -175,9 +175,9 @@ public class TimelineModel implements Parcelable {
                     File file = new File(temp.get(i));
                     if (file.exists()) {
                         result.add(temp.get(i));
-                    } else {
-                        result.add(temp.get(i));
                     }
+                }else {
+                    result.add(temp.get(i));
                 }
             }
         }

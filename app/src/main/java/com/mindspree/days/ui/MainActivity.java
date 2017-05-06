@@ -638,8 +638,12 @@ public class MainActivity extends BaseActivity {
      */
     private void insertAllImages(Cursor cursor) {
         //Create an array to store path to all the images
+        Date now = new Date();
         String[] arrPath = new String[cursor.getCount()];
         for (int i = 0; i < cursor.getCount(); i++) {
+
+            Date originDate = AppUtils.getTodayDateTime(now, "00:00:00");
+
             cursor.moveToPosition(i);
             int dataColumnIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA);
             //Store the path of the image
@@ -648,26 +652,30 @@ public class MainActivity extends BaseActivity {
 
             File file = new File(arrPath[i]);
             Date lastModified = new Date(file.lastModified());
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.sss");
-            String formattedDateString = formatter.format(lastModified);
-            //Log.i("PATH modify_date", "PATH modify_date : " + formattedDateString);
+            if(!lastModified.before(originDate)) {
 
-            String filename = arrPath[i].substring(arrPath[i].lastIndexOf("/") + 1);
-            //Log.i("PATH modify_date", "PATH modify_name : " + filename);
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.sss");
+                String formattedDateString = formatter.format(lastModified);
+                //Log.i("PATH modify_date", "PATH modify_date : " + formattedDateString);
 
-            int photo_size = (int) file.length();
+                String filename = arrPath[i].substring(arrPath[i].lastIndexOf("/") + 1);
+                //Log.i("PATH modify_date", "PATH modify_name : " + filename);
 
-            if (mDBWrapper.isAvailable(arrPath[i])) {
-                //Log.i("PATH modify_date", "PATH already there OLD : " + arrPath[i]);
-                File fileExists = new File(arrPath[i]);
-                //Log.i("PATH modify_date", "PATHa already there file Exist : " + fileExists.exists());
-                if (!fileExists.exists()) {
-                    mDBWrapper.deleteOld(arrPath[i]);
+                int photo_size = (int) file.length();
+
+                if (mDBWrapper.isAvailable(arrPath[i])) {
+                    //Log.i("PATH modify_date", "PATH already there OLD : " + arrPath[i]);
+                    File fileExists = new File(arrPath[i]);
+                    //Log.i("PATH modify_date", "PATHa already there file Exist : " + fileExists.exists());
+                    if (!fileExists.exists()) {
+                        mDBWrapper.deleteOld(arrPath[i]);
+                    }
+                } else {
+                    //Log.i("PATH modify_date", "PATH already there NEW : " + arrPath[i]);
+                    mDBWrapper.insertNew(arrPath[i], filename, formattedDateString, photo_size);
                 }
-            } else {
-                //Log.i("PATH modify_date", "PATH already there NEW : " + arrPath[i]);
-                mDBWrapper.insertNew(arrPath[i], filename, formattedDateString, photo_size);
             }
+
         }
     }
 
@@ -993,7 +1001,7 @@ public class MainActivity extends BaseActivity {
                             if(tag instanceof TimelineModel) {
                                 FoursquareModel model = FoursquareModel.parseData(data);
                                 TimelineModel timeline = (TimelineModel)tag;
-                                mDBWrapper.setLocation(timeline.mLocationId, model.mName);
+                                mDBWrapper.setLocation(timeline.mLocationId, model.mName, model.mCategory);
                             }
                         } catch (Exception e) {
                             //showToast(getString(R.string.message_network_error));

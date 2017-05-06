@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.mindspree.days.data.DBWrapper;
 import com.mindspree.days.lib.AppPreference;
+import com.mindspree.days.lib.AppUtils;
 import com.mindspree.days.model.TimelineModel;
 import com.mindspree.days.model.WeatherModel;
 import com.mindspree.days.network.AsyncHttpResponse;
@@ -221,12 +222,12 @@ public class FileJobService extends JobService {
 
         try {
 
-            //if (AppUtils.datediffinminutes(now, dateFormat.parse(model.getMeasureDate())) >= 3) {
-            if (dbLocation.distanceTo(location) > mPreference.getDistance()) {
-                sendAnalyticsEvent(mPreference.getUserUid(), "photo_location", String.format("%f,%f",location.getLatitude(), location.getLongitude()));
-                mDBWrapper.insertLocationAminute(location.getLatitude(), location.getLongitude());
+            if (AppUtils.datediffinminutes(now, dateFormat.parse(model.getMeasureDate())) >= (mPreference.getDuration()/2)) {
+                if (dbLocation.distanceTo(location) > mPreference.getDistance()) {
+                    sendAnalyticsEvent(mPreference.getUserUid(), "photo_location", String.format("%f,%f",location.getLatitude(), location.getLongitude()));
+                    mDBWrapper.insertLocationAminute(location.getLatitude(), location.getLongitude());
+                }
             }
-            //}
         } catch (Exception e) {
             e.printStackTrace();
         }

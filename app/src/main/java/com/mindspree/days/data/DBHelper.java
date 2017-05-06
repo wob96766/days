@@ -440,7 +440,7 @@ public class DBHelper extends SQLiteOpenHelper {
         Calendar cal = Calendar.getInstance();
 
         cal.setTime(date);
-        // 10분 더하기
+        // 2 minutes before
         cal.add(Calendar.MINUTE, -2);
 
 

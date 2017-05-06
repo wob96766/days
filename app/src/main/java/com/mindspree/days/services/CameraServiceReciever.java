@@ -52,12 +52,12 @@ public class CameraServiceReciever extends BroadcastReceiver {
 
         try {
 
-            //if (AppUtils.datediffinminutes(now, dateFormat.parse(model.getMeasureDate())) >= 3) {
+            if (AppUtils.datediffinminutes(now, dateFormat.parse(model.getMeasureDate())) >= (mPreference.getDuration()/2)) {
                 if (dbLocation.distanceTo(location) > mPreference.getDistance()) {
                     sendAnalyticsEvent(mPreference.getUserUid(), "photo_location", String.format("%f,%f",location.getLatitude(), location.getLongitude()));
                     mDBWrapper.insertLocationAminute(location.getLatitude(), location.getLongitude());
                 }
-            //}
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
