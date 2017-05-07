@@ -15,7 +15,7 @@ public class PhotoInfoModel {
     public int file_index;
     public String file_location;
     public String file_name;
-    public int is_best;
+    public float is_best;
     public int cluster_id;
     public String quality_rank;
     public String blurring_index;

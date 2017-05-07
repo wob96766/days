@@ -333,6 +333,31 @@ public class EngineDBInterface {
         return photoArrayList;
     }
 
+
+    public float getQualityRankWithPhotoURL(String file_location_name){
+        DBHelper dbHelper = AppApplication.getDbHelper();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        float quality_score = 0;
+
+        Cursor c = db.rawQuery(" SELECT quality_rank " +
+                " FROM PHOTOS " +
+                " WHERE file_location = '" + file_location_name + "';", null);
+
+        if(c.moveToFirst()){
+            do{
+                quality_score = c.getFloat(0);
+
+            }while(c.moveToNext());
+        }
+
+        c.close();
+        db.close();
+
+        return quality_score;
+    }
+
+
     public float getExtraFeatWithPhotoURL(String file_location_name){
         DBHelper dbHelper = AppApplication.getDbHelper();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -378,6 +403,30 @@ public class EngineDBInterface {
 
         return Weight_Coeff;
     }
+
+    public float getBestPhotoFlagWithPhotoURL(String file_location_name){
+        DBHelper dbHelper = AppApplication.getDbHelper();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        float BestPhotoFlag = 0;
+
+        Cursor c = db.rawQuery(" SELECT is_best " +
+                " FROM PHOTOS " +
+                " WHERE file_location = '" + file_location_name + "';", null);
+
+        if(c.moveToFirst()){
+            do{
+                BestPhotoFlag = c.getFloat(0);
+
+            }while(c.moveToNext());
+        }
+
+        c.close();
+        db.close();
+
+        return BestPhotoFlag;
+    }
+
 
     public void updateClusterID(String file_location, int cluster_id) {
         DBHelper dbHelper = AppApplication.getDbHelper();
@@ -444,6 +493,18 @@ public class EngineDBInterface {
                 " SET final_score = " + final_score +
                 " , quality_rank = " + final_score +
                 " WHERE file_location = '"+file_location+"';");
+
+        db.close();
+
+    }
+
+    public void updateIsBestScore(String file_location, double final_score){
+        DBHelper dbHelper = AppApplication.getDbHelper();
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        db.execSQL("UPDATE photos" +
+                " SET is_best = " + final_score +
+                " WHERE file_location = '" + file_location + "';");
 
         db.close();
 
