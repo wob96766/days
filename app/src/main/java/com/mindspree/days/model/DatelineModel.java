@@ -83,9 +83,7 @@ public class DatelineModel implements Parcelable {
     public DnnModel dnnModel;
 
     public String mMood_kr = "";
-    public String mMood_hash_kr = "";
 
-    public ArrayList DNN_result_in;
     public ArrayList DNN_result;
     public String hashString_DNN="";
 
@@ -191,19 +189,6 @@ public class DatelineModel implements Parcelable {
         }
         return result;
     }
-
-    //junyong - get image's "photo_index" to be displayed on the screen
-    public ArrayList<String> getDisplayPhotoIdsExtended() {
-        if(mPhotoGroup != null) {
-            ArrayList<String> photoids = new ArrayList<String>(Arrays.asList(mPhotoIds.split(",")));
-
-            return new ArrayList<String>(Arrays.asList(mPhotoIds.split(",")));
-
-        } else {
-            return new ArrayList<>();
-        }
-    }
-
     //junyong - get weather
     public String getWeather(){
         if(mWeather.equals("Clear")){
@@ -339,10 +324,9 @@ public class DatelineModel implements Parcelable {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -1);
         String DateToday = dateFormat.format(cal.getTime()); //your formatted date here
-        cal.add(Calendar.DATE, 0);
+        cal.add(Calendar.DATE, -2);
         String DateYesterday = dateFormat.format(cal.getTime()); //your formatted date here
 
-//        if(DateInMomeent.equals(DateYesterday) ) {   // This is only for debugging
 //        if(mSentence == null || mSentence.equals("") || DateInMomeent.equals(DateYesterday) ) {   // This is only for debugging
         if(mSentence == null || mSentence.equals("")  ) {
 
@@ -355,7 +339,6 @@ public class DatelineModel implements Parcelable {
 
             Random generator = new Random();
             clusterEngine =new ClusterEngine();
-            EngineDBInterface engineDBInterface = new EngineDBInterface();
 
             String [] DNN_path = MainActivity.DNN_path;
             DNN_result = new ArrayList();
@@ -368,23 +351,24 @@ public class DatelineModel implements Parcelable {
             doDayOfWeek();
             String hash_string ="";
 
-            //1. Today is *** date
-            hash_string = hash_string + String.format("오늘은 %s. ", getDate());  //            hash_string = hash_string + String.format("Today is %s. ", getDate());
+            //1. Today is *** date\
+//            hash_string = hash_string + String.format("Today is %s. ", getDate());
+            hash_string = hash_string + String.format("오늘은 %s. ", getDate());
 
             //2 Weather
             if(mWeather==null){
                 hash_string = hash_string + "날씨 잘 모르겠음.\n";
             }else{
-                hash_string = hash_string + String.format("날씨 %s. ", getWeather());//                hash_string = hash_string + String.format("It is %s. ", getWeatherEnglish());
+//                hash_string = hash_string + String.format("It is %s. ", getWeatherEnglish());
+                hash_string = hash_string + String.format("오늘 날씨는 %s. ", getWeather());
                 DNN_result.add(String.format("#%s",mWeather));
             }
 
 
-            //3. Place
+
             ArrayList poiList = getPoiList();
             ArrayList poiCRDatesList = getPoiCRDatesList();
             int photoID_size=0;
-            int photoIDExt_size=0;
 
             if(poiList.size()>0)
             {
@@ -395,63 +379,50 @@ public class DatelineModel implements Parcelable {
                 PhotoInfoModel[] photoinfos=null;
                 Integer[] PhotoPoi_mapping_index=null;   // This contains POI index for each photo element
 
-
-
                 if(photoID_size>0){
                     photoinfos = new PhotoInfoModel[photoID_size];
 
-
-                    // Add cluster size to the quality score for additional weight and save it to is_best field
-                    // This is how you get cluster size for the specific cluster ID
-                    ArrayList photoIDsEx = getDisplayPhotoIdsExtended();
-                    photoIDExt_size= photoIDsEx.size();
-                    PhotoInfoModel[] photoinfosExt=null;
-                    photoinfosExt = new PhotoInfoModel[photoIDExt_size];
-
-                    for (int i=0;i<photoIDExt_size;i++) {
-                        photoinfosExt[i] = getPhotoInfo(photoIDsEx.get(i).toString());
-
-                        float best_photo_flag = engineDBInterface.getBestPhotoFlagWithPhotoURL(photoinfosExt[i].name);
-
-                            int cluster_size = getClusterSize(String.valueOf(photoinfosExt[i].cluster_id));
-                            float quality_score = engineDBInterface.getQualityRankWithPhotoURL(photoinfosExt[i].name);
-                            photoinfosExt[i].is_best = (float)cluster_size +  quality_score;
-                            engineDBInterface.updateIsBestScore(photoinfosExt[i].name, (float)cluster_size +  quality_score);
-                    }
-
-
-                    for (int i=0;i<photoIDExt_size;i++) {
-                        for(int j=1;j<photoIDExt_size;j++){
-
-                            PhotoInfoModel photoinfos_temp =null;
-                            if(photoinfosExt[j-1].is_best > photoinfosExt[j].is_best){
-
-                                photoinfos_temp = photoinfosExt[j];
-                                photoinfosExt[j] =photoinfosExt[j-1];
-                                photoinfosExt[j-1] =photoinfos_temp;
-                            }
-                        }
-                    }
-
-
-
-
-
-
-                    // photoID_size, photoinfos ,poiCRDatesList for POI based sentence generation
                     for (int i=0;i<photoID_size;i++)
                         photoinfos[i] = getPhotoInfo(photoIDs.get(i).toString());
 
                     // convert POI & Photo create time format to yyyy-MM-dd HH:mm:ss
                     PhotoPoi_mapping_index= PhotoPoi_mapping(photoID_size, photoinfos ,poiCRDatesList);
 
-                    // Get the unique POI index that has photos
+                    // Get the unique POI index
                     Set<Integer> uniqKeys = new TreeSet<Integer>();
                     try {
                         uniqKeys.addAll(Arrays.asList(PhotoPoi_mapping_index));
                     } catch (Exception e) {
 
-                        hash_string = hash_string + String.format("\n #%s", "Error");
+                        Log.e("your app", e.toString());
+                        String temp = "ok";
+                        if(PhotoPoi_mapping_index==null)
+                        {
+                            temp =null;
+                        }
+
+
+                        String temp2="";
+                        for (int i=0;i<poiList.size();i++)
+                        {
+                            temp2=temp2 + String.format("#%s ", poiList.get(i).toString());
+                        }
+                        String temp3="";
+                        for (int i=0;i<poiList.size();i++)
+                        {
+                            temp3=temp3 + String.format("#%s ", poiCRDatesList.get(i).toString());
+                        }
+                        String temp4="";
+                        for (int i=0;i<photoID_size;i++)
+                        {
+                            temp4=temp4 + String.format("#%s ", photoinfos.toString());
+                        }
+
+                        hash_string = hash_string + temp2 + temp3+ temp4;
+                        hash_string = hash_string + String.format("\n #%s #%s #%s ", DateInMomeent,DateToday, temp);
+
+
+
                         return hash_string;
                     }
 
@@ -467,46 +438,32 @@ public class DatelineModel implements Parcelable {
                     List<Integer> integerList = new ArrayList<>(uniqKeys);
                     Integer [] uniqKeysArray = new Integer[uniqKeys.size()];
                     for (int j = 0; j < uniqKeys.size(); j++)
-                      uniqKeysArray[j] = integerList.get(j); // uniqKeysArray contains unique place that took photos
+                      uniqKeysArray[j] = integerList.get(j); //
 
-
-                    // Get the unique POIs index from all POIs
-                    int array_size = arraylistsize_nooverlap(poiList);
-                    String [] poiList_nooverlap = new String[array_size];
-                    poiList_nooverlap=arraylistTostringarray_nooverlap(poiList);
-
+                    //3. Place
                     // POI based sentence generation part
-                    hash_string = dnnModel.POIbasedSentence(uniqKeysArray, poiList_nooverlap,poiList,hash_string);
+//                    hash_string = POIbasedSentence(uniqKeysArray,poiList,hash_string);
+                    hash_string = POIbasedSentence_korean(uniqKeysArray,poiList,hash_string);
 
-
-                    //4. Face & Deep learning
+                    // Photo based sentence generation part
                     int offset =0;
                     int size =0;
                     ArrayList photolist = getPhotoList();
                     String hash_string_face ="";
                     String hash_string_face_buf ="";
-                    for (int m=0;m<uniqKeysArray.length;m++){
+                    for (int m=0;m<uniqKeysArray.length;m++)
+                    {
                         // key is unique poi index
                         Integer key_temp = uniqKeysArray[m];  //This is POI index which is key
-<<<<<<< HEAD
-                        size = result.get(key_temp);          // This is the number of photos taken in this POI index
-=======
                         if(result.size() > key_temp) {
                             size = result.get(key_temp);          // This is the number of photos taken in this POI index
 
->>>>>>> a71d67a5f804ecd0b5f86e55384625c4b6df7369
 
                             //4. Face & Deep learning
                             hash_string_face = SentenceFromPhoto(offset, size, poiList.get(key_temp).toString(), photolist, front_cam_width, rear_cam_width, DNN_path, weekend_days);
 
-<<<<<<< HEAD
-//                        hash_string_face=SentenceFromPhoto(offset,size,poiList.get(key_temp).toString(),photolist,front_cam_width,rear_cam_width, DNN_path, weekend_days);
-                        hash_string_face= dnnModel.SentenceFromPhoto_korean(clusterEngine,DNN_result, offset,size,poiList.get(key_temp).toString(),photolist,front_cam_width,rear_cam_width, DNN_path, weekend_days);
-                        DNN_result = dnnModel.HashFromPhoto_korean(clusterEngine,DNN_result, offset,size,poiList.get(key_temp).toString(),photolist,front_cam_width,rear_cam_width, DNN_path, weekend_days);
-=======
                             if (hash_string_face.equals(hash_string_face_buf))
                                 hash_string_face = ""; // This is to prevent the duplication
->>>>>>> a71d67a5f804ecd0b5f86e55384625c4b6df7369
 
                             hash_string = hash_string + hash_string_face;
                             hash_string_face_buf = hash_string_face;
@@ -515,6 +472,8 @@ public class DatelineModel implements Parcelable {
                         }
                     }
 
+
+//
                         hashString_DNN="";
                         if(DNN_result.size()>0){
                             hashString_DNN =hashString_DNN + "\n";
@@ -532,7 +491,8 @@ public class DatelineModel implements Parcelable {
 
                 }
 
-
+                // This is how you get cluster size for the specific cluster ID
+//                int temp = getClusterSize(String.valueOf(photoinfos[1].cluster_id));
 
 
                 // Phot0 & POI mapping
@@ -563,22 +523,18 @@ public class DatelineModel implements Parcelable {
 
                     if(mMood.equals("Happy")){
                         mMood_kr="그럭저럭 행복한";
-                        mMood_hash_kr="행복";
                     }else if(mMood.equals("Angry")){
                         mMood_kr="별로 기분이 안 좋은";
-                        mMood_hash_kr="화남";
                     }else if(mMood.equals("Sad")){
-                        mMood_kr="슬픔";
-                        mMood_hash_kr="행복";
+                        mMood_kr="좀 슬픈";
                     }else if(mMood.equals("Busy")){
                         mMood_kr="많이 바쁜";
-                        mMood_hash_kr="바쁨";
                     }
 
 
-                    hash_string = hash_string + String.format("\n 오늘은 %s 하루였다. ", mMood_kr);
+                    hash_string = hash_string + String.format("\n 오늘은 %s 하루였다. ", mMood);
 //                    hash_string = hash_string + String.format("\n I think today was %s day in general. ", mMood);
-                    DNN_result.add(String.format("#%s",mMood_hash_kr));
+                    DNN_result.add(String.format("#%s",mMood));
                 }
 
                 if(DNN_result.size()>0){
@@ -596,17 +552,21 @@ public class DatelineModel implements Parcelable {
             }
             else{
 
-//                hash_string =hash_string + "I think I didn't do anything special. What a boring day. I will go out somewhere tomorrow";
-                int n = generator.nextInt(dnnModel.dailysummary_nopoi_kr.length);
-                hash_string = hash_string + String.format("%s ", dnnModel.dailysummary_nopoi_kr[n]);
+//                hash_string =hash_string + " 오늘은 별 특별한 일이 없었다. 조금은 지루한 하루 였다. 내일은 어디라도 가야 할 텐데 I think I didn't do anything special. What a boring day. I will go out somewhere tomorrow";
+                hash_string =hash_string + " 오늘은 별 특별한 일이 없었다. 조금은 지루한 하루 였다. 내일은 어디라도 가야 할 텐데";
             }
 
 
 
             hash_string = hash_string +  hashString_DNN;
 
-            mDBWrapper.setSentence(DateInMomeent,hash_string);
-            return hash_string;
+
+            // This saves sentense to DB
+            // if (!DateInMomeent.equals(DateToday))
+                mDBWrapper.setSentence(DateInMomeent,hash_string);
+
+
+                return hash_string;
 
 
 
@@ -640,49 +600,47 @@ public class DatelineModel implements Parcelable {
     }
 
 
-    public String [] arraylistTostringarray_nooverlap(ArrayList poiList){
-        Set<String> uniqKeys2 = new TreeSet<String>();
+
+    public ArrayList resampleandsave(int photoID_size, File myDir, ArrayList photolist) {
+
+        ArrayList days_moment_resample_image  = new ArrayList();
+
+        for (int t=0;t<photoID_size;t++) {
+            String DNN_test_path_input = photolist.get(t).toString();
+            File files = new File(DNN_test_path_input);
+            if (files.exists()) {
+                Bitmap bm = AppUtils.downsampleImageFile(DNN_test_path_input, 122, 149);
 
 
-        // Convert poiList arraylist to string array
-        Object[] poiListStringArraytemp = poiList.toArray(new String[poiList.size()]);
-        String[] poiListStringArray = (String[]) poiListStringArraytemp;
+                if(myDir.exists() && myDir.isDirectory()) {
+                    // do nothing
+                }else{
+                    myDir.mkdirs();
+                }
 
-        try {
-            uniqKeys2.addAll(Arrays.asList(poiListStringArray));
-        } catch (Exception e) {
-            e.printStackTrace();
+                String fname = "Days_Moment_" + t + ".days";
+                File file = new File(myDir, fname);
+                days_moment_resample_image.add(file.toString());
 
+                if (file.exists())
+                    file.delete();
+
+                try {
+                    FileOutputStream out = new FileOutputStream(file);
+                    bm.compress(Bitmap.CompressFormat.JPEG, 90, out);
+                    out.flush();
+                    out.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+
+            }
         }
 
-        List<String> stringList = new ArrayList<>(uniqKeys2);
-        String [] uniqKeysArray2 = new String[uniqKeys2.size()];
-        for (int j = 0; j < uniqKeys2.size(); j++)
-            uniqKeysArray2[j] = stringList.get(j); //
-
-
-        return uniqKeysArray2;
-
+        return days_moment_resample_image;
     }
 
-    public int arraylistsize_nooverlap(ArrayList poiList){
-        Set<String> uniqKeys2 = new TreeSet<String>();
-
-
-        // Convert poiList arraylist to string array
-        Object[] poiListStringArraytemp = poiList.toArray(new String[poiList.size()]);
-        String[] poiListStringArray = (String[]) poiListStringArraytemp;
-
-        try {
-            uniqKeys2.addAll(Arrays.asList(poiListStringArray));
-        } catch (Exception e) {
-            e.printStackTrace();
-
-        }
-
-        return uniqKeys2.size();
-
-    }
 
     public String resampleandsave_single(int index, File myDir, String DNN_test_path_input) {
 
@@ -747,6 +705,211 @@ public class DatelineModel implements Parcelable {
 
     }
 
+    public String POIbasedSentence(Integer [] uniqKeysArray, ArrayList poiList , String hash_string){
+
+
+
+        if(uniqKeysArray.length==1){
+            if(uniqKeysArray[0].toString().contains(AppUtils.getAppText(R.string.text_location_home))) {
+                hash_string = hash_string + String.format("%s %s. ", "I didn't go anywhere. Just stayed in my house", poiList.get(uniqKeysArray[0]).toString());
+            }else{
+                hash_string = hash_string + String.format("%s %s. ", "I didn't go anywhere. Just stayed in", poiList.get(uniqKeysArray[0]).toString());
+            }
+
+        } else if(uniqKeysArray.length==2){
+//                        if( poiList.get(0).toString().equals(poiList.get(1).toString()) && poiList.size()==2)
+//                            hash_string = hash_string + String.format("%s. ", "I just quickly went outside and came back home soon.");
+
+
+                if(uniqKeysArray[0].toString().contains(AppUtils.getAppText(R.string.text_location_home)) && uniqKeysArray[1].toString().contains(AppUtils.getAppText(R.string.text_location_home))) {
+
+
+
+                }else if(uniqKeysArray[0].toString().contains(AppUtils.getAppText(R.string.text_location_home)) || !uniqKeysArray[1].toString().contains(AppUtils.getAppText(R.string.text_location_home))){
+
+                       int index_key= uniqKeysArray[1];
+                       if(index_key >= poiList.size())
+                           index_key = poiList.size()-1;
+
+                        hash_string = hash_string + String.format("I went to %s ", poiList.get(index_key).toString());
+
+
+                }else if(!uniqKeysArray[0].toString().contains(AppUtils.getAppText(R.string.text_location_home)) || uniqKeysArray[1].toString().contains(AppUtils.getAppText(R.string.text_location_home))){
+                        int index_key= uniqKeysArray[0];
+                        if(index_key >= poiList.size())
+                        index_key = poiList.size()-1;
+
+                        hash_string = hash_string + String.format("I went to %s ", poiList.get(index_key).toString());
+
+                }else{
+                    for (int k=0;k<2;k++){
+                        int index_key= uniqKeysArray[k];
+                        if(index_key >= poiList.size())
+                            index_key = poiList.size()-1;
+
+                        if(k==0)
+                            hash_string = hash_string + String.format("I went to %s and ", poiList.get(index_key).toString());
+                        else{
+                            if(poiList.size() > k)
+                                hash_string = hash_string + String.format("%s. ", poiList.get(index_key).toString());
+
+                        }
+                    }
+                }
+
+
+
+
+        }else if(uniqKeysArray.length>2){
+
+            // Later on, there might be some corner case such as home, home, home, school, school and home
+            hash_string = hash_string + String.format("%s.", "I went to a couple of places. ");
+
+
+            for (int l=0;l<uniqKeysArray.length;l++){
+
+                int index_key= uniqKeysArray[l];
+                if(index_key >= poiList.size())
+                    index_key = poiList.size()-1;
+
+                if(l==0) {
+
+                    if(uniqKeysArray[l].toString().contains(AppUtils.getAppText(R.string.text_location_home))){
+                        hash_string = hash_string + String.format("Here are some nice photos taken in my house");
+                    }else{
+                        hash_string = hash_string + String.format("Here are some nice photos taken in %s", poiList.get(index_key).toString());
+                    }
+
+
+                }else if(l<uniqKeysArray.length-1) {
+
+                    if(uniqKeysArray[l].toString().equals(uniqKeysArray[l-1].toString())){
+                        // Do nothing, overlapped .
+                    }else{
+                        hash_string = hash_string + String.format(", %s ", poiList.get(index_key).toString());
+                    }
+
+
+                }else if(l==uniqKeysArray.length-1) {
+
+                    if(uniqKeysArray[l].toString().equals(uniqKeysArray[l-1].toString())){
+                        // Do nothing, overlapped .
+                    }else{
+                        hash_string = hash_string + String.format("and %s. ", poiList.get(index_key).toString());
+                    }
+
+
+                }
+            }
+        }
+
+        return hash_string;
+
+    }
+
+
+    public String POIbasedSentence_korean(Integer [] uniqKeysArray, ArrayList poiList , String hash_string){
+
+
+
+        if(uniqKeysArray.length==1){
+            if(uniqKeysArray[0].toString().contains(AppUtils.getAppText(R.string.text_location_home))) {
+                hash_string = hash_string + String.format("%s . ", "오늘은 아무데도 가지 않고 하루종일 집에만 있었다");
+            }else{
+                hash_string = hash_string + String.format("%s %s %s. ", "오늘은 아무데도 가지 않고 ", poiList.get(uniqKeysArray[0]).toString(), " 에만 있었다");
+            }
+
+        } else if(uniqKeysArray.length==2){
+//                        if( poiList.get(0).toString().equals(poiList.get(1).toString()) && poiList.size()==2)
+//                            hash_string = hash_string + String.format("%s. ", "I just quickly went outside and came back home soon.");
+
+
+            if(uniqKeysArray[0].toString().contains(AppUtils.getAppText(R.string.text_location_home)) && uniqKeysArray[1].toString().contains(AppUtils.getAppText(R.string.text_location_home))) {
+
+
+
+            }else if(uniqKeysArray[0].toString().contains(AppUtils.getAppText(R.string.text_location_home)) || !uniqKeysArray[1].toString().contains(AppUtils.getAppText(R.string.text_location_home))){
+
+                int index_key= uniqKeysArray[1];
+                if(index_key >= poiList.size())
+                    index_key = poiList.size()-1;
+
+                hash_string = hash_string + String.format("오늘 나는 %s에 갔다. ", poiList.get(index_key).toString());
+
+
+            }else if(!uniqKeysArray[0].toString().contains(AppUtils.getAppText(R.string.text_location_home)) || uniqKeysArray[1].toString().contains(AppUtils.getAppText(R.string.text_location_home))){
+                int index_key= uniqKeysArray[0];
+                if(index_key >= poiList.size())
+                    index_key = poiList.size()-1;
+
+                hash_string = hash_string + String.format("오늘 나는 %s에 갔다. ", poiList.get(index_key).toString());
+
+            }else{
+                for (int k=0;k<2;k++){
+                    int index_key= uniqKeysArray[k];
+                    if(index_key >= poiList.size())
+                        index_key = poiList.size()-1;
+
+                    if(k==0)
+                        hash_string = hash_string + String.format("오늘 나는 %s 에도 가고 ", poiList.get(index_key).toString());
+                    else{
+                        if(poiList.size() > k)
+                            hash_string = hash_string + String.format("%s 에도 갔다. ", poiList.get(index_key).toString());
+
+                    }
+                }
+            }
+
+
+
+
+        }else if(uniqKeysArray.length>2){
+
+            // Later on, there might be some corner case such as home, home, home, school, school and home
+            hash_string = hash_string + String.format("%s.", "오늘 여기 저기 돌아다녔다. ");
+
+
+            for (int l=0;l<uniqKeysArray.length;l++){
+
+                int index_key= uniqKeysArray[l];
+                if(index_key >= poiList.size())
+                    index_key = poiList.size()-1;
+
+                if(l==0) {
+
+                    if(uniqKeysArray[l].toString().contains(AppUtils.getAppText(R.string.text_location_home))){
+                        hash_string = hash_string + String.format("집에서 사진도 몇 장 찍었다");
+                    }else{
+                        hash_string = hash_string + String.format("여기 %s", poiList.get(index_key).toString());
+                    }
+
+
+                }else if(l<uniqKeysArray.length-1) {
+
+                    if(uniqKeysArray[l].toString().equals(uniqKeysArray[l-1].toString())){
+                        // Do nothing, overlapped .
+                    }else{
+                        hash_string = hash_string + String.format(", %s ", poiList.get(index_key).toString());
+                    }
+
+
+                }else if(l==uniqKeysArray.length-1) {
+
+                    if(uniqKeysArray[l].toString().equals(uniqKeysArray[l-1].toString())){
+                        // Do nothing, overlapped .
+                    }else{
+                        hash_string = hash_string + String.format("그리고 %s 에서 찍은 사진들이 있음. ", poiList.get(index_key).toString());
+                    }
+
+
+                }
+            }
+        }
+
+        return hash_string;
+
+    }
+
 
 
     public Integer[] PhotoPoi_mapping(int photoID_size, PhotoInfoModel[] photoinfos ,ArrayList poiCRDatesList)
@@ -790,8 +953,6 @@ public class DatelineModel implements Parcelable {
     }
 
 
-<<<<<<< HEAD
-=======
     public String SentenceFromPhoto(int offset,int size,String poi_string, ArrayList PhotoList,  int front_cam_width, int rear_cam_width, String [] DNN_path, int weekend_days)
     {
         String hash_string = "";
@@ -1459,7 +1620,6 @@ public class DatelineModel implements Parcelable {
     }
 
 
->>>>>>> a71d67a5f804ecd0b5f86e55384625c4b6df7369
 
     public boolean classDetect(String class_predict, String [] Class_DB){
 
