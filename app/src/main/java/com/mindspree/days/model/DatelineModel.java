@@ -171,6 +171,7 @@ public class DatelineModel implements Parcelable {
     //junyong - get image's "photo_index" to be displayed on the screen
     public ArrayList<String> getDisplayPhotoIds() {
         ArrayList<String> result = new ArrayList<String>();
+        ArrayList<String> result2 = new ArrayList<String>();
 
         if(mPhotoGroup != null) {
 
