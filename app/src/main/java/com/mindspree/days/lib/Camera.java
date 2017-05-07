@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -236,6 +237,26 @@ public class Camera {
 		Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath(), options);
 		return bitmap;
 	}
+
+	private Bitmap loadImageWithSampleSize(Uri uri) {
+		BitmapFactory.Options options = new BitmapFactory.Options();
+		options.inJustDecodeBounds = true;
+		BitmapFactory.decodeFile(getRealPathFromURI(mContext, uri), options);
+		int width = options.outWidth;
+		int height = options.outHeight;
+		int longSide = Math.max(width, height);
+		int sampleSize = 1;
+		if (longSide > mImageSizeBoundary) {
+			//	sampleSize = longSide / mImageSizeBoundary;
+		}
+		options.inJustDecodeBounds = false;
+		options.inSampleSize = sampleSize;
+		options.inPurgeable = true;
+		options.inDither = false;
+
+		Bitmap bitmap = BitmapFactory.decodeFile(getRealPathFromURI(mContext, uri), options);
+		return bitmap;
+	}
 	
 	public File getSelectedImageFile() {
 		return mFile;
@@ -337,28 +358,57 @@ public class Camera {
 		mCropAspectWidth = aspectX;
 		mCropAspectHeight = aspectY;
 	}
-	
+
+	public String getRealPathFromURI(Context context, Uri contentUri) {
+		Cursor cursor = null;
+		try {
+			String[] proj = { MediaStore.Images.Media.DATA };
+			cursor = context.getContentResolver().query(contentUri,  proj, null, null, null);
+			int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+			cursor.moveToFirst();
+			return cursor.getString(column_index);
+		} finally {
+			if (cursor != null) {
+				cursor.close();
+			}
+		}
+	}
+
 	private void copyUriToFile(Uri srcUri, File target) {
 		FileInputStream inputStream = null;
 		FileOutputStream outputStream = null;
 		FileChannel fcin = null;
-		FileChannel fcout = null;
+		//FileChannel fcout = null;
 		try {
 			inputStream = (FileInputStream) mContext.getContentResolver().openInputStream(srcUri);
 			outputStream = new FileOutputStream(target);
 
 			fcin = inputStream.getChannel();
-			fcout = outputStream.getChannel();
+//			fcout = outputStream.getChannel();
+			Bitmap bitmap = loadImageWithSampleSize(srcUri);
+			try {
+				ExifInterface exif = new ExifInterface(getRealPathFromURI(mContext, srcUri));
+				int exifOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+				int exifRotateDegree = exifOrientationToDegrees(exifOrientation);
+				bitmap = rotateImage(bitmap, exifRotateDegree);
+				bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+				//long size = fcin.size();
+				//fcin.transferTo(0, size, fcout);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 
-			long size = fcin.size();
-			fcin.transferTo(0, size, fcout);
+			//long size = fcin.size();
+			//fcin.transferTo(0, size, fcout);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			try {
+			/*try {
 				fcout.close();
 			} catch (IOException ioe) {
-			}
+			}*/
 			try {
 				fcin.close();
 			} catch (IOException ioe) {
@@ -392,9 +442,9 @@ public class Camera {
 			return mFile;
 		}
 		
-		String mFileName = sha1(String.format("%d", System.currentTimeMillis()))+".png";
+		String mFileName = "." + sha1(String.format("%d", System.currentTimeMillis()))+".png";
 
-		File path = new File(Environment.getExternalStorageDirectory() + "/menupick/");
+		File path = new File(Environment.getExternalStorageDirectory() + "/days/");
 		if (!path.exists()) {
 			path.mkdirs();
 		}
