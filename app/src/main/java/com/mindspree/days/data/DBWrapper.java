@@ -1,5 +1,7 @@
 package com.mindspree.days.data;
 
+import android.database.Cursor;
+
 import com.google.firebase.database.DataSnapshot;
 import com.mindspree.days.AppApplication;
 import com.mindspree.days.model.Daily;
@@ -55,6 +57,12 @@ public class DBWrapper {
     public void insertLocation(double latitude, double longitude) {
         mDbHelper.insertLocation(mUserUid, latitude, longitude);
     }
+
+    // create user's location
+    public void insertLocationAminute(double latitude, double longitude) {
+        mDbHelper.insertLocationAminute(mUserUid, latitude, longitude);
+    }
+
     // create user's location
     public void updateLocation(double latitude, double longitude) {
         mDbHelper.updateLocation(mUserUid, latitude, longitude);
@@ -128,15 +136,25 @@ public class DBWrapper {
         mDbHelper.setMood(mUserUid, mood);
     }
 
-    //update the mood of the day.
+    //update the weather of the day.
     public void setWeather(String weather){
         mDbHelper.setWeather(mUserUid, weather);
+    }
+
+    public String getWeatherToday(){
+        return mDbHelper.getWeatherToday(mUserUid);
     }
 
     // update the set location information.
     public void setLocation(int locationId, String title) {
         mDbHelper.setLocation(mUserUid, locationId, title);
     }
+
+    // update the set location information.
+    public void setLocation(int locationId, String title, String category) {
+        mDbHelper.setLocation(mUserUid, locationId, title, category);
+    }
+
 
     // update the set location information.
     public void setLocationLog(int locationId , int islock) {
@@ -213,6 +231,13 @@ public class DBWrapper {
         return mDbHelper.getCreateTime(mUserUid, name);
     }
 
+    public int getNewPhotoCount() {
+        return mDbHelper.getNewPhotoCount(mUserUid);
+    }
+
+    public int updateNewPhotoFlag() {
+        return mDbHelper.updateNewPhotoFlag(mUserUid);
+    }
 
 
 }

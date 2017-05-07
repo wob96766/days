@@ -52,8 +52,23 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
         Glide.with(mContext).load("").centerCrop().into(holder.mThumnail1);
         Glide.with(mContext).load("").centerCrop().into(holder.mThumnail2);
         Glide.with(mContext).load("").centerCrop().into(holder.mThumnail3);
+        Glide.with(mContext).load("").centerCrop().into(holder.mThumnail4);
+        Glide.with(mContext).load("").centerCrop().into(holder.mThumnail5);
+        Glide.with(mContext).load("").centerCrop().into(holder.mThumnail6);
+        Glide.with(mContext).load("").centerCrop().into(holder.mThumnail7);
+        Glide.with(mContext).load("").centerCrop().into(holder.mThumnail8);
+        Glide.with(mContext).load("").centerCrop().into(holder.mThumnail9);
         if(mDataSource.get(position).getPhotoList().size() > 0) {
-
+            if(files.size() > 6){
+                holder.mViewPhoto2.setVisibility(View.VISIBLE);
+                holder.mViewPhoto3.setVisibility(View.VISIBLE);
+            } else if(files.size() > 3){
+                holder.mViewPhoto2.setVisibility(View.VISIBLE);
+                holder.mViewPhoto3.setVisibility(View.GONE);
+            } else{
+                holder.mViewPhoto2.setVisibility(View.GONE);
+                holder.mViewPhoto3.setVisibility(View.GONE);
+            }
             for(int i=0 ; i<files.size() ; i++){
                 if (i == 0)  {
                     Glide.with(mContext).load(files.get(i)).centerCrop().into(holder.mThumnail1);
@@ -61,6 +76,20 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
                     Glide.with(mContext).load(files.get(i)).centerCrop().into(holder.mThumnail2);
                 } else if(i == 2){
                     Glide.with(mContext).load(files.get(i)).centerCrop().into(holder.mThumnail3);
+                } else if (i == 3)  {
+
+                    Glide.with(mContext).load(files.get(i)).centerCrop().into(holder.mThumnail4);
+                } else if(i == 4) {
+                    Glide.with(mContext).load(files.get(i)).centerCrop().into(holder.mThumnail5);
+                } else if(i == 5){
+                    Glide.with(mContext).load(files.get(i)).centerCrop().into(holder.mThumnail6);
+                }  else if (i == 6)  {
+
+                    Glide.with(mContext).load(files.get(i)).centerCrop().into(holder.mThumnail7);
+                } else if(i == 7) {
+                    Glide.with(mContext).load(files.get(i)).centerCrop().into(holder.mThumnail8);
+                } else if(i == 8){
+                    Glide.with(mContext).load(files.get(i)).centerCrop().into(holder.mThumnail9);
                 }
             }
 
@@ -131,6 +160,12 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
         public ImageView mThumnail1;
         public ImageView mThumnail2;
         public ImageView mThumnail3;
+        public ImageView mThumnail4;
+        public ImageView mThumnail5;
+        public ImageView mThumnail6;
+        public ImageView mThumnail7;
+        public ImageView mThumnail8;
+        public ImageView mThumnail9;
         public TextView mTextTitle;
         public TextView mTextSubTitle;
         public TextView mTextContent;
@@ -144,6 +179,10 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
         public View mTopLine;
         public View mBottomLine;
 
+        public View mViewPhoto1;
+        public View mViewPhoto2;
+        public View mViewPhoto3;
+
         public TextView mLikeCount;
         public TextView mCommentCount;
         public View mImageContainer;
@@ -156,9 +195,18 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
             mViewPhoto = (ViewGroup)aq.id(R.id.view_photo).getView();
             mTopLine = aq.id(R.id.view_topline).getView();
             mBottomLine = aq.id(R.id.view_bottomline).getView();
+            mViewPhoto1 = aq.id(R.id.view_photo).getView();
+            mViewPhoto2 = aq.id(R.id.view_photo2).getView();
+            mViewPhoto3 = aq.id(R.id.view_photo3).getView();
             mThumnail1 = aq.id(R.id.image_thumnail1).width(metrics.widthPixels * 2 / 8, false).height(metrics.widthPixels * 2 / 8, false).clicked(mOnClickListener).getImageView();
             mThumnail2 = aq.id(R.id.image_thumnail2).width(metrics.widthPixels * 2 / 8, false).height(metrics.widthPixels * 2 / 8, false).clicked(mOnClickListener).getImageView();
             mThumnail3 = aq.id(R.id.image_thumnail3).width(metrics.widthPixels * 2 / 8, false).height(metrics.widthPixels * 2 / 8, false).clicked(mOnClickListener).getImageView();
+            mThumnail4 = aq.id(R.id.image_thumnail4).width(metrics.widthPixels * 2 / 8, false).height(metrics.widthPixels * 2 / 8, false).clicked(mOnClickListener).getImageView();
+            mThumnail5 = aq.id(R.id.image_thumnail5).width(metrics.widthPixels * 2 / 8, false).height(metrics.widthPixels * 2 / 8, false).clicked(mOnClickListener).getImageView();
+            mThumnail6 = aq.id(R.id.image_thumnail6).width(metrics.widthPixels * 2 / 8, false).height(metrics.widthPixels * 2 / 8, false).clicked(mOnClickListener).getImageView();
+            mThumnail7 = aq.id(R.id.image_thumnail7).width(metrics.widthPixels * 2 / 8, false).height(metrics.widthPixels * 2 / 8, false).clicked(mOnClickListener).getImageView();
+            mThumnail8 = aq.id(R.id.image_thumnail8).width(metrics.widthPixels * 2 / 8, false).height(metrics.widthPixels * 2 / 8, false).clicked(mOnClickListener).getImageView();
+            mThumnail9 = aq.id(R.id.image_thumnail9).width(metrics.widthPixels * 2 / 8, false).height(metrics.widthPixels * 2 / 8, false).clicked(mOnClickListener).getImageView();
             /*fit screen size
             if(contentHeight > 0) {
                 aq.id(R.id.image_container).height(contentHeight);

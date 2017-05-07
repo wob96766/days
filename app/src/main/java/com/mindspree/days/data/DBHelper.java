@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -37,7 +38,7 @@ import java.util.Date;
 public class DBHelper extends SQLiteOpenHelper {
 
     private final String TAG = getClass().getSimpleName();
-    private final int VERSION = 1;
+    private final int VERSION = 2;
     private Context context;
     private SQLiteDatabase database;
     private String DATABASE_PATH = "";
@@ -80,6 +81,8 @@ public class DBHelper extends SQLiteOpenHelper {
     private String COLUMN_LOCATION_INDEX = "location_index";
     private String COLUMN_CREATE_DATE = "create_date";
     private String COLUMN_CREATED = "created";
+    private String COLUMN_CATEGORY = "category";
+    private String COLUMN_FLAG = "flag";
 
     private String COLUMN_DAILY_INDEX = "daily_index";
     private String COLUMN_MOOD = "mood";
@@ -93,7 +96,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @SuppressLint("SdCardPath")
     public DBHelper(Context context) {
-        super(context, context.getResources().getString(R.string.db_name), null, 1);
+        super(context, context.getResources().getString(R.string.db_name), null, 2);
         this.context = context;
         DATABASE_PATH = "/data/data/" + context.getPackageName() + "/databases/";
         DB_NAME = context.getResources().getString(R.string.db_name);
@@ -120,6 +123,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 + COLUMN_DELETE_CHECK + " INTEGER,"
                 + COLUMN_UPDATE_DATE + " TEXT,"
                 + COLUMN_PHOTO_SIZE + " TEXT,"
+                + COLUMN_FLAG + " INT DEFAULT 1,"
                 + COLUMN_SORTSEQ + " INTEGER DEFAULT 100,"
                 + COLUMN_USER_ID + " TEXT DEFAULT '1'" + ")";
         db.execSQL(CREATE_PHOTO_TABLE);
@@ -134,6 +138,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 + COLUMN_MEASURELONGITUDE+ " DOUBLE,"
                 + COLUMN_DISTANCE + " FLOAT,"
                 + COLUMN_LOCK + " INT,"
+                + COLUMN_CATEGORY  + " TEXT,"
                 + COLUMN_MEASURE_DATE + " TEXT,"
                 + COLUMN_CREATE_DATE + " TEXT,"
                 + COLUMN_UPDATE_DATE + " TEXT)";
@@ -200,7 +205,20 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        switch (oldVersion) {
+            case 1 :
+                try {
+                    db.beginTransaction();
+                    db.execSQL("ALTER TABLE " + TABLE_LOCATIONS + " ADD COLUMN " + COLUMN_CATEGORY + " TEXT DEFAULT ''");
+                    db.execSQL("ALTER TABLE " + TABLE_PHOTOS + " ADD COLUMN " + COLUMN_FLAG + " INT DEFAULT 1");
+                    db.setTransactionSuccessful();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    db.endTransaction();
+                };
+                break;
+        }
     }
 
     /**
@@ -302,8 +320,30 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(COLUMN_FILE_NAME, fileName);
         values.put(COLUMN_UPDATE_DATE, fileUpdateDate);
         values.put(COLUMN_PHOTO_SIZE, photo_size);
+        values.put(COLUMN_FLAG, 0);
 
         return database.insert(TABLE_PHOTOS, null, values);
+    }
+
+    public int getNewPhotoCount(final String user_uid) {
+        int photoCount = 0;
+
+        Cursor cursor = database.query(TABLE_PHOTOS, null, String.format(" %s = 0 and %s = ? ", COLUMN_FLAG, COLUMN_USER_ID), new String[]{user_uid}, null, null, COLUMN_UPDATE_DATE+ " DESC", null);
+        try {
+            photoCount = cursor.getCount();
+            if (cursor != null)
+                cursor.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return photoCount;
+    }
+
+    public int updateNewPhotoFlag(final String userUid) {
+
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_FLAG, 1);
+        return database.update(TABLE_PHOTOS, cv,  String.format(" %s = 0 and %s = ? ", COLUMN_FLAG, COLUMN_USER_ID), new String[]{userUid});
     }
 
     public long updateLocation(final String user_uid, final double latitude, final double longitude) {
@@ -394,6 +434,47 @@ public class DBHelper extends SQLiteOpenHelper {
         return database.insert(TABLE_LOCATIONS, null, values);
     }
 
+    public long insertLocationAminute(final String user_uid, final double latitude, final double longitude) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        Date date = new Date();
+        Calendar cal = Calendar.getInstance();
+
+        cal.setTime(date);
+        // 2 minutes before
+        cal.add(Calendar.MINUTE, -2);
+
+
+        Cursor cursor = database.query(TABLE_LOCATIONS, null, null, null, null, null, COLUMN_CREATE_DATE+ " DESC", null);
+        try {
+            if (cursor.moveToFirst()) {
+                do {
+                    int locationIndex = cursor.getInt(cursor.getColumnIndex(COLUMN_LOCATION_INDEX));
+                    ContentValues cv = new ContentValues();
+                    cv.put(COLUMN_UPDATE_DATE, dateFormat.format(date));
+                    database.update(TABLE_LOCATIONS, cv, COLUMN_LOCATION_INDEX + " =? ", new String[]{String.format("%d", locationIndex)});
+                    break;
+                } while (cursor.moveToNext());
+            }
+            if (cursor != null)
+                cursor.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        final ContentValues values = new ContentValues();
+
+        values.put(COLUMN_USER_ID, user_uid);
+        values.put(COLUMN_LATITUDE, latitude);
+        values.put(COLUMN_LONGITUDE, longitude);
+        values.put(COLUMN_MEASURELATITUDE, latitude);
+        values.put(COLUMN_MEASURELONGITUDE, longitude);
+        values.put(COLUMN_CREATE_DATE, dateFormat.format(cal.getTime()));
+        values.put(COLUMN_MEASURE_DATE, dateFormat.format(cal.getTime()));
+
+        return database.insert(TABLE_LOCATIONS, null, values);
+    }
+
     public void setMood(final String userUid, final String mood) {
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
@@ -462,6 +543,33 @@ public class DBHelper extends SQLiteOpenHelper {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public String getWeatherToday(final String userUid) {
+        String weather = "";
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        //dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+        Date date = new Date();
+
+        Cursor cursor = database.query(TABLE_DAILY, null,  String.format("date(%s) = date('now') and %s =? ", COLUMN_CREATE_DATE, COLUMN_USER_ID), new String[]{userUid}, null, null, COLUMN_CREATE_DATE+ " DESC", null);
+        try {
+            if(cursor.getCount() > 0){
+                if (cursor.moveToFirst()) {
+                    do {
+                        weather = cursor.getString(cursor.getColumnIndex(COLUMN_WEATHER));
+
+                        break;
+                    } while (cursor.moveToNext());
+                }
+
+            }
+            if (cursor != null)
+                cursor.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return weather;
     }
 
     public void setSentence(final String userUid, final String sentence) {
@@ -554,6 +662,16 @@ public class DBHelper extends SQLiteOpenHelper {
 
         database.update(TABLE_LOCATIONS, values, COLUMN_LOCATION_INDEX + " =? ", new String[]{String.format("%d", locationId)});
     }
+
+    public void setLocation(String userUid, int locationId, String title, String category) {
+        final ContentValues values = new ContentValues();
+
+        values.put(COLUMN_NAME, title);
+        values.put(COLUMN_CATEGORY, category);
+
+        database.update(TABLE_LOCATIONS, values, COLUMN_LOCATION_INDEX + " =? ", new String[]{String.format("%d", locationId)});
+    }
+
 
     public void setLocationLog(String userUid, int islock, int locationId) {
 
@@ -890,8 +1008,8 @@ public class DBHelper extends SQLiteOpenHelper {
         try {
             Cursor cursor = database.rawQuery(
                     "select a.create_date, "
-                            + "(select group_concat(ifnull(b.file_location, b.file_location_url)) from (select * from PHOTOS where date(update_date) = date(a.create_date) and user_id = '" + userUid + "' order by quality_rank desc) b )  as files,"
-                            + "(select group_concat(b.file_index) from (select * from PHOTOS where date(update_date) = date(a.create_date) and user_id = '" + userUid + "' order by quality_rank desc) b )  as ids,"
+                            + "(select group_concat(ifnull(b.file_location, b.file_location_url)) from (select * from PHOTOS where date(update_date) = date(a.create_date) and user_id = '" + userUid + "' group by cluster_id order by quality_rank desc) b )  as files,"
+                            + "(select group_concat(b.file_index) from (select * from PHOTOS where date(update_date) = date(a.create_date) and user_id = '" + userUid + "' group by cluster_id order by quality_rank desc) b )  as ids,"
                             + "(select count(*) from PHOTOS where date(a.create_date) = date(update_date) and user_id = '" + userUid + "')  as photo_count, "
                             + "(select count(*) from LOCATIONS where date(a.create_date) = date(create_date) and user_id = '" + userUid + "')  as location_count,"
                             + "(select sentence from DAILY where date(create_date) = date(a.create_date)) as sentence ,"
@@ -960,7 +1078,7 @@ public class DBHelper extends SQLiteOpenHelper {
         try {
             Cursor cursor = database.rawQuery(
                     "select a.create_date, "
-                            + "(select group_concat(ifnull(b.file_location, b.file_location_url)) from (select * from PHOTOS where date(update_date) = date(a.create_date) and user_id = '" + userUid + "' order by quality_rank desc) b )  as files,"
+                            + "(select group_concat(ifnull(b.file_location, b.file_location_url)) from (select * from PHOTOS where date(update_date) = date(a.create_date) and user_id = '" + userUid + "' group by cluster_id order by quality_rank desc) b )  as files,"
                             + "(select count(*) from PHOTOS where date(a.create_date) = date(update_date) and user_id = '" + userUid + "')  as photo_count, "
                             + "(select count(*) from LOCATIONS where date(a.create_date) = date(create_date) and user_id = '" + userUid + "')  as location_count,"
                             + "(select sentence from DAILY where date(create_date) = date(a.create_date)) as sentence,"
@@ -1003,7 +1121,7 @@ public class DBHelper extends SQLiteOpenHelper {
         try {
             Cursor cursor = database.rawQuery(
                     "select a.create_date, "
-                            + "(select group_concat(ifnull(b.file_location, b.file_location_url)) from (select * from PHOTOS where date(update_date) = date(a.create_date) and user_id = '" + userUid + "' order by quality_rank desc) b )  as files,"
+                            + "(select group_concat(ifnull(b.file_location, b.file_location_url)) from (select * from PHOTOS where date(update_date) = date(a.create_date) and user_id = '" + userUid + "' group by cluster_id order by quality_rank desc) b )  as files,"
                             + "(select group_concat(b.file_index) from (select * from PHOTOS where date(update_date) = date(a.create_date) and user_id = '" + userUid + "' order by quality_rank desc) b )  as ids,"
                             + "(select count(*) from PHOTOS where date(a.create_date) = date(update_date) and user_id = '" + userUid + "')  as photo_count, "
                             + "(select count(*) from LOCATIONS where date(a.create_date) = date(create_date) and user_id = '" + userUid + "')  as location_count,"

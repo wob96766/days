@@ -18,8 +18,10 @@
     <uses-feature android:name="android.hardware.location.gps" />
 
     <!-- <uses-feature android:name="android.hardware.camera2.full" /> -->
-    <uses-feature android:name="android.hardware.camera2.full" />
-    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera2.full"
+        android:required="true"/>
+    <uses-feature android:name="android.hardware.camera"
+        android:required="true" />
     <uses-permission android:name="android.permission.CAMERA" />
 
     <application
@@ -230,6 +232,13 @@
             android:enabled="true">
         </service>
 
+        <service
+            android:name="com.mindspree.days.services.FileJobService"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:exported="true"
+            android:enabled="true">
+        </service>
+
         <receiver
             android:name="com.mindspree.days.services.LocationServiceReciever"
             android:enabled="true"
@@ -249,6 +258,19 @@
             </intent-filter>
         </receiver>
 
+        <receiver
+            android:name="com.mindspree.days.services.CameraServiceReciever"
+            android:enabled="true" >
+            <intent-filter android:priority="10000">
+                <!-- <action android:name="com.android.camera.NEW_PICTURE" /> -->
+
+                <action android:name="android.intent.action.CAMERA_BUTTON" />
+                <action android:name="com.android.camera.NEW_PICTURE" />
+                <action android:name="android.hardware.action.NEW_PICTURE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+        </receiver>
 
         <provider android:authorities="com.facebook.app.FacebookContentProvider212478769212695"
             android:name="com.facebook.FacebookContentProvider"

@@ -385,6 +385,49 @@ public class TodayFragment extends BaseFragment{
                     }
                 }
                 break;
+                case R.id.image_thumnail4: {
+                    TimelineModel model = mAdapter.getItem(position);
+                    if(model.getImageList().size() > 3) {
+                        ImagePickActivity.startActivity(getContext(), model);
+                    }
+                }
+                break;
+                case R.id.image_thumnail5: {
+                    TimelineModel model = mAdapter.getItem(position);
+                    if(model.getImageList().size() > 4) {
+                        ImagePickActivity.startActivity(getContext(), model);
+                    }
+                }
+                break;
+                case R.id.image_thumnail6: {
+                    TimelineModel model = mAdapter.getItem(position);
+                    if(model.getImageList().size() > 5) {
+                        ImagePickActivity.startActivity(getContext(), model);
+                    }
+                }
+                break;
+                case R.id.image_thumnail7: {
+                    TimelineModel model = mAdapter.getItem(position);
+                    if(model.getImageList().size() > 6) {
+                        ImagePickActivity.startActivity(getContext(), model);
+                    }
+                }
+                break;
+                case R.id.image_thumnail8: {
+                    TimelineModel model = mAdapter.getItem(position);
+                    if(model.getImageList().size() > 7) {
+                        ImagePickActivity.startActivity(getContext(), model);
+                    }
+                }
+                break;
+                case R.id.image_thumnail9: {
+                    TimelineModel model = mAdapter.getItem(position);
+                    if(model.getImageList().size() > 8) {
+                        ImagePickActivity.startActivity(getContext(), model);
+                    }
+                }
+                break;
+
                 case R.id.image_location: {
                     TimelineModel model = mAdapter.getItem(position);
                     SearchMapActivity.startActivity(getContext(), model.mLocationId, model.mLatitude, model.mLogitude);

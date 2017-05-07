@@ -180,7 +180,7 @@ public class AppPreference {
     //    return getInt(TAG_DURATION, 10);
     //}
 	public int getDuration() {
-		return getInt(TAG_DURATION, 10);
+		return getInt(TAG_DURATION, 4);
 	}
 
     public void setLaunchHistory(String value) {
