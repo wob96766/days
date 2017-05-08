@@ -440,9 +440,9 @@ public class DatelineModel implements Parcelable {
                         Integer key_temp = uniqKeysArray[m];  //This is POI index which is key
                         size = result.get(key_temp);          // This is the number of photos taken in this POI index
 
-                        hash_string_face= dnnModel.SentenceFromPhoto_korean(clusterEngine,DNN_result, offset,size,poiList.get(key_temp).toString(),photolist,front_cam_width,rear_cam_width, DNN_path, weekend_days);
+                        hash_string_face= dnnModel.SentenceFromPhoto_korean(clusterEngine, offset,size, DNN_result, poiList.get(key_temp).toString(),photolist,front_cam_width,rear_cam_width, DNN_path, weekend_days);
 //                        DNN_result = dnnModel.HashFromPhoto_korean(clusterEngine,DNN_result, offset,size,poiList.get(key_temp).toString(),photolist,front_cam_width,rear_cam_width, DNN_path, weekend_days);
-                        DNN_result = dnnModel.DNN_result;
+                        DNN_result.addAll(dnnModel.DNN_result);
 
                         if(hash_string_face.equals(hash_string_face_buf))
                             hash_string_face=""; // This is to prevent the duplication
@@ -537,7 +537,7 @@ public class DatelineModel implements Parcelable {
 //                        }
 //                    }
 
-                    for(int r=0;r<DNN_result.size();r++)
+                    for(int r=0;r<DNN_result_nooverlap.length;r++)
                         hashString_DNN = hashString_DNN + DNN_result_nooverlap[r];
 
 

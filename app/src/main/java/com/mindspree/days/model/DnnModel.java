@@ -1029,7 +1029,7 @@ public class DnnModel {
     }
 
 
-    public String SentenceFromPhoto_korean(ClusterEngine clusterEngine,ArrayList DNN_result, int offset,int size,String poi_string, ArrayList PhotoList,  int front_cam_width, int rear_cam_width, String [] DNN_path, int weekend_days)
+    public String SentenceFromPhoto_korean(ClusterEngine clusterEngine, int offset,int size,ArrayList DNN_result_in, String poi_string, ArrayList PhotoList,  int front_cam_width, int rear_cam_width, String [] DNN_path, int weekend_days)
     {
         String hash_string = "";
         String hash_string_DNN= "";
@@ -1041,6 +1041,7 @@ public class DnnModel {
 
         EngineDBInterface engineDBInterface = new EngineDBInterface();
 
+        DNN_result =DNN_result_in;
 
         // POI context based string generation
         //POI_DB1 : Coffe and tea
@@ -1246,14 +1247,24 @@ public class DnnModel {
             jargv[5] =DNN_test_path_resample;
             jargv[6] = outDir+"/";
 
-            String class_predict = DnnEngineClassJNI(jargv);
-            System.gc();
+            String class_predict = null;
+            Boolean foodClass =false;
+            Boolean WaterClass =false;
+            Boolean MounatainClass=false ;
+            Boolean PlayClass =false;
+            if(i==0) {
+                class_predict = DnnEngineClassJNI(jargv);
+                foodClass = classDetect(class_predict, dnnModel.DNN_DB1);
+                WaterClass = classDetect(class_predict, dnnModel.DNN_DB2);
+                MounatainClass = classDetect(class_predict, dnnModel.DNN_DB3);
+                PlayClass = classDetect(class_predict, dnnModel.DNN_DB4);
+                System.gc();
+            }
 
 
-            Boolean foodClass = classDetect(class_predict, dnnModel.DNN_DB1);
-            Boolean WaterClass = classDetect(class_predict, dnnModel.DNN_DB2);
-            Boolean MounatainClass = classDetect(class_predict, dnnModel.DNN_DB3);
-            Boolean PlayClass = classDetect(class_predict, dnnModel.DNN_DB4);
+
+
+
 
 
             double [] temp_time = clusterEngine.timeFeatureExtract(timelinePhotoFile);
