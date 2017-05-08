@@ -153,6 +153,7 @@ public class TimelineModel implements Parcelable {
     //junyong  - get the 3 representing photo URL
     public ArrayList<String> getPhotoList() {
         if(mPhotoList == null) {
+            mPhotoList = new ArrayList<String>();
             if (mPhotoGroup != null) {
                 ArrayList<String> temp = new ArrayList<String>(Arrays.asList(mPhotoGroup.split(",")));
                 for (int i = 0; i < temp.size(); i++) {
@@ -165,8 +166,6 @@ public class TimelineModel implements Parcelable {
                         mPhotoList.add(temp.get(i));
                     }
                 }
-            } else {
-                mPhotoList = new ArrayList<String>();
             }
         }
         return mPhotoList;
@@ -175,6 +174,7 @@ public class TimelineModel implements Parcelable {
 
     public ArrayList<String> getImageList() {
         if(mImageList == null) {
+            mImageList = new ArrayList<String>();
             if (mImageGroup != null) {
                 ArrayList<String> temp = new ArrayList<String>(Arrays.asList(mImageGroup.split(",")));
                 for (int i = 0; i < temp.size(); i++) {
@@ -187,8 +187,6 @@ public class TimelineModel implements Parcelable {
                         mImageList.add(temp.get(i));
                     }
                 }
-            } else {
-                mImageList = new ArrayList<String>();
             }
         }
         return mImageList;
