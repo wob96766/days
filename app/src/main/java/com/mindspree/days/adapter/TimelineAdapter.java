@@ -58,17 +58,18 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
         Glide.with(mContext).load("").centerCrop().into(holder.mThumnail7);
         Glide.with(mContext).load("").centerCrop().into(holder.mThumnail8);
         Glide.with(mContext).load("").centerCrop().into(holder.mThumnail9);
+        if(files.size() > 6){
+            holder.mViewPhoto2.setVisibility(View.VISIBLE);
+            holder.mViewPhoto3.setVisibility(View.VISIBLE);
+        } else if(files.size() > 3){
+            holder.mViewPhoto2.setVisibility(View.VISIBLE);
+            holder.mViewPhoto3.setVisibility(View.GONE);
+        } else{
+            holder.mViewPhoto2.setVisibility(View.GONE);
+            holder.mViewPhoto3.setVisibility(View.GONE);
+        }
         if(mDataSource.get(position).getPhotoList().size() > 0) {
-            if(files.size() > 6){
-                holder.mViewPhoto2.setVisibility(View.VISIBLE);
-                holder.mViewPhoto3.setVisibility(View.VISIBLE);
-            } else if(files.size() > 3){
-                holder.mViewPhoto2.setVisibility(View.VISIBLE);
-                holder.mViewPhoto3.setVisibility(View.GONE);
-            } else{
-                holder.mViewPhoto2.setVisibility(View.GONE);
-                holder.mViewPhoto3.setVisibility(View.GONE);
-            }
+
             for(int i=0 ; i<files.size() ; i++){
                 if (i == 0)  {
                     Glide.with(mContext).load(files.get(i)).centerCrop().into(holder.mThumnail1);
