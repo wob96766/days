@@ -264,7 +264,8 @@ public class ClusterEngine {
 
         try {
             exif = new ExifInterface(fname);
-            String exif_DATETIME = getTakenTime(fname);// exif.getAttribute(ExifInterface.TAG_DATETIME);
+            //String exif_DATETIME = getTakenTime(fname);
+            String exif_DATETIME = exif.getAttribute(ExifInterface.TAG_DATETIME);
 
             exif_year = Double.parseDouble(exif_DATETIME.substring(0, 4));
             exif_month = Double.parseDouble(exif_DATETIME.substring(5, 7));

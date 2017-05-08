@@ -91,28 +91,86 @@
                         </LinearLayout>
 
                         <LinearLayout
-                            android:id="@+id/view_photo"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal" >
-                            <ImageView
-                                android:id="@+id/image_thumnail1"
-                                android:padding="@dimen/xsmall"
-                                android:layout_width="60dp"
-                                android:layout_height="60dp"
-                                android:gravity="center_vertical"/>
-                            <ImageView
-                                android:id="@+id/image_thumnail2"
-                                android:padding="@dimen/xsmall"
-                                android:layout_width="60dp"
-                                android:layout_height="60dp"
-                                android:gravity="center_vertical"/>
-                            <ImageView
-                                android:id="@+id/image_thumnail3"
-                                android:padding="@dimen/xsmall"
-                                android:layout_width="60dp"
-                                android:layout_height="60dp"
-                                android:gravity="center_vertical"/>
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:id="@+id/view_photo"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal" >
+                                <ImageView
+                                    android:id="@+id/image_thumnail1"
+                                    android:padding="@dimen/xsmall"
+                                    android:layout_width="60dp"
+                                    android:layout_height="60dp"
+                                    android:gravity="center_vertical"/>
+                                <ImageView
+                                    android:id="@+id/image_thumnail2"
+                                    android:padding="@dimen/xsmall"
+                                    android:layout_width="60dp"
+                                    android:layout_height="60dp"
+                                    android:gravity="center_vertical"/>
+                                <ImageView
+                                    android:id="@+id/image_thumnail3"
+                                    android:padding="@dimen/xsmall"
+                                    android:layout_width="60dp"
+                                    android:layout_height="60dp"
+                                    android:gravity="center_vertical"/>
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/view_photo2"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:paddingTop="@dimen/middle"
+                                android:visibility="gone">
+                                <ImageView
+                                    android:id="@+id/image_thumnail4"
+                                    android:layout_width="60dp"
+                                    android:layout_height="60dp"
+                                    android:gravity="center_vertical"/>
+                                <ImageView
+                                    android:id="@+id/image_thumnail5"
+                                    android:layout_marginLeft="@dimen/middle"
+                                    android:layout_marginRight="@dimen/middle"
+                                    android:layout_width="60dp"
+                                    android:layout_height="60dp"
+                                    android:gravity="center_vertical"/>
+                                <ImageView
+                                    android:id="@+id/image_thumnail6"
+                                    android:layout_width="60dp"
+                                    android:layout_height="60dp"
+                                    android:gravity="center_vertical"/>
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/view_photo3"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:paddingTop="@dimen/middle"
+                                android:visibility="gone">
+                                <ImageView
+                                    android:id="@+id/image_thumnail7"
+                                    android:layout_width="60dp"
+                                    android:layout_height="60dp"
+                                    android:gravity="center_vertical"/>
+                                <ImageView
+                                    android:id="@+id/image_thumnail8"
+                                    android:layout_marginLeft="@dimen/middle"
+                                    android:layout_marginRight="@dimen/middle"
+                                    android:layout_width="60dp"
+                                    android:layout_height="60dp"
+                                    android:gravity="center_vertical"/>
+                                <ImageView
+                                    android:id="@+id/image_thumnail9"
+                                    android:layout_width="60dp"
+                                    android:layout_height="60dp"
+                                    android:gravity="center_vertical"/>
+                            </LinearLayout>
                         </LinearLayout>
                     </LinearLayout>
 
