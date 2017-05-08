@@ -165,6 +165,8 @@ public class TimelineModel implements Parcelable {
                         mPhotoList.add(temp.get(i));
                     }
                 }
+            } else {
+                mPhotoList = new ArrayList<String>();
             }
         }
         return mPhotoList;
@@ -185,6 +187,8 @@ public class TimelineModel implements Parcelable {
                         mImageList.add(temp.get(i));
                     }
                 }
+            } else {
+                mImageList = new ArrayList<String>();
             }
         }
         return mImageList;

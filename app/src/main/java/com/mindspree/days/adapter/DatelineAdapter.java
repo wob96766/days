@@ -51,7 +51,10 @@ public class DatelineAdapter extends RecyclerView.Adapter<DatelineAdapter.MyView
         Glide.with(mContext).load("").centerCrop().into(holder.mThumnail7);
         Glide.with(mContext).load("").centerCrop().into(holder.mThumnail8);
         Glide.with(mContext).load("").centerCrop().into(holder.mThumnail9);
-        if(files.size() > 6){
+        if(files == null){
+            holder.mViewPhoto2.setVisibility(View.GONE);
+            holder.mViewPhoto3.setVisibility(View.GONE);
+        } else if(files.size() > 6){
             holder.mViewPhoto2.setVisibility(View.VISIBLE);
             holder.mViewPhoto3.setVisibility(View.VISIBLE);
         } else if(files.size() > 3){
