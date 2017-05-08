@@ -51,6 +51,19 @@ public class DatelineAdapter extends RecyclerView.Adapter<DatelineAdapter.MyView
         Glide.with(mContext).load("").centerCrop().into(holder.mThumnail7);
         Glide.with(mContext).load("").centerCrop().into(holder.mThumnail8);
         Glide.with(mContext).load("").centerCrop().into(holder.mThumnail9);
+        if(files == null){
+            holder.mViewPhoto2.setVisibility(View.GONE);
+            holder.mViewPhoto3.setVisibility(View.GONE);
+        } else if(files.size() > 6){
+            holder.mViewPhoto2.setVisibility(View.VISIBLE);
+            holder.mViewPhoto3.setVisibility(View.VISIBLE);
+        } else if(files.size() > 3){
+            holder.mViewPhoto2.setVisibility(View.VISIBLE);
+            holder.mViewPhoto3.setVisibility(View.GONE);
+        } else{
+            holder.mViewPhoto2.setVisibility(View.GONE);
+            holder.mViewPhoto3.setVisibility(View.GONE);
+        }
         if(mDataSource.get(position).getPhotoList().size() > 0) {
 
             for(int i=0 ; i<files.size() ; i++){
@@ -136,9 +149,14 @@ public class DatelineAdapter extends RecyclerView.Adapter<DatelineAdapter.MyView
         public TextView mTextMonth;
         public ViewGroup mViewPhoto;
 
+        public View mViewPhoto1;
+        public View mViewPhoto2;
+        public View mViewPhoto3;
+
         public TextView mLikeCount;
         public TextView mCommentCount;
         public View mImageContainer;
+
         public MyViewHolders(View itemView) {
             super(itemView);
 
@@ -146,6 +164,10 @@ public class DatelineAdapter extends RecyclerView.Adapter<DatelineAdapter.MyView
 
             AQuery aq = new AQuery(itemView);
             mViewPhoto = (ViewGroup)aq.id(R.id.view_photo).getView();
+            mViewPhoto1 = aq.id(R.id.view_photo).getView();
+            mViewPhoto2 = aq.id(R.id.view_photo2).getView();
+            mViewPhoto3 = aq.id(R.id.view_photo3).getView();
+
             mThumnail1 = aq.id(R.id.image_thumnail1).width(metrics.widthPixels * 2 / 9, false).height(metrics.widthPixels * 2 / 9, false).clicked(mOnClickListener).getImageView();
             mThumnail2 = aq.id(R.id.image_thumnail2).width(metrics.widthPixels * 2 / 9, false).height(metrics.widthPixels * 2 / 9, false).clicked(mOnClickListener).getImageView();
             mThumnail3 = aq.id(R.id.image_thumnail3).width(metrics.widthPixels * 2 / 9, false).height(metrics.widthPixels * 2 / 9, false).clicked(mOnClickListener).getImageView();

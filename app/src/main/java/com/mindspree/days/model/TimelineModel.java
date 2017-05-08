@@ -71,6 +71,9 @@ public class TimelineModel implements Parcelable {
     private String mPhotoGroup = "";
     private String mImageGroup = "";
 
+    ArrayList<String> mPhotoList = null;
+    ArrayList<String> mImageList = null;
+
 
     private String mMeasureTime ="";
     private String mMeasureTimeInHour ="";
@@ -149,39 +152,44 @@ public class TimelineModel implements Parcelable {
 
     //junyong  - get the 3 representing photo URL
     public ArrayList<String> getPhotoList() {
-        ArrayList<String> result = new ArrayList<String>();
-        if(mPhotoGroup != null) {
-            ArrayList<String> temp = new ArrayList<String>(Arrays.asList(mPhotoGroup.split(",")));
-            for(int i=0;i<temp.size() ; i++){
-                if(!temp.get(i).contains("http://") && !temp.get(i).contains("https://")) {
-                    File file = new File(temp.get(i));
-                    if (file.exists()) {
-                        result.add(temp.get(i));
+        if(mPhotoList == null) {
+            mPhotoList = new ArrayList<String>();
+            if (mPhotoGroup != null) {
+                ArrayList<String> temp = new ArrayList<String>(Arrays.asList(mPhotoGroup.split(",")));
+                for (int i = 0; i < temp.size(); i++) {
+                    if (!temp.get(i).contains("http://") && !temp.get(i).contains("https://")) {
+                        File file = new File(temp.get(i));
+                        if (file.exists()) {
+                            mPhotoList.add(temp.get(i));
+                        }
+                    } else {
+                        mPhotoList.add(temp.get(i));
                     }
-                } else {
-                    result.add(temp.get(i));
                 }
             }
         }
-        return result;
+        return mPhotoList;
+
     }
 
     public ArrayList<String> getImageList() {
-        ArrayList<String> result = new ArrayList<String>();
-        if(mPhotoGroup != null) {
-            ArrayList<String> temp = new ArrayList<String>(Arrays.asList(mPhotoGroup.split(",")));
-            for(int i=0;i<temp.size() ; i++){
-                if(!temp.get(i).contains("http://") && !temp.get(i).contains("https://")) {
-                    File file = new File(temp.get(i));
-                    if (file.exists()) {
-                        result.add(temp.get(i));
+        if(mImageList == null) {
+            mImageList = new ArrayList<String>();
+            if (mImageGroup != null) {
+                ArrayList<String> temp = new ArrayList<String>(Arrays.asList(mImageGroup.split(",")));
+                for (int i = 0; i < temp.size(); i++) {
+                    if (!temp.get(i).contains("http://") && !temp.get(i).contains("https://")) {
+                        File file = new File(temp.get(i));
+                        if (file.exists()) {
+                            mImageList.add(temp.get(i));
+                        }
+                    } else {
+                        mImageList.add(temp.get(i));
                     }
-                }else {
-                    result.add(temp.get(i));
                 }
             }
         }
-        return result;
+        return mImageList;
     }
 
     public void setCreateDate(String formatDate){
