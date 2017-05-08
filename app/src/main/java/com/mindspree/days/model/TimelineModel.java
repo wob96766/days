@@ -168,8 +168,8 @@ public class TimelineModel implements Parcelable {
 
     public ArrayList<String> getImageList() {
         ArrayList<String> result = new ArrayList<String>();
-        if(mPhotoGroup != null) {
-            ArrayList<String> temp = new ArrayList<String>(Arrays.asList(mPhotoGroup.split(",")));
+        if(mImageGroup != null) {
+            ArrayList<String> temp = new ArrayList<String>(Arrays.asList(mImageGroup.split(",")));
             for(int i=0;i<temp.size() ; i++){
                 if(!temp.get(i).contains("http://") && !temp.get(i).contains("https://")) {
                     File file = new File(temp.get(i));
