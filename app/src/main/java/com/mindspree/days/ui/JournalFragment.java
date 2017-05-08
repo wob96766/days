@@ -194,6 +194,48 @@ public class JournalFragment extends BaseFragment{
                     }
                 }
                     break;
+                case R.id.image_thumnail4:{
+                    DatelineModel model = mAdapter.getItem(position);
+                    if (model.getPhotoList().size() > 3) {
+                        ImageviewActivity.startActivity(getContext(), model.getPhotoString());
+                    }
+                }
+                break;
+                case R.id.image_thumnail5: {
+                    DatelineModel model = mAdapter.getItem(position);
+                    if (model.getPhotoList().size() > 4) {
+                        ImageviewActivity.startActivity(getContext(), model.getPhotoString());
+                    }
+                }
+                break;
+                case R.id.image_thumnail6: {
+                    DatelineModel model = mAdapter.getItem(position);
+                    if (model.getPhotoList().size() > 5) {
+                        ImageviewActivity.startActivity(getContext(), model.getPhotoString());
+                    }
+                }
+                break;
+                case R.id.image_thumnail7:{
+                    DatelineModel model = mAdapter.getItem(position);
+                    if (model.getPhotoList().size() > 6) {
+                        ImageviewActivity.startActivity(getContext(), model.getPhotoString());
+                    }
+                }
+                break;
+                case R.id.image_thumnail8: {
+                    DatelineModel model = mAdapter.getItem(position);
+                    if (model.getPhotoList().size() > 7) {
+                        ImageviewActivity.startActivity(getContext(), model.getPhotoString());
+                    }
+                }
+                break;
+                case R.id.image_thumnail9: {
+                    DatelineModel model = mAdapter.getItem(position);
+                    if (model.getPhotoList().size() > 8) {
+                        ImageviewActivity.startActivity(getContext(), model.getPhotoString());
+                    }
+                }
+                break;
                 case R.id.text_month:
                 case R.id.text_day:{
                     DatelineModel model = mAdapter.getItem(position);
