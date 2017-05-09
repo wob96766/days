@@ -125,22 +125,22 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:orientation="horizontal"
-                                android:paddingTop="@dimen/middle"
-                                android:visibility="gone">
+                                android:paddingTop="@dimen/middle">
                                 <ImageView
                                     android:id="@+id/image_thumnail4"
+                                    android:padding="@dimen/xsmall"
                                     android:layout_width="60dp"
                                     android:layout_height="60dp"
                                     android:gravity="center_vertical"/>
                                 <ImageView
                                     android:id="@+id/image_thumnail5"
-                                    android:layout_marginLeft="@dimen/middle"
-                                    android:layout_marginRight="@dimen/middle"
+                                    android:padding="@dimen/xsmall"
                                     android:layout_width="60dp"
                                     android:layout_height="60dp"
                                     android:gravity="center_vertical"/>
                                 <ImageView
                                     android:id="@+id/image_thumnail6"
+                                    android:padding="@dimen/xsmall"
                                     android:layout_width="60dp"
                                     android:layout_height="60dp"
                                     android:gravity="center_vertical"/>
@@ -155,18 +155,19 @@
                                 android:visibility="gone">
                                 <ImageView
                                     android:id="@+id/image_thumnail7"
+                                    android:padding="@dimen/xsmall"
                                     android:layout_width="60dp"
                                     android:layout_height="60dp"
                                     android:gravity="center_vertical"/>
                                 <ImageView
                                     android:id="@+id/image_thumnail8"
-                                    android:layout_marginLeft="@dimen/middle"
-                                    android:layout_marginRight="@dimen/middle"
+                                    android:padding="@dimen/xsmall"
                                     android:layout_width="60dp"
                                     android:layout_height="60dp"
                                     android:gravity="center_vertical"/>
                                 <ImageView
                                     android:id="@+id/image_thumnail9"
+                                    android:padding="@dimen/xsmall"
                                     android:layout_width="60dp"
                                     android:layout_height="60dp"
                                     android:gravity="center_vertical"/>

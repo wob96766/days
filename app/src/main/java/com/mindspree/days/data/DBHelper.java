@@ -963,7 +963,7 @@ public class DBHelper extends SQLiteOpenHelper {
         ArrayList<TimelineModel> list =  new ArrayList<TimelineModel>();
         try {
             Cursor cursor = database.rawQuery(
-                    "SELECT a.location_index, a.name, a.latitude, a.longitude, a.create_date," +
+                    /*"SELECT a.location_index, a.name, a.latitude, a.longitude, a.create_date," +
                             "(SELECT group_concat(ifnull(x.file_location, x.file_location_url))" +
                             "   FROM (SELECT c.file_location, c.file_location_url" +
                             "           FROM (SELECT cluster_id, MAX(quality_rank) as quality_rank FROM PHOTOS GROUP BY  cluster_id ) b" +
@@ -976,6 +976,21 @@ public class DBHelper extends SQLiteOpenHelper {
                             "  ORDER BY  c.sortseq asc, c.quality_rank desc) images" +
                             "  from LOCATIONS a" +
                             " where date(a.create_date) = '" + dateString + "' and user_id = '" + userUid + "'"
+                            , null);*/
+                    "SELECT a.location_index, a.name, a.latitude, a.longitude, a.create_date," +
+                            "(SELECT group_concat(ifnull(x.file_location, x.file_location_url))" +
+                            "   FROM (SELECT c.file_location, c.file_location_url" +
+                            "           FROM (SELECT cluster_id, MAX(quality_rank) as quality_rank FROM PHOTOS GROUP BY  cluster_id, sortseq ) b" +
+                            "               INNER JOIN PHOTOS c ON b.cluster_id = c.cluster_id AND b.quality_rank = c.quality_rank " +
+                            "          WHERE c.update_date between ifnull(a.create_date, date('now','localtime')) and ifnull(a.update_date, datetime('now', 'localtime'))" +
+                            "          ORDER BY  c.sortseq asc, c.quality_rank desc) x) files," +
+                            "(SELECT group_concat(ifnull(c.file_location, c.file_location_url))" +
+                            "   FROM PHOTOS c " +
+                            "  WHERE c.update_date between ifnull(a.create_date, date('now','localtime')) and ifnull(a.update_date, datetime('now', 'localtime'))" +
+                            "  ORDER BY  c.sortseq asc, c.quality_rank desc) images" +
+                            "  from LOCATIONS a" +
+                            " where date(a.create_date) = '" + dateString + "' and user_id = '" + userUid + "'"
+
                     , null);
             if (cursor.moveToFirst()) {
                 do {

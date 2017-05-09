@@ -81,6 +81,7 @@ public class DatelineModel implements Parcelable {
 
     public ClusterEngine clusterEngine;
     public DnnModel dnnModel;
+    ArrayList<String> mPhotoList = null;
 
     public String mMood_kr = "";
 
@@ -152,21 +153,23 @@ public class DatelineModel implements Parcelable {
     }
     //junyong  - get the 3 representing photo URL
     public ArrayList<String> getPhotoList() {
-        ArrayList<String> result = new ArrayList<String>();
-        if(mPhotoGroup != null) {
-            ArrayList<String> temp = new ArrayList<String>(Arrays.asList(mPhotoGroup.split(",")));
-            for(int i=0;i<temp.size() ; i++){
-                if(!temp.get(i).contains("http://") && !temp.get(i).contains("https://")) {
-                    File file = new File(temp.get(i));
-                    if (file.exists()) {
-                        result.add(temp.get(i));
+        if(mPhotoList == null) {
+            mPhotoList = new ArrayList<String>();
+            if (mPhotoGroup != null) {
+                ArrayList<String> temp = new ArrayList<String>(Arrays.asList(mPhotoGroup.split(",")));
+                for (int i = 0; i < temp.size(); i++) {
+                    if (!temp.get(i).contains("http://") && !temp.get(i).contains("https://")) {
+                        File file = new File(temp.get(i));
+                        if (file.exists()) {
+                            mPhotoList.add(temp.get(i));
+                        }
+                    } else {
+                        mPhotoList.add(temp.get(i));
                     }
-                } else {
-                    result.add(temp.get(i));
                 }
             }
         }
-        return result;
+        return mPhotoList;
     }
     //junyong - get image's "photo_index" to be displayed on the screen
     public ArrayList<String> getDisplayPhotoIds() {
