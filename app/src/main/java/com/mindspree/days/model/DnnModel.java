@@ -100,7 +100,7 @@ public class DnnModel {
     public String [] FaceBasedPool_selfie_smile_kr ={"간만에 웃는 사진도 찍었다", "오늘 찍은 최고의 사진인 듯. 크~ 간만에 잘 나온 미소 사진", "오늘 셀피 몇장 찍었다. 좋은 곳에서 셀피 찰칵"};
     public String [] FaceBasedPool_selfie_nosmile_kr ={"간만에 셀피도 찍었다", "오늘 찍은 최고의 사진인듯. ㅎㅎ 간만에 잘나왔는데 다음엔 좀 더 웃어야지", "여기 온 기념으로 오늘 셀피 몇장 찍었다."};
     public String [] FaceBasedPool_single_smile_kr ={"나이스 스마일 샷 ~ 오늘도 즐거운 하루", "오늘의 베스트 샷. 다들 스마일 ~", " ㅎㅎ "};
-    public String [] FaceBasedPool_single_nosmile_kr ={"무표정 샷", "쫌 진지한 사진도 찍었다", "심각한 얼굴 o.o"};
+    public String [] FaceBasedPool_single_nosmile_kr ={"무표정 샷도 찍었다.", "간만에 진지한 사진도 한 컷 찍었다.", "근엄한 사진도 한 컷 찍었다."};
     public String [] FaceBasedPool_group_smile_kr = {"친구 동료들과 즐거운 사진도 찍었다", "오늘의 베스트 그룹 샷..(다들 표정이 좋네)", "오늘의 베스트 그룹 샷..(다들 표정 좋군)", "오늘도 다들 즐거운 하루를 보냈다"};
     public String [] FaceBasedPool_group_nosmile_kr = {"단체 사진을 찍었다", "오늘의 베스트 그룹 샷.", "단체 사진도 몇장 찍었다"};
 
@@ -1252,7 +1252,8 @@ public class DnnModel {
             Boolean WaterClass =false;
             Boolean MounatainClass=false ;
             Boolean PlayClass =false;
-            if(i==0) {
+
+            if(!POI_DB2_DETECT || !POI_DB6_DETECT || selfie_cnt==0 || groupPhoto_cnt==0 || groupSelfie_cnt==0 ||singlePhoto_cnt==0) {
                 class_predict = DnnEngineClassJNI(jargv);
                 foodClass = classDetect(class_predict, dnnModel.DNN_DB1);
                 WaterClass = classDetect(class_predict, dnnModel.DNN_DB2);
@@ -1260,11 +1261,6 @@ public class DnnModel {
                 PlayClass = classDetect(class_predict, dnnModel.DNN_DB4);
                 System.gc();
             }
-
-
-
-
-
 
 
             double [] temp_time = clusterEngine.timeFeatureExtract(timelinePhotoFile);
@@ -1289,7 +1285,7 @@ public class DnnModel {
                 }else if(pic_time>=19) {
                     //Party
 //                    hash_string_DNN = String.format("%s %s %s", "I had party with my friends and colleagues in ", poi_string, ". Awesome food. ");
-                    hash_string_DNN = String.format("%s에서 %s ", poi_string, "저녁 회식을 했다");
+                    hash_string_DNN = String.format("%s에서 %s ", poi_string, "저녁 회식을 했다.");
 
                     class_predict =String.format("#%s #%s","회식", poi_string);
                 }

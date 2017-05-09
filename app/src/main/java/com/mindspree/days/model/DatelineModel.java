@@ -191,11 +191,6 @@ public class DatelineModel implements Parcelable {
         }
         return result;
     }
-
-
-
-
-
     //junyong - get weather
     public String getWeather(){
         if(mWeather.equals("Clear")){
@@ -336,6 +331,7 @@ public class DatelineModel implements Parcelable {
 
 //        if(mSentence == null || mSentence.equals("") || DateInMomeent.equals(DateYesterday) ) {   // This is only for debugging
         if(mSentence == null || mSentence.equals("")  ) {
+//        if(true) {
 
             if (sentence_mode.equals("hash"))
                 return "";
@@ -387,8 +383,6 @@ public class DatelineModel implements Parcelable {
                 if(photoID_size>0){
                     photoinfos = new PhotoInfoModel[photoID_size];
 
-                    // photoID_size, photoinfos ,poiCRDatesList for POI based sentence generation
-
                     for (int i=0;i<photoID_size;i++)
                         photoinfos[i] = getPhotoInfo(photoIDs.get(i).toString());
 
@@ -404,7 +398,6 @@ public class DatelineModel implements Parcelable {
                         Log.e("your app", e.toString());
                         hash_string = hash_string + String.format("\n #%s", "Error");
                         return hash_string;
-
                     }
 
 
@@ -419,7 +412,7 @@ public class DatelineModel implements Parcelable {
                     List<Integer> integerList = new ArrayList<>(uniqKeys);
                     Integer [] uniqKeysArray = new Integer[uniqKeys.size()];
                     for (int j = 0; j < uniqKeys.size(); j++)
-                      uniqKeysArray[j] = integerList.get(j); // uniqKeysArray contains unique place that took photos
+                      uniqKeysArray[j] = integerList.get(j); //
 
                     //3. POI based sentence
                     // Get the unique POIs index from all POIs
@@ -427,7 +420,6 @@ public class DatelineModel implements Parcelable {
                     String [] poiList_nooverlap = new String[array_size];
                     poiList_nooverlap=arraylistTostringarray_nooverlap(poiList);
                     hash_string = dnnModel.POIbasedSentence(uniqKeysArray, poiList_nooverlap,poiList,hash_string);
-
 
                     //4. Face & Deep learning
                     int offset =0;
@@ -452,22 +444,6 @@ public class DatelineModel implements Parcelable {
 
                         offset=offset+size;
                     }
-
-
-//
-                        hashString_DNN="";
-                        if(DNN_result.size()>0){
-                            hashString_DNN =hashString_DNN + "\n";
-                            for(int r=0;r<DNN_result.size();r++) {
-                                if (r == 0)
-                                    hashString_DNN = hashString_DNN + String.format("%s ", DNN_result.get(r).toString());
-                                else {
-                                    if (!DNN_result.get(r).toString().equals(DNN_result.get(r - 1).toString()))
-                                        hashString_DNN = hashString_DNN + String.format("%s ", DNN_result.get(r).toString());
-                                }
-                            }
-
-                        }
 
 
                 }
@@ -522,26 +498,13 @@ public class DatelineModel implements Parcelable {
 
                 if(DNN_result.size()>0){
 
-
-                    // Get the unique hash result
+                    // Get the unique hash result,  remove overlapping
                     int array_size = arraylistsize_nooverlap(DNN_result);
                     String [] DNN_result_nooverlap = new String[array_size];
                     DNN_result_nooverlap=arraylistTostringarray_nooverlap(DNN_result);
 
-//                    for(int r=0;r<DNN_result.size();r++) {
-//                        if (r == 0)
-//                            hashString_DNN = hashString_DNN + String.format("%s ", DNN_result.get(r).toString());
-//                        else {
-//                            if (!DNN_result.get(r).toString().equals(DNN_result.get(r - 1).toString()))
-//                                hashString_DNN = hashString_DNN + String.format("%s ", DNN_result.get(r).toString());
-//                        }
-//                    }
-
                     for(int r=0;r<DNN_result_nooverlap.length;r++)
                         hashString_DNN = hashString_DNN + DNN_result_nooverlap[r];
-
-
-
 
                 }
 
@@ -549,22 +512,22 @@ public class DatelineModel implements Parcelable {
             }
             else{
 
-                hash_string =hash_string + "I think I didn't do anything special. What a boring day. I will go out somewhere tomorrow";
+//                hash_string =hash_string + "I think I didn't do anything special. What a boring day. I will go out somewhere tomorrow";
                 int n = generator.nextInt(dnnModel.dailysummary_nopoi_kr.length);
                 hash_string = hash_string + String.format("%s ", dnnModel.dailysummary_nopoi_kr[n]);
             }
 
 
 
-            hash_string = hash_string +  hashString_DNN;
+            hash_string = hash_string + "\n" + hashString_DNN;
 
 
             // This saves sentense to DB
             // if (!DateInMomeent.equals(DateToday))
-                mDBWrapper.setSentence(DateInMomeent,hash_string);
+            mDBWrapper.setSentence(DateInMomeent,hash_string);
 
 
-                return hash_string;
+            return hash_string;
 
 
 
@@ -596,6 +559,48 @@ public class DatelineModel implements Parcelable {
 
 
     }
+
+
+
+    public String resampleandsave_single(int index, File myDir, String DNN_test_path_input) {
+
+        String days_moment_resample_image=null;
+
+
+            File files = new File(DNN_test_path_input);
+            if (files.exists()) {
+                Bitmap bm = AppUtils.downsampleImageFile(DNN_test_path_input, 122, 149);
+
+
+                if(myDir.exists() && myDir.isDirectory()) {
+                    // do nothing
+                }else{
+                    myDir.mkdirs();
+                }
+
+                String fname = "Days_Moment_" + index + ".days";
+                File file = new File(myDir, fname);
+                days_moment_resample_image=file.toString();
+
+                if (file.exists())
+                    file.delete();
+
+                try {
+                    FileOutputStream out = new FileOutputStream(file);
+                    bm.compress(Bitmap.CompressFormat.JPEG, 90, out);
+                    out.flush();
+                    out.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+
+            }
+
+
+        return days_moment_resample_image;
+    }
+
 
 
 
@@ -643,8 +648,6 @@ public class DatelineModel implements Parcelable {
         return uniqKeys2.size();
 
     }
-
-
 
 
     public Integer[] PhotoPoi_mapping(int photoID_size, PhotoInfoModel[] photoinfos ,ArrayList poiCRDatesList)
@@ -707,7 +710,6 @@ public class DatelineModel implements Parcelable {
 
         return PhotoPoi_mapping_index;
     }
-
 
 
 
