@@ -16,6 +16,7 @@ public class Daily {
     public String user_id;
     public String create_date;
     public String weather;
+    public String sentence;
 
     public Daily(){
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
@@ -30,6 +31,7 @@ public class Daily {
         result.put("user_id", user_id);
         result.put("create_date", create_date);
         result.put("weather", weather);
+        result.put("sentence", sentence);
 
         return result;
     }

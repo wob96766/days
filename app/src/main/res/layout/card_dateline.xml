@@ -125,7 +125,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:orientation="horizontal"
-                                android:paddingTop="@dimen/middle">
+                                android:paddingTop="@dimen/xsmall">
                                 <ImageView
                                     android:id="@+id/image_thumnail4"
                                     android:padding="@dimen/xsmall"
@@ -151,7 +151,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:orientation="horizontal"
-                                android:paddingTop="@dimen/middle"
+                                android:paddingTop="@dimen/xsmall"
                                 android:visibility="gone">
                                 <ImageView
                                     android:id="@+id/image_thumnail7"

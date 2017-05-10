@@ -51,19 +51,25 @@ public class DatelineAdapter extends RecyclerView.Adapter<DatelineAdapter.MyView
         Glide.with(mContext).load("").centerCrop().into(holder.mThumnail7);
         Glide.with(mContext).load("").centerCrop().into(holder.mThumnail8);
         Glide.with(mContext).load("").centerCrop().into(holder.mThumnail9);
-        if(files == null){
+        if(files == null || files.size() < 1){
+            holder.mViewPhoto1.setVisibility(View.GONE);
             holder.mViewPhoto2.setVisibility(View.GONE);
             holder.mViewPhoto3.setVisibility(View.GONE);
-        } else if(files.size() > 6){
-            holder.mViewPhoto2.setVisibility(View.VISIBLE);
-            holder.mViewPhoto3.setVisibility(View.VISIBLE);
-        } else if(files.size() > 3){
+        }else if(files.size() <=3){
+            holder.mViewPhoto1.setVisibility(View.VISIBLE);
+            holder.mViewPhoto2.setVisibility(View.GONE);
+            holder.mViewPhoto3.setVisibility(View.GONE);
+        } else if(files.size() <=6){
+            holder.mViewPhoto1.setVisibility(View.VISIBLE);
             holder.mViewPhoto2.setVisibility(View.VISIBLE);
             holder.mViewPhoto3.setVisibility(View.GONE);
         } else{
-            holder.mViewPhoto2.setVisibility(View.GONE);
-            holder.mViewPhoto3.setVisibility(View.GONE);
+            holder.mViewPhoto1.setVisibility(View.VISIBLE);
+            holder.mViewPhoto2.setVisibility(View.VISIBLE);
+            holder.mViewPhoto3.setVisibility(View.VISIBLE);
         }
+
+
         if(mDataSource.get(position).getPhotoList().size() > 0) {
 
             for(int i=0 ; i<files.size() ; i++){
