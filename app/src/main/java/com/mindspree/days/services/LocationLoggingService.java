@@ -63,6 +63,8 @@ public class LocationLoggingService extends Service {
 
     private DBWrapper mDBWrapper;
     private AppPreference mPreference;
+    private Location mOldLocation = new Location("old");
+    private int mLocationCount = 0;
 
     private Runnable mRunnable;
     private Handler mHandler = new Handler();
@@ -306,6 +308,7 @@ public class LocationLoggingService extends Service {
                     TimelineModel model = mDBWrapper.getLastTimeline();
                     if (model.getLatitude() == 0 && model.getLongitude() == 0) {
                         //if (AppUtils.datediffinminutes(now, dateFormat.parse(mPreference.getMeasureTime())) >= mPreference.getDuration()) {
+                        sendAnalyticsEvent(mPreference.getUserUid(), "location", String.format("%f,%f",location.getLatitude(), location.getLongitude()));
                         mDBWrapper.insertLocation(location.getLatitude(), location.getLongitude());
                         sendBroadcast(new Intent(AppConfig.Broadcast.REFRESH_DATA));
                         //}
@@ -318,9 +321,15 @@ public class LocationLoggingService extends Service {
                         if (AppUtils.datediffinminutes(now, dateFormat.parse(model.getMeasureDate())) >= mPreference.getDuration()) {
                             if (dbLocation.distanceTo(location) > mPreference.getDistance()) {
                                 if (model.mLock == 1) {
-                                    sendAnalyticsEvent(mPreference.getUserUid(), "location", String.format("%f,%f",location.getLatitude(), location.getLongitude()));
-                                    mDBWrapper.insertLocation(location.getLatitude(), location.getLongitude());
-                                    sendBroadcast(new Intent(AppConfig.Broadcast.REFRESH_DATA));
+                                    if(mLocationCount < 10){
+                                        sendAnalyticsEvent(mPreference.getUserUid(), "dum", String.format("%f,%f", location.getLatitude(), location.getLongitude()));
+                                        mLocationCount++;
+                                    } else {
+                                        sendAnalyticsEvent(mPreference.getUserUid(), "location", String.format("%f,%f", location.getLatitude(), location.getLongitude()));
+                                        mDBWrapper.insertLocation(location.getLatitude(), location.getLongitude());
+                                        mLocationCount = 0;
+                                        sendBroadcast(new Intent(AppConfig.Broadcast.REFRESH_DATA));
+                                    }
                                 } else {
                                     mDBWrapper.updateLocation(location.getLatitude(), location.getLongitude());
                                     mDBWrapper.updateMeasureLocation(location.getLatitude(), location.getLongitude());
