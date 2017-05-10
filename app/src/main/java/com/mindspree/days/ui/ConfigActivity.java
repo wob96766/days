@@ -83,6 +83,7 @@ public class ConfigActivity extends BaseActivity {
                 {
                     case 0:
                     case 1:
+                    case 2:
                         mEditDistance.setText(mDistanceList[item]);
                         break;
                 }
@@ -104,6 +105,7 @@ public class ConfigActivity extends BaseActivity {
                     case 0:
                     case 1:
                     case 2:
+                    case 3:
                         mEditDuration.setText(mDurationList[item]);
                         break;
                 }
