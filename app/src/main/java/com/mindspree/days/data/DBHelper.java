@@ -1481,7 +1481,7 @@ public class DBHelper extends SQLiteOpenHelper {
                         model.weather = cursor.getString(cursor.getColumnIndex(COLUMN_WEATHER));
                         model.user_id = cursor.getString(cursor.getColumnIndex(COLUMN_USER_ID));
                         model.create_date = cursor.getString(cursor.getColumnIndex(COLUMN_CREATE_DATE));
-
+                        model.sentence = cursor.getString(cursor.getColumnIndex(COLUMN_SENTENCE));
 
                         list.add(model);
                     } while (cursor.moveToNext());
@@ -1576,6 +1576,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 values.put(COLUMN_WEATHER, item.weather);
                 values.put(COLUMN_USER_ID, item.user_id);
                 values.put(COLUMN_CREATE_DATE, item.create_date);
+                values.put(COLUMN_SENTENCE, item.sentence);
 
                 database.insert(TABLE_DAILY, null, values);
             }
