@@ -45,9 +45,9 @@
                 android:drawablePadding="12dp"/>
 
             <TextView
-                style="@style/font_black_12sp"
+                style="@style/font_black_14sp"
                 android:id="@+id/btn_kakao"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginLeft="20dp"
@@ -60,7 +60,7 @@
             <TextView
                 style="@style/font_black_12sp"
                 android:id="@+id/btn_etc"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
