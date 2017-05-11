@@ -188,17 +188,14 @@
                             style="@style/font_greydark_14sp"
                             android:id="@+id/text_content"
                             android:layout_marginTop="@dimen/small"
-                            android:layout_marginLeft="75dp"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:ellipsize="end"
-                            android:maxLines="15" />
+                            android:ellipsize="end" />
 
                         <TextView
                             style="@style/font_orange_14sp"
                             android:id="@+id/text_content_hash"
                             android:layout_marginTop="@dimen/small"
-                            android:layout_marginLeft="75dp"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
