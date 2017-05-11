@@ -63,6 +63,7 @@ public class DatelineModel implements Parcelable {
     private String mPhotoGroup = "";
     private String mPhotoIds = "";
     private String mPoiGroup = "";
+    private String mCategoryGroup = "";
     private String mPoiCRDatesGroup = "";
     private int mLocationCount = 0;
     private int mPhotoCount = 0;
@@ -93,13 +94,14 @@ public class DatelineModel implements Parcelable {
     public DatelineModel(){
     }
 
-    public DatelineModel(String updateDate, String photoGroup, String ids, String weather, String mood, int locationCount, int photoCount, String sentence, String poiGroup, String poiCRDatesGroup){
+    public DatelineModel(String updateDate, String photoGroup, String ids, String weather, String mood, int locationCount, int photoCount, String sentence, String poiGroup, String poiCRDatesGroup, String categoryGroup){
         mUpdateDate = updateDate;
         mPhotoGroup = photoGroup;
         mPhotoIds = ids;
         mWeather = weather;
         mMood =mood;
         mPoiGroup = poiGroup;
+        mCategoryGroup = categoryGroup;
         mPoiCRDatesGroup = poiCRDatesGroup;
         mLocationCount = locationCount;
         mPhotoCount = photoCount;
@@ -284,6 +286,15 @@ public class DatelineModel implements Parcelable {
 //        if(mPhotoGroup != null) {
         if(mPoiGroup != null) {
             return new ArrayList<String>(Arrays.asList(mPoiGroup.split(",")));
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
+    public ArrayList<String> getCategoryList() {
+//        if(mPhotoGroup != null) {
+        if(mCategoryGroup != null) {
+            return new ArrayList<String>(Arrays.asList(mCategoryGroup.split(",")));
         } else {
             return new ArrayList<>();
         }
