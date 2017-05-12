@@ -27,6 +27,7 @@ public class AppPreference {
 	private final String TAG_WEATHER_DATE    		= "WEATHER_DATE";
 	private final String TAG_PIN    				= "PIN";
     private final String TAG_LOCKSCREEN    	        = "LOCKSCREEN";
+	private final String TAG_INSTALLDATE    	        = "TAG_INSTALLDATE";
 
 	private final String TAG_MEASURE_TIME 			= "MEASURE_TIME";
 	private final String TAG_LOGGING_OFF	 		= "LOGGING_OFF";
@@ -190,6 +191,16 @@ public class AppPreference {
 	public String getLaunchHistory() {
 		return getString(TAG_HAS_LAUNCH_HISTORY, "");
 	}
+
+
+	public void setInstallDate(String value) {
+		putString(TAG_INSTALLDATE, value);
+	}
+
+	public String getInstallDate() {
+		return getString(TAG_INSTALLDATE, "");
+	}
+
 
 	public double getLatitude(){
 		return Double.valueOf(getString(TAG_LATITUDE, "0"));

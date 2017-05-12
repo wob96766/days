@@ -17,6 +17,7 @@ import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.location.LocationManager;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -632,6 +633,33 @@ public class MainActivity extends BaseActivity {
         return cursor;
     }
 
+    private static String getTakenTime(String fname){
+        String dateString = "";
+        File file = new File(fname);
+        if(file.exists()) //Extra check, Just to validate the given path
+        {
+            ExifInterface intf = null;
+            try
+            {
+                intf = new ExifInterface(fname);
+                if(intf != null)
+                {
+                    dateString = intf.getAttribute(ExifInterface.TAG_DATETIME);
+                }
+            }
+            catch(Exception e)
+            {
+
+                e.printStackTrace();
+            }
+            if(intf == null)
+            {
+                Date lastModDate = new Date(file.lastModified());
+                dateString = lastModDate.toString();
+            }
+        }
+        return dateString;
+    }
     /**
      * Method to get all images list
      * here we get the all images list in device.
@@ -640,9 +668,16 @@ public class MainActivity extends BaseActivity {
         //Create an array to store path to all the images
         Date now = new Date();
         String[] arrPath = new String[cursor.getCount()];
+        Date originDate;
+        if(mPreference.getInstallDate().equals("")){
+            mPreference.setInstallDate(AppUtils.getTodayDateTimeString(now, "00:00:00"));
+            originDate = AppUtils.getTodayDateTime(now, "00:00:00");
+        } else {
+            originDate = AppUtils.StringToDate(mPreference.getInstallDate() + " 00:00:00");
+        }
         for (int i = 0; i < cursor.getCount(); i++) {
 
-            Date originDate = AppUtils.getTodayDateTime(now, "00:00:00");
+
 
             cursor.moveToPosition(i);
             int dataColumnIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA);

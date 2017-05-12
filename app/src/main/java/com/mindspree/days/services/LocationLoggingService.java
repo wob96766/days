@@ -308,7 +308,7 @@ public class LocationLoggingService extends Service {
                     TimelineModel model = mDBWrapper.getLastTimeline();
                     if (model.getLatitude() == 0 && model.getLongitude() == 0) {
                         //if (AppUtils.datediffinminutes(now, dateFormat.parse(mPreference.getMeasureTime())) >= mPreference.getDuration()) {
-                        sendAnalyticsEvent(mPreference.getUserUid(), "location", String.format("%f,%f",location.getLatitude(), location.getLongitude()));
+                        sendAnalyticsEvent(mPreference.getUserUid(), "location_init", String.format("%f,%f on %f,%f", location.getLatitude(), location.getLongitude(), model.getLatitude() , model.getLongitude()));
                         mDBWrapper.insertLocation(location.getLatitude(), location.getLongitude());
                         sendBroadcast(new Intent(AppConfig.Broadcast.REFRESH_DATA));
                         //}
@@ -322,10 +322,10 @@ public class LocationLoggingService extends Service {
                             if (dbLocation.distanceTo(location) > mPreference.getDistance()) {
                                 if (model.mLock == 1) {
                                     if(mLocationCount < 10){
-                                        sendAnalyticsEvent(mPreference.getUserUid(), "dum", String.format("%f,%f", location.getLatitude(), location.getLongitude()));
+                                        sendAnalyticsEvent(mPreference.getUserUid(), "dum", String.format("%f,%f on %f,%f", location.getLatitude(), location.getLongitude(), model.getLatitude() , model.getLongitude()));
                                         mLocationCount++;
                                     } else {
-                                        sendAnalyticsEvent(mPreference.getUserUid(), "location", String.format("%f,%f", location.getLatitude(), location.getLongitude()));
+                                        sendAnalyticsEvent(mPreference.getUserUid(), "location",  String.format("%f,%f on %f,%f", location.getLatitude(), location.getLongitude(), model.getLatitude() , model.getLongitude()));
                                         mDBWrapper.insertLocation(location.getLatitude(), location.getLongitude());
                                         mLocationCount = 0;
                                         sendBroadcast(new Intent(AppConfig.Broadcast.REFRESH_DATA));

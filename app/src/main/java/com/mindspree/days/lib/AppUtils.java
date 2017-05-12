@@ -60,6 +60,19 @@ public class AppUtils {
         }
     }
 
+    public static String getTodayDateTimeString(Date origin, String timeFormat){
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd ", Locale.KOREA);
+            String dateString = dateFormat.format(origin);
+
+
+            return dateString;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
     public static Date StringToDate(Date origin, String timeFormat){
         try {
 
@@ -71,6 +84,19 @@ public class AppUtils {
             return origin;
         }
     }
+
+    public static Date StringToDate(String timeFormat){
+        try {
+
+            SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
+
+            return sdFormat.parse(timeFormat);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return new Date();
+        }
+    }
+
 
     public static boolean isEmail(String email) {
         String emailPattern = "[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\\.+[a-z]+";
