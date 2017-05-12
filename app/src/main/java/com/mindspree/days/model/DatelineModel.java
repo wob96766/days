@@ -338,12 +338,12 @@ public class DatelineModel implements Parcelable {
         String DateInMomeent= getDate();
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, -1);
-        String DateToday = dateFormat.format(cal.getTime()); //your formatted date here
         cal.add(Calendar.DATE, 0);
+        String DateToday = dateFormat.format(cal.getTime()); //your formatted date here
+        cal.add(Calendar.DATE, -1);
         String DateYesterday = dateFormat.format(cal.getTime()); //your formatted date here
 
-//        if(mSentence == null || mSentence.equals("") || DateInMomeent.equals(DateYesterday) ) {   // This is only for debugging
+//        if(mSentence == null || mSentence.equals("") || DateInMomeent.equals(DateToday) ) {   // This is only for debugging
         if(mSentence == null || mSentence.equals("")  ) {
 //        if(true) {
 
@@ -688,7 +688,7 @@ public class DatelineModel implements Parcelable {
 
                         // Photo Create date formatting
                         Date photoCRDatesList_format = AppUtils.StringToDate(now, photoinfos[k].update_date);
-                        if(photoCRDatesList_format.equals(poiCRDatesList_format1) && photoCRDatesList_format.after(poiCRDatesList_format1) && photoCRDatesList_format.before(poiCRDatesList_format2))
+                        if(photoCRDatesList_format.equals(poiCRDatesList_format1) || photoCRDatesList_format.after(poiCRDatesList_format1) && photoCRDatesList_format.before(poiCRDatesList_format2))
                             PhotoPoi_mapping_index[k]= j;
                     }else if(j==0){
                         poiCRDatesList_format1 = AppUtils.StringToDate(now, poiCRDatesList.get(j).toString());

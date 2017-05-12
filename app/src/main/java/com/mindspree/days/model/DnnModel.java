@@ -1253,7 +1253,7 @@ public class DnnModel {
             Boolean MounatainClass=false ;
             Boolean PlayClass =false;
 
-            if(!POI_DB2_DETECT || !POI_DB6_DETECT || selfie_cnt==0 || groupPhoto_cnt==0 || groupSelfie_cnt==0 ||singlePhoto_cnt==0) {
+            if((!POI_DB2_DETECT || !POI_DB6_DETECT || selfie_cnt==0 || groupPhoto_cnt==0 || groupSelfie_cnt==0 ||singlePhoto_cnt==0) && (i == offset)) {
                 class_predict = DnnEngineClassJNI(jargv);
                 foodClass = classDetect(class_predict, dnnModel.DNN_DB1);
                 WaterClass = classDetect(class_predict, dnnModel.DNN_DB2);
