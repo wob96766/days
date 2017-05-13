@@ -1460,6 +1460,7 @@ public class DBHelper extends SQLiteOpenHelper {
                         model.photo_size = cursor.getInt(cursor.getColumnIndex(COLUMN_PHOTO_SIZE));
                         model.sortseq = cursor.getInt(cursor.getColumnIndex(COLUMN_SORTSEQ));
                         model.user_id = cursor.getString(cursor.getColumnIndex(COLUMN_USER_ID));
+                        model.flag = cursor.getInt(cursor.getColumnIndex(COLUMN_FLAG));
 
                         list.add(model);
                     } while (cursor.moveToNext());
@@ -1524,6 +1525,7 @@ public class DBHelper extends SQLiteOpenHelper {
                         model.measure_date = cursor.getString(cursor.getColumnIndex(COLUMN_MEASURE_DATE));
                         model.create_date = cursor.getString(cursor.getColumnIndex(COLUMN_CREATE_DATE));
                         model.update_date = cursor.getString(cursor.getColumnIndex(COLUMN_UPDATE_DATE));
+                        model.category = cursor.getString(cursor.getColumnIndex(COLUMN_CATEGORY));
 
                         list.add(model);
                     } while (cursor.moveToNext());

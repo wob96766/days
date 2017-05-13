@@ -338,9 +338,9 @@ public class LocationLoggingService extends Service {
                                 } else {
                                     if (model.mLock != 1) {
                                         mDBWrapper.updateMeasureLocation(location.getLatitude(), location.getLongitude());
-                                        if (mHomeLocation != null && mHomeLocation.distanceTo(location) < 300) {
+                                        if (mHomeLocation != null && mHomeLocation.distanceTo(location) < 150) {
                                             mDBWrapper.setLocationLog(model.mLocationId, AppUtils.getAppText(R.string.text_location_home), mHomeLocation.getLatitude(), mHomeLocation.getLongitude());
-                                        } else if (mOtherLocation != null && mOtherLocation.distanceTo(location) < 300) {
+                                        } else if (mOtherLocation != null && mOtherLocation.distanceTo(location) < 150) {
                                             mDBWrapper.setLocationLog(model.mLocationId, AppUtils.getAppText(R.string.text_location_other), mOtherLocation.getLatitude(), mOtherLocation.getLongitude());
                                         } else {
                                             mDBWrapper.setLocationLog(model.mLocationId, 1);
