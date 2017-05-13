@@ -1197,6 +1197,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 cursor.close();
         } catch (Exception e) {
             e.printStackTrace();
+            model.mMeasureLatitude = -1;
+            model.mMeasureLogitude = -1;
         }
         return model;
     }
