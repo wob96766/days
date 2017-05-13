@@ -1565,6 +1565,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 values.put(COLUMN_MEASURE_DATE, location.measure_date);
                 values.put(COLUMN_CREATE_DATE, location.create_date);
                 values.put(COLUMN_UPDATE_DATE, location.update_date);
+                values.put(COLUMN_CATEGORY, location.category);
 
                 database.insert(TABLE_LOCATIONS, null, values);
             }
@@ -1621,7 +1622,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 values.put(COLUMN_PHOTO_SIZE, item.photo_size);
                 values.put(COLUMN_SORTSEQ, item.sortseq);
                 values.put(COLUMN_USER_ID, item.user_id);
-
+                values.put(COLUMN_FLAG, item.flag);
 
                 database.insert(TABLE_PHOTOS, null, values);
             }
