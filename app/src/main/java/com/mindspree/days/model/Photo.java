@@ -31,6 +31,7 @@ public class Photo {
     public int sortseq;
     public String user_id;
     public String file_url;
+    public int flag;
 
     public Photo()
     {
@@ -69,6 +70,7 @@ public class Photo {
         result.put("photo_size", photo_size);
         result.put("sortseq", sortseq);
         result.put("user_id", user_id);
+        result.put("flag", flag);
         return result;
     }
 }

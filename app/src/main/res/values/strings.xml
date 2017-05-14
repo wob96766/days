@@ -77,7 +77,7 @@
     <string name="text_terms_agreement">이용약관에 동의합니다.</string>
     <string name="text_privacy_agreement">개인정보취급방침에 동의합니다.</string>
 
-    <string name="text_progress_preparedata">데이터 확인중.</string>
+    <string name="text_progress_preparedata">데이터 확인중. 전송하는 데이터의 양에 따라 최대 10분이상 소요됩니다.</string>
     <string name="text_progress_imageprocessing">사진을 읽어오는 중입니다.</string>
 
     <!-- hint for ui -->
@@ -114,6 +114,8 @@
     <!-- Messages for Dialog and Toast -->
     <string name="message_search_entertext">결과가 없습니다.</string>
     <string name="message_network_error">네트워크접속 에러입니다. 다시 시도해주세요.</string>
+    <string name="message_backup_error">데이터 백업 중 에러가 발생했습니다. 다시 시도해주세요.</string>
+    <string name="message_restore_error">데이터 복원 중 에러가 발생했습니다. 다시 시도해주세요.</string>
 
     <string name="message_app_finish">뒤로가기 버튼을 한번 더 누르면 앱이 종료됩니다.</string>
     <string name="message_data_backup_restore">진행할 작업을 선택하세요.</string>

@@ -20,14 +20,22 @@
             android:layout_height="wrap_content"
             android:text="@string/text_progress_preparedata" />
 
+        <!--<com.mindspree.days.view.AnimatingProgressBar-->
+            <!--style="?android:attr/progressBarStyleHorizontal"-->
+            <!--android:id="@+id/pregress_bar"-->
+            <!--android:layout_height="2dp"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_marginTop="@dimen/middle"-->
+            <!--android:max="1000"-->
+            <!--android:progress="0"/>-->
+
         <com.mindspree.days.view.AnimatingProgressBar
-            style="?android:attr/progressBarStyleHorizontal"
             android:id="@+id/pregress_bar"
-            android:layout_height="2dp"
-            android:layout_width="match_parent"
-            android:layout_marginTop="@dimen/middle"
-            android:max="1000"
-            android:progress="0"/>
+            android:layout_gravity="center_horizontal"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="@dimen/middle" />
+
 
     </LinearLayout>
 

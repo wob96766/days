@@ -172,6 +172,8 @@ public class DataBackupActivity extends BaseActivity {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                showToast(getAppText(R.string.message_backup_error));
+                finish();
             }
             return null;
         }

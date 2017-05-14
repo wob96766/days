@@ -1460,6 +1460,7 @@ public class DBHelper extends SQLiteOpenHelper {
                         model.photo_size = cursor.getInt(cursor.getColumnIndex(COLUMN_PHOTO_SIZE));
                         model.sortseq = cursor.getInt(cursor.getColumnIndex(COLUMN_SORTSEQ));
                         model.user_id = cursor.getString(cursor.getColumnIndex(COLUMN_USER_ID));
+                        model.flag = cursor.getInt(cursor.getColumnIndex(COLUMN_FLAG));
 
                         list.add(model);
                     } while (cursor.moveToNext());
@@ -1524,6 +1525,7 @@ public class DBHelper extends SQLiteOpenHelper {
                         model.measure_date = cursor.getString(cursor.getColumnIndex(COLUMN_MEASURE_DATE));
                         model.create_date = cursor.getString(cursor.getColumnIndex(COLUMN_CREATE_DATE));
                         model.update_date = cursor.getString(cursor.getColumnIndex(COLUMN_UPDATE_DATE));
+                        model.category = cursor.getString(cursor.getColumnIndex(COLUMN_CATEGORY));
 
                         list.add(model);
                     } while (cursor.moveToNext());
@@ -1563,6 +1565,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 values.put(COLUMN_MEASURE_DATE, location.measure_date);
                 values.put(COLUMN_CREATE_DATE, location.create_date);
                 values.put(COLUMN_UPDATE_DATE, location.update_date);
+                values.put(COLUMN_CATEGORY, location.category);
 
                 database.insert(TABLE_LOCATIONS, null, values);
             }
@@ -1619,7 +1622,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 values.put(COLUMN_PHOTO_SIZE, item.photo_size);
                 values.put(COLUMN_SORTSEQ, item.sortseq);
                 values.put(COLUMN_USER_ID, item.user_id);
-
+                values.put(COLUMN_FLAG, item.flag);
 
                 database.insert(TABLE_PHOTOS, null, values);
             }

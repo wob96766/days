@@ -137,11 +137,17 @@ public class DataRestoreActivity extends BaseActivity {
     }
 
     private void restoreDatabase(DataSnapshot locations, DataSnapshot daily, DataSnapshot photos) {
-        mDBWrapper.restoreLocation(locations);
-        mDBWrapper.restoreDaily(daily);
-        mDBWrapper.restorePhoto(photos);
-        sendBroadcast(new Intent(AppConfig.Broadcast.REFRESH_DATA));
-        sendBroadcast(new Intent(AppConfig.Broadcast.REFRESH_CALENDAR));
-        finish();
+        try {
+            mDBWrapper.restoreLocation(locations);
+            mDBWrapper.restoreDaily(daily);
+            mDBWrapper.restorePhoto(photos);
+            sendBroadcast(new Intent(AppConfig.Broadcast.REFRESH_DATA));
+            sendBroadcast(new Intent(AppConfig.Broadcast.REFRESH_CALENDAR));
+            finish();
+        }catch (Exception e){
+            e.printStackTrace();
+            showToast(getAppText(R.string.message_restore_error));
+            finish();
+        }
     }
 }

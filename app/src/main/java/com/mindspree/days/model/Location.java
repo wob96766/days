@@ -22,6 +22,7 @@ public class Location {
     public String measure_date;
     public String create_date;
     public String update_date;
+    public String category;
 
     public Location(){
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
@@ -42,6 +43,7 @@ public class Location {
         result.put("measure_date", create_date);
         result.put("create_date", create_date);
         result.put("update_date", update_date);
+        result.put("category", category);
 
         return result;
     }
