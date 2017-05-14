@@ -340,12 +340,12 @@ public class DatelineModel implements Parcelable {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, 0);
         String DateToday = dateFormat.format(cal.getTime()); //your formatted date here
-        cal.add(Calendar.DATE, -1);
+        cal.add(Calendar.DATE, -2);
         String DateYesterday = dateFormat.format(cal.getTime()); //your formatted date here
 
 //        if(mSentence == null || mSentence.equals("") || DateInMomeent.equals(DateToday) ) {   // This is only for debugging
-//        if(DateInMomeent.equals(DateYesterday) ) {   // This is only for debugging
-        if(mSentence == null || mSentence.equals("")  ) {
+        if(DateInMomeent.equals(DateYesterday) ) {   // This is only for debugging
+//        if(mSentence == null || mSentence.equals("")  ) {
 //        if(true) {
 
             if (sentence_mode.equals("hash"))
@@ -374,7 +374,7 @@ public class DatelineModel implements Parcelable {
             if(mWeather==null){
                 hash_string = hash_string + "날씨 잘 모르겠음.\n";
             }else{
-                hash_string = hash_string + String.format("날씨 %s. ", getWeather());//                hash_string = hash_string + String.format("It is %s. ", getWeatherEnglish());
+                hash_string = hash_string + String.format("날씨 %s. \n", getWeather());//                hash_string = hash_string + String.format("It is %s. ", getWeatherEnglish());
                 DNN_result.add(String.format("#%s",mWeather));
             }
 
@@ -405,7 +405,7 @@ public class DatelineModel implements Parcelable {
                     poiList_nooverlap=arraylistTostringarray_nooverlap(poiList);
 
                     hash_string = dnnModel.POIbasedSentence(uniqKeysArray, DNN_result, poiList_nooverlap,poiList,hash_string);
-                    DNN_result.addAll(dnnModel.DNN_result);
+                    DNN_result = dnnModel.DNN_result;
 
                 }else if(photoID_size>0){
                     photoinfos = new PhotoInfoModel[photoID_size];
@@ -442,6 +442,7 @@ public class DatelineModel implements Parcelable {
 
                     int array_size = arraylistsize_nooverlap(poiList);
                     String [] poiList_nooverlap = new String[array_size];
+
                     poiList_nooverlap=arraylistTostringarray_nooverlap(poiList);
                     hash_string = dnnModel.POIbasedSentence(uniqKeysArray, DNN_result, poiList_nooverlap,poiList,hash_string);
 
@@ -453,17 +454,21 @@ public class DatelineModel implements Parcelable {
                     String hash_string_face_buf ="";
                     for (int m=0;m<uniqKeysArray.length;m++){
                         // key is unique poi index
-                        Integer key_temp = uniqKeysArray[m];  //This is POI index which is key
+                        Integer key_temp = uniqKeysArray[m];  //This is POI index that has photos
                         size = result.get(key_temp);          // This is the number of photos taken in this POI index
 
-                        hash_string_face= dnnModel.SentenceFromPhoto_korean(clusterEngine, offset,size, DNN_result, poiList.get(key_temp).toString(),photolist,front_cam_width,rear_cam_width, DNN_path, weekend_days);
-                        DNN_result.addAll(dnnModel.DNN_result);
+                        // uniqKeysArray[m] : Stores unique POI list with photos,   m will give you the POI index on m th array
+                        // result : returns size (number of photos) taken in each POI index
+                        // photolist[m} ~photolist[m+ size} belongs to index "uniqKeysArray[m]"
 
-                        if(hash_string_face.equals(hash_string_face_buf))
-                            hash_string_face=""; // This is to prevent the duplication
+                        hash_string_face= dnnModel.SentenceFromPhoto_korean(clusterEngine, offset,size, DNN_result, poiList.get(key_temp).toString(),photolist,front_cam_width,rear_cam_width, DNN_path, weekend_days);
+                        DNN_result = dnnModel.DNN_result;
+
+//                        if(hash_string_face.equals(hash_string_face_buf))
+//                            hash_string_face=""; // This is to prevent the duplication
 
                         hash_string =hash_string+hash_string_face;
-                        hash_string_face_buf = hash_string_face;
+//                        hash_string_face_buf = hash_string_face;
 
                         offset=offset+size;
                     }
@@ -527,7 +532,7 @@ public class DatelineModel implements Parcelable {
                 hash_string = hash_string + String.format("%s ", dnnModel.dailysummary_nopoi_kr[n]);
             }
 
-            // Save fianl sentence and hash to DB
+            // Save final sentence and hash to DB
             hash_string = hash_string + "\n" + hashString_DNN;
             mDBWrapper.setSentence(DateInMomeent,hash_string);
             return hash_string;
