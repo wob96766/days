@@ -32,6 +32,8 @@ public class DnnModel {
 
     public int language_mode = appConfig.LANGUAGE_MODE;
 
+    public ArrayList POILIST_key;
+    public ArrayList POICAT_content;
 
     public String [] DNN_DB1 = {"Dutch oven","wok","caldron","frying pan","Crock Pot","plate","restaurant","groom","bakery","pasta"};
     public String [] DNN_DB2 = {"lakeside","seashore","lakefront"};
@@ -181,8 +183,39 @@ public class DnnModel {
 
     }
 
-    public Random generator = new Random();
 
+    public void POILIST_key_set(ArrayList poi_list) {
+        POILIST_key = poi_list;
+    }
+
+    public void POICAT_val_set(ArrayList poicat_list){
+        POICAT_content = poicat_list;
+    }
+
+    public String poicatLUT(String poi_String){
+
+        int index =0;
+        String poicat_val ="";
+
+        if(POILIST_key !=null)
+        {
+            for(int k=0;k< POILIST_key.size();k++)
+            {
+                if(POILIST_key.get(k).toString().equals(poi_String))
+                    poicat_val = POICAT_content.get(k).toString();
+
+            }
+        }else{
+            return poicat_val;
+        }
+
+
+
+        return poicat_val;
+
+    }
+
+    public Random generator = new Random();
 
     public boolean poiclassDetect(String poi_String, String [] Class_DB){
 
@@ -628,16 +661,22 @@ public class DnnModel {
 
     public String POIbasedSentence(Integer [] uniqKeysArray,ArrayList DNN_result_in, String [] poiList_nooverlap, ArrayList poiList, String hash_string){
 
+            DNN_result.add("");
+            String poicat = "";
+            for(int j=0;j<poiList_nooverlap.length;j++) {
 
-            for(int j=0;j<poiList_nooverlap.length;j++)
-                DNN_result_in.add(String.format("#%s", poiList_nooverlap[j]));
-
+                poicat=poicatLUT(poiList_nooverlap[j]);
+                if(poicat.equals(""))
+                    DNN_result.add(String.format("#%s", poiList_nooverlap[j]));
+                else
+                    DNN_result.add(String.format("#%s %s", poiList_nooverlap[j], poicat));
+            }
 
             if(poiList_nooverlap.length==1){
                 if(poiList_nooverlap[0].contains(AppUtils.getAppText(R.string.text_location_home))) {
-                    hash_string = hash_string + String.format("%s . ", "오늘은 아무데도 가지 않고 하루종일 집에만 있었다");
+                    hash_string = hash_string + String.format("%s . ", "오늘은 아무데도 가지 않고 하루종일 집에서 있었다");
                 }else{
-                    hash_string = hash_string + String.format("%s %s %s. ", "오늘은 아무데도 가지 않고 ", poiList_nooverlap[0], " 에만 있었다");
+                    hash_string = hash_string + String.format("%s %s %s. ", "오늘은 주로 ", poiList_nooverlap[0], " 에만 있었다");
                 }
 
             } else if(poiList_nooverlap.length==2){
@@ -681,12 +720,12 @@ public class DnnModel {
                         if(poiList_nooverlap[l].contains(AppUtils.getAppText(R.string.text_location_home))){
 
                         }else
-                            hash_string = hash_string + String.format("여기 %s", poiList_nooverlap[l]);
+                            hash_string = hash_string + String.format("%s", poiList_nooverlap[l]);
 
                     }else if(l<poiList_nooverlap.length-1) {
                             hash_string = hash_string + String.format(", %s ", poiList_nooverlap[l]);
                     }else if(l==poiList_nooverlap.length-1) {
-                            hash_string = hash_string + String.format("그리고 %s 를 들렸다. ", poiList_nooverlap[l]);
+                            hash_string = hash_string + String.format("그리고 %s에도 들렸다. ", poiList_nooverlap[l]);
                     }
                 }
 

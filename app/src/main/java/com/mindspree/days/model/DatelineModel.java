@@ -363,6 +363,7 @@ public class DatelineModel implements Parcelable {
             front_cam_width = Integer.parseInt(readFromFile("front_camera_setting.txt", AppApplication.getAppInstance().getApplicationContext())) ;
             mDBWrapper = new DBWrapper(AppPreference.getInstance().getUserUid());
 
+
             doDayOfWeek();
             String hash_string ="";
 
@@ -378,7 +379,10 @@ public class DatelineModel implements Parcelable {
             }
 
             ArrayList poiList = getPoiList();
-            ArrayList poicatList = getCategoryList(); // Next step is to create Category LUT with POI list key
+            ArrayList poicatList = getCategoryList();
+            // Set up poilist and poicatlist LUT
+            dnnModel.POILIST_key_set(poiList);
+            dnnModel.POICAT_val_set(poicatList);
             ArrayList poiCRDatesList = getPoiCRDatesList();
             int photoID_size=0;
 
@@ -424,7 +428,6 @@ public class DatelineModel implements Parcelable {
 
                     int[] possibleNumbers = new int[100];
                     Map<Integer, Integer> result = new HashMap<Integer, Integer>();
-
                     for (int j = 0; j < PhotoPoi_mapping_index.length; ++j) {
                         possibleNumbers[PhotoPoi_mapping_index[j]] = possibleNumbers[PhotoPoi_mapping_index[j]] + 1;
                         result.put(PhotoPoi_mapping_index[j], possibleNumbers[PhotoPoi_mapping_index[j]]);
@@ -470,13 +473,11 @@ public class DatelineModel implements Parcelable {
 
 
                 // Phot0 & POI mapping
-                String temp = getCreateTime(poiList.get(0).toString());
-
                 // 5. Measure how busy user was
                 if(poiList.size() < 4) {
                     int n = generator.nextInt(dnnModel.dailysummary_nobusy.length);
                     hash_string = hash_string + String.format("%s ", dnnModel.dailysummary_nobusy[n]);
-                    DNN_result.add(String.format("#%s","하나도 안 바쁨"));
+                    DNN_result.add(String.format("#%s","여유"));
 
                 } else if(poiList.size() >= 4 && poiList.size() <= 6) {
                     int n = generator.nextInt(dnnModel.dailysummary_lessbusy.length);
@@ -490,7 +491,6 @@ public class DatelineModel implements Parcelable {
 
 
                 if(mMood!=null) {
-
                     if(mMood.equals("Happy")){
                         mMood_kr="그럭저럭 행복한";  // For sentence
                         mMood_hash_kr="행복";     // For hash
@@ -504,14 +504,12 @@ public class DatelineModel implements Parcelable {
                         mMood_kr="많이 바쁜";
                         mMood_hash_kr="바쁨";
                     }
-
                     hash_string = hash_string + String.format("\n 오늘은 %s 하루였다. ", mMood_kr);
                     DNN_result.add(String.format("#%s",mMood_hash_kr));
 
                 }
 
                 if(DNN_result.size()>0){
-
                     // Get the unique hash result,  remove overlapping
                     int array_size = arraylistsize_nooverlap(DNN_result);
                     String [] DNN_result_nooverlap = new String[array_size];
