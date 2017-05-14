@@ -344,16 +344,14 @@ public class DatelineModel implements Parcelable {
         String DateYesterday = dateFormat.format(cal.getTime()); //your formatted date here
 
 //        if(mSentence == null || mSentence.equals("") || DateInMomeent.equals(DateToday) ) {   // This is only for debugging
-        if(mSentence == null || mSentence.equals("")  ) {
-//        if(true) {
+//        if(DateInMomeent.equals(DateYesterday) ) {   // This is only for debugging
+//        if(mSentence == null || mSentence.equals("")  ) {
+        if(true) {
 
             if (sentence_mode.equals("hash"))
                 return "";
 
-
-            // Garbage collection before any heavy load work
             System.gc();
-
             Random generator = new Random();
             clusterEngine =new ClusterEngine();
             EngineDBInterface engineDBInterface = new EngineDBInterface();
@@ -363,7 +361,6 @@ public class DatelineModel implements Parcelable {
 
             rear_cam_width = Integer.parseInt(readFromFile("rear_camera_setting.txt", AppApplication.getAppInstance().getApplicationContext())) ;
             front_cam_width = Integer.parseInt(readFromFile("front_camera_setting.txt", AppApplication.getAppInstance().getApplicationContext())) ;
-
             mDBWrapper = new DBWrapper(AppPreference.getInstance().getUserUid());
 
             doDayOfWeek();
@@ -380,12 +377,12 @@ public class DatelineModel implements Parcelable {
                 DNN_result.add(String.format("#%s",mWeather));
             }
 
-
             ArrayList poiList = getPoiList();
+            ArrayList poicatList = getCategoryList(); // Next step is to create Category LUT with POI list key
             ArrayList poiCRDatesList = getPoiCRDatesList();
             int photoID_size=0;
 
-            if(poiList.size()>0)
+            if(poiList.size()>1)
             {
 
                 // Get photo info retrieval
@@ -394,7 +391,19 @@ public class DatelineModel implements Parcelable {
                 PhotoInfoModel[] photoinfos=null;
                 Integer[] PhotoPoi_mapping_index=null;   // This contains POI index for each photo element
 
-                if(photoID_size>0){
+                if(photoID_size==0){
+
+                    //3. POI based sentence
+                    // Get the unique POIs index from all POIs
+                    Integer [] uniqKeysArray = null;
+                    int array_size = arraylistsize_nooverlap(poiList);
+                    String [] poiList_nooverlap = new String[array_size];
+                    poiList_nooverlap=arraylistTostringarray_nooverlap(poiList);
+
+                    hash_string = dnnModel.POIbasedSentence(uniqKeysArray, DNN_result, poiList_nooverlap,poiList,hash_string);
+                    DNN_result.addAll(dnnModel.DNN_result);
+
+                }else if(photoID_size>0){
                     photoinfos = new PhotoInfoModel[photoID_size];
 
                     for (int i=0;i<photoID_size;i++)
@@ -408,12 +417,10 @@ public class DatelineModel implements Parcelable {
                     try {
                         uniqKeys.addAll(Arrays.asList(PhotoPoi_mapping_index));
                     } catch (Exception e) {
-
                         Log.e("your app", e.toString());
                         hash_string = hash_string + String.format("\n #%s", "Error");
                         return hash_string;
                     }
-
 
                     int[] possibleNumbers = new int[100];
                     Map<Integer, Integer> result = new HashMap<Integer, Integer>();
@@ -423,17 +430,17 @@ public class DatelineModel implements Parcelable {
                         result.put(PhotoPoi_mapping_index[j], possibleNumbers[PhotoPoi_mapping_index[j]]);
                     }
 
+                    //3. POI based sentence
+                    // Get the unique POIs index from all POIs
                     List<Integer> integerList = new ArrayList<>(uniqKeys);
                     Integer [] uniqKeysArray = new Integer[uniqKeys.size()];
                     for (int j = 0; j < uniqKeys.size(); j++)
                       uniqKeysArray[j] = integerList.get(j); //
 
-                    //3. POI based sentence
-                    // Get the unique POIs index from all POIs
                     int array_size = arraylistsize_nooverlap(poiList);
                     String [] poiList_nooverlap = new String[array_size];
                     poiList_nooverlap=arraylistTostringarray_nooverlap(poiList);
-                    hash_string = dnnModel.POIbasedSentence(uniqKeysArray, poiList_nooverlap,poiList,hash_string);
+                    hash_string = dnnModel.POIbasedSentence(uniqKeysArray, DNN_result, poiList_nooverlap,poiList,hash_string);
 
                     //4. Face & Deep learning
                     int offset =0;
@@ -447,7 +454,6 @@ public class DatelineModel implements Parcelable {
                         size = result.get(key_temp);          // This is the number of photos taken in this POI index
 
                         hash_string_face= dnnModel.SentenceFromPhoto_korean(clusterEngine, offset,size, DNN_result, poiList.get(key_temp).toString(),photolist,front_cam_width,rear_cam_width, DNN_path, weekend_days);
-//                        DNN_result = dnnModel.HashFromPhoto_korean(clusterEngine,DNN_result, offset,size,poiList.get(key_temp).toString(),photolist,front_cam_width,rear_cam_width, DNN_path, weekend_days);
                         DNN_result.addAll(dnnModel.DNN_result);
 
                         if(hash_string_face.equals(hash_string_face_buf))
@@ -466,23 +472,19 @@ public class DatelineModel implements Parcelable {
                 // Phot0 & POI mapping
                 String temp = getCreateTime(poiList.get(0).toString());
 
-
                 // 5. Measure how busy user was
                 if(poiList.size() < 4) {
                     int n = generator.nextInt(dnnModel.dailysummary_nobusy.length);
                     hash_string = hash_string + String.format("%s ", dnnModel.dailysummary_nobusy[n]);
-//                    DNN_result.add(String.format("#%s","Not busy"));
                     DNN_result.add(String.format("#%s","하나도 안 바쁨"));
 
                 } else if(poiList.size() >= 4 && poiList.size() <= 6) {
                     int n = generator.nextInt(dnnModel.dailysummary_lessbusy.length);
                     hash_string = hash_string + String.format("%s ", dnnModel.dailysummary_lessbusy[n]);
-//                    DNN_result.add(String.format("#%s","A bit busy"));
                     DNN_result.add(String.format("#%s","약간 바쁨"));
                 } else if (poiList.size() > 6) {
                     int n = generator.nextInt(dnnModel.dailysummary_busy.length);
                     hash_string = hash_string + String.format("%s ", dnnModel.dailysummary_busy[n]);
-//                    DNN_result.add(String.format("#%s","Busy"));
                     DNN_result.add(String.format("#%s","바쁨"));
                 }
 
@@ -490,8 +492,8 @@ public class DatelineModel implements Parcelable {
                 if(mMood!=null) {
 
                     if(mMood.equals("Happy")){
-                        mMood_kr="그럭저럭 행복한";
-                        mMood_hash_kr="행복";
+                        mMood_kr="그럭저럭 행복한";  // For sentence
+                        mMood_hash_kr="행복";     // For hash
                     }else if(mMood.equals("Angry")){
                         mMood_kr="별로 기분이 안 좋은";
                         mMood_hash_kr="화남";
@@ -503,9 +505,7 @@ public class DatelineModel implements Parcelable {
                         mMood_hash_kr="바쁨";
                     }
 
-
                     hash_string = hash_string + String.format("\n 오늘은 %s 하루였다. ", mMood_kr);
-//                    hash_string = hash_string + String.format("\n I think today was %s day in general. ", mMood);
                     DNN_result.add(String.format("#%s",mMood_hash_kr));
 
                 }
@@ -522,28 +522,17 @@ public class DatelineModel implements Parcelable {
 
                 }
 
-
             }
-            else{
+            else if(poiList.size()==1){
 
-//                hash_string =hash_string + "I think I didn't do anything special. What a boring day. I will go out somewhere tomorrow";
                 int n = generator.nextInt(dnnModel.dailysummary_nopoi_kr.length);
                 hash_string = hash_string + String.format("%s ", dnnModel.dailysummary_nopoi_kr[n]);
             }
 
-
-
+            // Save fianl sentence and hash to DB
             hash_string = hash_string + "\n" + hashString_DNN;
-
-
-            // This saves sentense to DB
-            // if (!DateInMomeent.equals(DateToday))
             mDBWrapper.setSentence(DateInMomeent,hash_string);
-
-
             return hash_string;
-
-
 
 
         } else {
@@ -555,7 +544,6 @@ public class DatelineModel implements Parcelable {
 
             if(sentenceHash.size()>=2)
             {
-
                 for(int i=1;i<sentenceHash.size();i++)
                     hashOnly = hashOnly + "#" + sentenceHash.get(i).toString();
             }
@@ -688,7 +676,7 @@ public class DatelineModel implements Parcelable {
 
                         // Photo Create date formatting
                         Date photoCRDatesList_format = AppUtils.StringToDate(now, photoinfos[k].update_date);
-                        if(photoCRDatesList_format.equals(poiCRDatesList_format1) || photoCRDatesList_format.after(poiCRDatesList_format1) && photoCRDatesList_format.before(poiCRDatesList_format2))
+                        if( (photoCRDatesList_format.equals(poiCRDatesList_format1) || photoCRDatesList_format.after(poiCRDatesList_format1)) && photoCRDatesList_format.before(poiCRDatesList_format2))
                             PhotoPoi_mapping_index[k]= j;
                     }else if(j==0){
                         poiCRDatesList_format1 = AppUtils.StringToDate(now, poiCRDatesList.get(j).toString());
