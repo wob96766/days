@@ -345,8 +345,8 @@ public class DatelineModel implements Parcelable {
 
 //        if(mSentence == null || mSentence.equals("") || DateInMomeent.equals(DateToday) ) {   // This is only for debugging
 //        if(DateInMomeent.equals(DateYesterday) ) {   // This is only for debugging
-//        if(mSentence == null || mSentence.equals("")  ) {
-        if(true) {
+        if(mSentence == null || mSentence.equals("")  ) {
+//        if(true) {
 
             if (sentence_mode.equals("hash"))
                 return "";
@@ -393,7 +393,7 @@ public class DatelineModel implements Parcelable {
 
                 if(photoID_size==0){
 
-                    //3. POI based sentence
+                    //1. Only POI based sentence. There is no photo
                     // Get the unique POIs index from all POIs
                     Integer [] uniqKeysArray = null;
                     int array_size = arraylistsize_nooverlap(poiList);

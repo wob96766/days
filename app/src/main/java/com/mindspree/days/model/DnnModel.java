@@ -672,7 +672,7 @@ public class DnnModel {
             }else if(poiList_nooverlap.length>2){
 
                 // this part describes which places I went to
-                hash_string = hash_string + String.format("%s.", "오늘 여기 저기 돌아다녔다. ");
+                hash_string = hash_string + String.format("%s.", "오늘은 여기 저기 돌아다녔다 ");
 
                 for (int l=0;l<poiList_nooverlap.length;l++){
 
