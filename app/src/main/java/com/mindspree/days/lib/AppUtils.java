@@ -24,10 +24,14 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
+import java.util.TreeSet;
 
 import static android.R.attr.orientation;
 
@@ -46,6 +50,49 @@ public class AppUtils {
         return diffMunutes.intValue();
     }
 
+
+    public static String [] arraylistTostringarray_nooverlap(ArrayList poiList){
+        Set<String> uniqKeys2 = new TreeSet<String>();
+
+        // Convert poiList arraylist to string array
+        Object[] poiListStringArraytemp = poiList.toArray(new String[poiList.size()]);
+        String[] poiListStringArray = (String[]) poiListStringArraytemp;
+
+        try {
+            uniqKeys2.addAll(Arrays.asList(poiListStringArray));
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+
+        List<String> stringList = new ArrayList<>(uniqKeys2);
+        String [] uniqKeysArray2 = new String[uniqKeys2.size()];
+        for (int j = 0; j < uniqKeys2.size(); j++)
+            uniqKeysArray2[j] = stringList.get(j); //
+
+
+        return uniqKeysArray2;
+
+    }
+
+    public static int arraylistsize_nooverlap(ArrayList poiList){
+        Set<String> uniqKeys2 = new TreeSet<String>();
+
+
+        // Convert poiList arraylist to string array
+        Object[] poiListStringArraytemp = poiList.toArray(new String[poiList.size()]);
+        String[] poiListStringArray = (String[]) poiListStringArraytemp;
+
+        try {
+            uniqKeys2.addAll(Arrays.asList(poiListStringArray));
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+
+        return uniqKeys2.size();
+
+    }
     public static Date getTodayDateTime(Date origin, String timeFormat){
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd ", Locale.KOREA);

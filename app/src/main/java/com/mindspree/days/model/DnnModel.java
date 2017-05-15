@@ -32,6 +32,8 @@ public class DnnModel {
 
     public int language_mode = appConfig.LANGUAGE_MODE;
 
+    public ArrayList POILIST_key;
+    public ArrayList POICAT_content;
 
     public String [] DNN_DB1 = {"Dutch oven","wok","caldron","frying pan","Crock Pot","plate","restaurant","groom","bakery","pasta"};
     public String [] DNN_DB2 = {"lakeside","seashore","lakefront"};
@@ -39,11 +41,11 @@ public class DnnModel {
     public String [] DNN_DB4 = {"amusement park","playground"};
 
 
-    public String [] POI_DB1 = {"coffee", "Coffee","카페","커피", "Starbucks", "A TWOSOME PLACE"};
+    public String [] POI_DB1 = {"coffee", "Coffee","카페","커피", "Starbucks", "A TWOSOME PLACE", "Cafe", "cafe"};
     public String [] POI_DB2 = {"restaurant","Restaurant","식당"};
     public String [] POI_DB3 = {"공원","PARK","Park","park"};
     public String [] POI_DB4 = {"극장","CINEMA","cinema","Cinema" ,"CGV"};
-    public String [] POI_DB5 = {"Mall","mall","쇼핑몰","쇼핑","쇼핑센터","쇼핑 센터", "백화점","Department store", "department store"};
+    public String [] POI_DB5 = {"Mall","mall","쇼핑몰","쇼핑","쇼핑센터","쇼핑 센터", "백화점","Department store", "department store", "shopping", "Shopping", "Store", "store"};
     public String [] POI_DB6 = {"월드","Amusement","놀이공원","놀이 공원"};
 
     public String [] FaceBasedPool_selfie_smile ;
@@ -98,9 +100,9 @@ public class DnnModel {
 
     // Korea mode
     public String [] FaceBasedPool_selfie_smile_kr ={"간만에 웃는 사진도 찍었다", "오늘 찍은 최고의 사진인 듯. 크~ 간만에 잘 나온 미소 사진", "오늘 셀피 몇장 찍었다. 좋은 곳에서 셀피 찰칵"};
-    public String [] FaceBasedPool_selfie_nosmile_kr ={"간만에 셀피도 찍었다", "오늘 찍은 최고의 사진인듯. ㅎㅎ 간만에 잘나왔는데 다음엔 좀 더 웃어야지", "여기 온 기념으로 오늘 셀피 몇장 찍었다."};
+    public String [] FaceBasedPool_selfie_nosmile_kr ={"간만에 셀피도 찍었다", "오늘 찍은 최고의 사진인듯. ㅎㅎ 간만에 잘나왔는데 다음엔 좀 더 웃어야지", "여기 온 기념으로 오늘 셀피 몇장 찍었다"};
     public String [] FaceBasedPool_single_smile_kr ={"나이스 스마일 샷 ~ 오늘도 즐거운 하루", "오늘의 베스트 샷. 다들 스마일 ~", " ㅎㅎ "};
-    public String [] FaceBasedPool_single_nosmile_kr ={"무표정 샷도 찍었다.", "간만에 진지한 사진도 한 컷 찍었다.", "근엄한 사진도 한 컷 찍었다."};
+    public String [] FaceBasedPool_single_nosmile_kr ={"무표정 시크한 셀피도 남겼다", "간만에 진지한 사진도 한 컷 남겼다", "근엄한 사진도 한 컷 찍었다"};
     public String [] FaceBasedPool_group_smile_kr = {"친구 동료들과 즐거운 사진도 찍었다", "오늘의 베스트 그룹 샷..(다들 표정이 좋네)", "오늘의 베스트 그룹 샷..(다들 표정 좋군)", "오늘도 다들 즐거운 하루를 보냈다"};
     public String [] FaceBasedPool_group_nosmile_kr = {"단체 사진을 찍었다", "오늘의 베스트 그룹 샷.", "단체 사진도 몇장 찍었다"};
 
@@ -181,8 +183,39 @@ public class DnnModel {
 
     }
 
-    public Random generator = new Random();
 
+    public void POILIST_key_set(ArrayList poi_list) {
+        POILIST_key = poi_list;
+    }
+
+    public void POICAT_val_set(ArrayList poicat_list){
+        POICAT_content = poicat_list;
+    }
+
+    public String poicatLUT(String poi_String){
+
+        int index =0;
+        String poicat_val ="";
+
+        if(POILIST_key !=null)
+        {
+            for(int k=0;k< POILIST_key.size();k++)
+            {
+                if(POILIST_key.get(k).toString().equals(poi_String))
+                    poicat_val = POICAT_content.get(k).toString();
+
+            }
+        }else{
+            return poicat_val;
+        }
+
+
+
+        return poicat_val;
+
+    }
+
+    public Random generator = new Random();
 
     public boolean poiclassDetect(String poi_String, String [] Class_DB){
 
@@ -204,7 +237,7 @@ public class DnnModel {
 
     }
 
-    public String  getPOIstring(String poi_string, DnnModel dnnModel, double avg_PhotoCreateTime, int weekend_days){
+    public String  getPOIstring(String poi_string, ArrayList DNN_result_in, DnnModel dnnModel, double avg_PhotoCreateTime, int weekend_days){
 
         // POI context based string generation
         //POI_DB1 : Coffe and tea
@@ -215,55 +248,58 @@ public class DnnModel {
         //POI_DB6 : "놀이공원"
 
         String hash_string_POI="";
-
+        DNN_result=DNN_result_in;
 
         if(language_mode==1) // Englinsh
         {
             if(poiclassDetect(poi_string,dnnModel.POI_DB1)){
                 hash_string_POI =  String.format("%s 에서 ",poi_string);
                 hash_string_POI= hash_string_POI + String.format("%s. ","커피를 한잔 마셨다. ");
+                DNN_result.add(String.format("#%s", "커피 한잔"));
             } else if(poiclassDetect(poi_string,dnnModel.POI_DB2)){
                 hash_string_POI =  String.format("%s 에서 ",poi_string);
 
                 if(avg_PhotoCreateTime>05 && avg_PhotoCreateTime< 10){
                     //Breakfast
                     hash_string_POI = hash_string_POI + String.format("%s ", "아침을 먹었다. ");
-
+                    DNN_result.add(String.format("#%s", "아침 식사"));
                 }else if(avg_PhotoCreateTime>=11 && avg_PhotoCreateTime< 14){
                     //Lunch
                     hash_string_POI = hash_string_POI +String.format("%s ", "점심을 먹었다. ");
-
+                    DNN_result.add(String.format("#%s", "점심 식사"));
                 }else if(avg_PhotoCreateTime>=10 && avg_PhotoCreateTime< 11){
                     //Lunch
                     hash_string_POI =hash_string_POI + String.format("%s ", "브런치를 먹었다. ");
-
+                    DNN_result.add(String.format("#%s", "브런치"));
                 }else if(avg_PhotoCreateTime>=17 && avg_PhotoCreateTime< 19){
                     //dinner
                     hash_string_POI = hash_string_POI +String.format("%s ", "저녁을 먹었다. ");
+                    DNN_result.add(String.format("#%s", "저녁 식사"));
                 }else if(avg_PhotoCreateTime>=19) {
                     //Party
                     hash_string_POI = hash_string_POI +String.format("%s ", "친구 동료들과 저녁 회식 모임을 했다. ");
+                    DNN_result.add(String.format("#%s", "회식"));
                 }
 
             } else if(poiclassDetect(poi_string,dnnModel.POI_DB3)){
                 hash_string_POI =  String.format("%s 에서 ",poi_string);
                 hash_string_POI= hash_string_POI + String.format("%s. ","산책도 하면서 쉬었다. ");
-
+                DNN_result.add(String.format("#%s", "산책"));
             } else if(poiclassDetect(poi_string,dnnModel.POI_DB4)){
 
                 hash_string_POI =  String.format("%s 에서 ",poi_string);
                 hash_string_POI= hash_string_POI + String.format("%s. ","영화를 관람했다 ");
-
+                DNN_result.add(String.format("#%s", "영화 관람"));
             } else if(poiclassDetect(poi_string,dnnModel.POI_DB5)){
 
                 hash_string_POI =  String.format("%s 에서 ",poi_string);
                 hash_string_POI= hash_string_POI + String.format("%s. ","쇼핑을 했다 ");
-
+                DNN_result.add(String.format("#%s", "쇼핑"));
             } else if(poiclassDetect(poi_string,dnnModel.POI_DB6)){
 
                 hash_string_POI =  String.format("%s ",poi_string);
                 hash_string_POI= hash_string_POI + String.format("%s. ","공원에 놀러 갔다 ");
-
+                DNN_result.add(String.format("#%s", "놀이 공원"));
             }
         }
         else if(language_mode==2)  // Korean
@@ -271,37 +307,46 @@ public class DnnModel {
             if (poiclassDetect(poi_string, dnnModel.POI_DB1)) {
                 hash_string_POI = String.format("%s 에서 ", poi_string);
                 hash_string_POI = hash_string_POI + String.format("%s. ", "커피를 마셨다");
+                DNN_result.add(String.format("#%s", "커피"));
             } else if (poiclassDetect(poi_string, dnnModel.POI_DB2)) {
                 hash_string_POI = String.format("%s 에서 ", poi_string);
 
                 if (avg_PhotoCreateTime > 05 && avg_PhotoCreateTime < 10) {
                     //Breakfast
                     hash_string_POI = hash_string_POI + String.format("%s ", "아침을 먹었다. ");
-
+                    DNN_result.add(String.format("#%s", "아침 식사"));
                 } else if (avg_PhotoCreateTime >= 11 && avg_PhotoCreateTime < 14) {
                     //Lunch
                     hash_string_POI = hash_string_POI + String.format("%s ", "점심을 먹었다. ");
-
+                    DNN_result.add(String.format("#%s", "점심 식사"));
                 } else if (avg_PhotoCreateTime >= 10 && avg_PhotoCreateTime < 11) {
                     //Lunch
                     hash_string_POI = hash_string_POI + String.format("%s %s ", "브런치를 먹었다. ");
-
+                    DNN_result.add(String.format("#%s", "브런치"));
                 } else if (avg_PhotoCreateTime >= 17 && avg_PhotoCreateTime < 19) {
                     //dinner
                     hash_string_POI = hash_string_POI + String.format("%s %s ", "저녁을 먹었다. ");
+                    DNN_result.add(String.format("#%s", "저녁 식사"));
                 } else if (avg_PhotoCreateTime >= 19) {
                     //Party
                     if (weekend_days == 0)  // Week days
+                    {
                         hash_string_POI = hash_string_POI + String.format("%s ", "동료들과 저녁 모임을 했다.");
-                    else   // Weekend
+                        DNN_result.add(String.format("#%s", "저녁 회식"));
+                    }else   // Weekend
+                    {
                         hash_string_POI = hash_string_POI + String.format("%s ", "주말 저녁 데이트/외출을 즐겼다 .");
+                        DNN_result.add(String.format("#%s", "주말 저녁 외식, 데이트"));
+                    }
                 }
 
             } else if (poiclassDetect(poi_string, dnnModel.POI_DB3)) {
                 hash_string_POI = String.format("%s 에서 ", poi_string);
                 if (weekend_days == 1)  // Weekend
+                {
                     hash_string_POI = hash_string_POI + String.format("%s. ", "주말에 공원에서 산책을 했다.");
-
+                    DNN_result.add(String.format("#%s", "주말 공원 산책"));
+                }
 
             } else if (poiclassDetect(poi_string, dnnModel.POI_DB4)) {
 
@@ -310,19 +355,23 @@ public class DnnModel {
                 {
                     if (avg_PhotoCreateTime > 19 && avg_PhotoCreateTime < 24) {
                         hash_string_POI = hash_string_POI + String.format("%s. ", "간만에 영화보러 왔다.(간만 주중 영화) ");
-                    } else
+                        DNN_result.add(String.format("#%s", "주중 극장 나들이"));
+                    } else {
                         hash_string_POI = hash_string_POI + String.format("%s. ", "영화 관람하러 극장에 왔다.(신나는 주말 극장 데이트) ");
-
+                        DNN_result.add(String.format("#%s", "주말 극장 나들이"));
+                    }
 
                 } else if (poiclassDetect(poi_string, dnnModel.POI_DB5)) {
 
                     hash_string_POI = String.format("%s에서 ", poi_string);
                     hash_string_POI = hash_string_POI + String.format("%s. ", "쇼핑을 했다");
+                    DNN_result.add(String.format("#%s", "쇼핑"));
 
                 } else if (poiclassDetect(poi_string, dnnModel.POI_DB6)) {
 
                     hash_string_POI = String.format("%s ", poi_string);
                     hash_string_POI = hash_string_POI + String.format("%s. ", "놀이 공원에 갔다");
+                    DNN_result.add(String.format("#%s", "놀이 공원"));
 
                 }
             }
@@ -626,15 +675,24 @@ public class DnnModel {
     }
 
 
-    public String POIbasedSentence(Integer [] uniqKeysArray, String [] poiList_nooverlap, ArrayList poiList, String hash_string){
+    public String POIbasedSentence(Integer [] uniqKeysArray,ArrayList DNN_result_in, String [] poiList_nooverlap, ArrayList poiList, String hash_string){
 
+            DNN_result=DNN_result_in;
+            String poicat = "";
+            for(int j=0;j<poiList_nooverlap.length;j++) {
 
+                poicat=poicatLUT(poiList_nooverlap[j]);
+                if(poicat.equals(""))
+                    DNN_result.add(String.format("#%s", poiList_nooverlap[j]));
+                else
+                    DNN_result.add(String.format("#%s, %s", poiList_nooverlap[j], poicat));
+            }
 
             if(poiList_nooverlap.length==1){
                 if(poiList_nooverlap[0].contains(AppUtils.getAppText(R.string.text_location_home))) {
-                    hash_string = hash_string + String.format("%s . ", "오늘은 아무데도 가지 않고 하루종일 집에만 있었다");
+                    hash_string = hash_string + String.format("%s . ", "오늘은 아무데도 가지 않고 하루종일 집에서 있었다");
                 }else{
-                    hash_string = hash_string + String.format("%s %s %s. ", "오늘은 아무데도 가지 않고 ", poiList_nooverlap[0], " 에만 있었다");
+                    hash_string = hash_string + String.format("%s %s %s. ", "오늘은 주로 ", poiList_nooverlap[0], " 에만 있었다");
                 }
 
             } else if(poiList_nooverlap.length==2){
@@ -669,7 +727,7 @@ public class DnnModel {
             }else if(poiList_nooverlap.length>2){
 
                 // this part describes which places I went to
-                hash_string = hash_string + String.format("%s.", "오늘 여기 저기 돌아다녔다. ");
+                hash_string = hash_string + String.format("%s.", "오늘은 여기 저기 돌아다녔다 ");
 
                 for (int l=0;l<poiList_nooverlap.length;l++){
 
@@ -678,51 +736,60 @@ public class DnnModel {
                         if(poiList_nooverlap[l].contains(AppUtils.getAppText(R.string.text_location_home))){
 
                         }else
-                            hash_string = hash_string + String.format("여기 %s", poiList_nooverlap[l]);
+                            hash_string = hash_string + String.format("%s", poiList_nooverlap[l]);
 
                     }else if(l<poiList_nooverlap.length-1) {
                             hash_string = hash_string + String.format(", %s ", poiList_nooverlap[l]);
                     }else if(l==poiList_nooverlap.length-1) {
-                            hash_string = hash_string + String.format("그리고 %s 를 들렸다. ", poiList_nooverlap[l]);
+                            hash_string = hash_string + String.format("그리고 %s에도 들렸다. ", poiList_nooverlap[l]);
                     }
                 }
 
                 // this part describes where I took photos
-                for (int l=0;l<uniqKeysArray.length;l++){
+                if(uniqKeysArray!=null)
+                {
 
-                    int index_key= uniqKeysArray[l];
-                    if(index_key >= poiList.size())
-                        index_key = poiList.size()-1;
+                    hash_string = hash_string + String.format("\n");
 
-                    if(l==0) {
+                    for (int l=0;l<uniqKeysArray.length;l++){
 
-                        if(uniqKeysArray[l].toString().contains(AppUtils.getAppText(R.string.text_location_home))){
-                            hash_string = hash_string + String.format("집에서 사진도 몇 장 찍었다");
-                        }else{
-                            hash_string = hash_string + String.format("여기 %s", poiList.get(index_key).toString());
+                        int index_key= uniqKeysArray[l];
+                        if(index_key >= poiList.size())
+                            index_key = poiList.size()-1;
+
+                        if(l==0) {
+
+                            if(uniqKeysArray[l].toString().contains(AppUtils.getAppText(R.string.text_location_home))){
+                                hash_string = hash_string + String.format("집에서 사진도 몇 장 찍었다");
+                            }else{
+                                hash_string = hash_string + String.format(" %s", poiList.get(index_key).toString());
+                            }
+
+
+                        }else if(l<uniqKeysArray.length-1) {
+
+                            if(uniqKeysArray[l].toString().equals(uniqKeysArray[l-1].toString())){
+                                // Do nothing, overlapped .
+                            }else{
+                                hash_string = hash_string + String.format(", %s ", poiList.get(index_key).toString());
+                            }
+
+
+                        }else if(l==uniqKeysArray.length-1) {
+
+                            if(uniqKeysArray[l].toString().equals(uniqKeysArray[l-1].toString())){
+                                // Do nothing, overlapped .
+                            }else{
+                                hash_string = hash_string + String.format("그리고 %s 에서는 사진도 몇 장 남겼다. ", poiList.get(index_key).toString());
+                            }
+
+
                         }
-
-
-                    }else if(l<uniqKeysArray.length-1) {
-
-                        if(uniqKeysArray[l].toString().equals(uniqKeysArray[l-1].toString())){
-                            // Do nothing, overlapped .
-                        }else{
-                            hash_string = hash_string + String.format(", %s ", poiList.get(index_key).toString());
-                        }
-
-
-                    }else if(l==uniqKeysArray.length-1) {
-
-                        if(uniqKeysArray[l].toString().equals(uniqKeysArray[l-1].toString())){
-                            // Do nothing, overlapped .
-                        }else{
-                            hash_string = hash_string + String.format("그리고 %s 에서 찍은 사진들이 있음. ", poiList.get(index_key).toString());
-                        }
-
-
                     }
                 }
+
+
+
             }
 
 
@@ -732,316 +799,19 @@ public class DnnModel {
 
     }
 
-
-    public String SentenceFromPhoto(int offset,int size,String poi_string, ArrayList PhotoList,  int front_cam_width, int rear_cam_width, String [] DNN_path, int weekend_days)
-    {
-        String hash_string = "";
-        String hash_string_DNN= "";
-        String hash_string_POI= "";
-        int photoCount = PhotoList.size();
-        DnnModel dnnModel = new DnnModel();
-        Random generator = new Random();
-        double avg_PhotoCreateTime =0;
-
-        EngineDBInterface engineDBInterface = new EngineDBInterface();
-
-
-        // POI context based string generation
-        //POI_DB1 : Coffe and tea
-        //POI_DB2 : 식당, Restaurant
-        //POI_DB3 : Park
-        //POI_DB4 : Cinema
-        //POI_DB5 : "shopping"
-        //POI_DB6 : "놀이공원"
-        for (int i = offset; i < offset + size; i++){
-            String timelinePhotoFile = PhotoList.get(i).toString();
-            double temp[] = clusterEngine.timeFeatureExtract(timelinePhotoFile);
-            avg_PhotoCreateTime=avg_PhotoCreateTime+temp[3];
-        }
-        avg_PhotoCreateTime=avg_PhotoCreateTime/size;
-
-        // POI context based sentence
-//        boolean POI_DB1_DETECT= poiclassDetect(poi_string,dnnModel.POI_DB1);
-        boolean POI_DB2_DETECT= poiclassDetect(poi_string,dnnModel.POI_DB2);
-//        boolean POI_DB3_DETECT= poiclassDetect(poi_string,dnnModel.POI_DB3);
-//        boolean POI_DB4_DETECT= poiclassDetect(poi_string,dnnModel.POI_DB4);
-//        boolean POI_DB5_DETECT= poiclassDetect(poi_string,dnnModel.POI_DB5);
-        boolean POI_DB6_DETECT= poiclassDetect(poi_string,dnnModel.POI_DB6);
-
-
-
-        hash_string_POI = dnnModel.getPOIstring(poi_string, dnnModel, avg_PhotoCreateTime, weekend_days);
-        hash_string=hash_string+hash_string_POI;
-
-
-        int sentence_cnt =0;
-
-        for (int i = offset; i < offset + size; i++){
-            String timelinePhotoFile = PhotoList.get(i).toString();
-
-            int Im_width=0;
-            int Im_height=0;
-
-            float Num_Face=0;
-            float Smile_Prob=0;
-            int selfie_cnt=0;
-            int singlePhoto_cnt=0;
-            int groupSelfie_cnt=0;
-            int groupPhoto_cnt=0;
-            int nonhumanPhoto_cnt=0;
-            int smile_cnt=0;
-
-            int n = 0;
-
-
-            // Face detectioin : Face number. Eye close. Smile probability
-
-            final BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            BitmapFactory.decodeFile(timelinePhotoFile, options);
-            int imgHeight = options.outHeight;
-            int sample_size =1;
-
-            if(imgHeight <=300)
-                sample_size =1 ;
-            else if(imgHeight <=1000)
-                sample_size =4 ;
-            else if(imgHeight >1000 && imgHeight<2000)
-                sample_size =6 ;
-            else if(imgHeight >=2000)
-                sample_size =8 ;
-
-            BitmapFactory.Options bitmap_options = new BitmapFactory.Options();
-            bitmap_options.inPreferredConfig = Bitmap.Config.RGB_565;
-            bitmap_options.inSampleSize = sample_size;
-            Bitmap bMap_temp = BitmapFactory.decodeFile(timelinePhotoFile, bitmap_options);
-            Im_width = bMap_temp.getWidth() * sample_size ;
-
-            Num_Face =  engineDBInterface.getExtraFeatWithPhotoURL(timelinePhotoFile);
-            Smile_Prob =  engineDBInterface.getWeightCoeffWithPhotoURL(timelinePhotoFile);
-
-
-            // Selfie, solo , group
-            if( Num_Face == 1) {
-                if( Math.abs(front_cam_width - Im_width) < 500)
-                    selfie_cnt++;
-                else if ( Math.abs(rear_cam_width - Im_width) < 500)
-                    singlePhoto_cnt ++;
-            }
-            else if( Num_Face >1) {
-
-                if( Math.abs(front_cam_width - Im_width) < 500)
-                    groupSelfie_cnt++;
-                else if ( Math.abs(rear_cam_width - Im_width) < 500)
-                    groupPhoto_cnt++;
-
-            }
-
-            if( Smile_Prob >= 0.6)
-                smile_cnt++;
-
-
-            String connection="";
-            if(size==1)
-                connection=".";
-            else if(size==2 && (i-offset)==0)
-                connection="and";
-            else if(size==2 && (i-offset)==1)
-                connection=".";
-            else if(size>2 && (i-offset)<size-2)
-                connection=",";
-            else if(size>2 && (i-offset)==size-2)
-                connection="and";
-            else if(size>2 && (i-offset)==size-1)
-                connection=".";
-            else
-                connection="";
-
-
-            // Selfie check
-            if (selfie_cnt > 0) {
-                // Smile detection
-                n = generator.nextInt(dnnModel.FaceBasedPool_selfie_smile.length);
-
-                if (smile_cnt > 0) {
-                    hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_selfie_smile[n], connection);
-                    DNN_result.add(String.format("#%s", "Selfie with smile"));
-                } else {
-                    hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_selfie_nosmile[n], connection);
-                    DNN_result.add(String.format("#%s", "Selfie"));
-                }
-
-            }
-
-
-            // Group photo, single photo check
-            if (singlePhoto_cnt > 0) {
-
-                // Smile detection
-                n = generator.nextInt(dnnModel.FaceBasedPool_single_smile.length);
-
-                if (smile_cnt > 0) {
-                    hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_single_smile[n], connection);
-                } else {
-                    hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_single_nosmile[n], connection);
-
-                }
-            }
-
-            if (groupPhoto_cnt > 0) {
-
-                // Smile detection
-                n = generator.nextInt(dnnModel.FaceBasedPool_group_smile.length);
-
-                if (smile_cnt > 0) {
-                    hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_group_smile[n], connection);
-                } else {
-                    hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_group_nosmile[n], connection);
-                }
-                DNN_result.add(String.format("#%s", "Group photo"));
-
-            }
-
-            if (groupSelfie_cnt > 0) {
-                // Smile detection
-                n = generator.nextInt(dnnModel.FaceBasedPool_group_selfie.length);
-
-                if (smile_cnt > 0) {
-                    hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_group_selfie[n], connection);
-                    DNN_result.add(String.format("#%s", "Group selfie with smile"));
-                } else {
-                    hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_group_noselfie[n], connection);
-                    DNN_result.add(String.format("#%s", "Group selfie"));
-                }
-
-            }
-
-
-            // This is to interpret non humand photos such as food and landscape
-            // Do nothing at this point
-            //4. Deep learning engine
-            // It detects food, mountain, cliff, river, sea, seashore only
-            File outDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString());
-            String root = Environment.getExternalStorageDirectory().toString();
-            File myDir = new File(root + "/days_resample_images"); //
-            String days_moment_resample_image ;
-
-            days_moment_resample_image=resampleandsave_single(i, myDir, timelinePhotoFile);
-
-
-
-            // Run neural network
-            // This is for classification
-            String DNN_test_path_resample =days_moment_resample_image;
-            String[] jargv =new String[7];
-            jargv[0] ="classifier_Class";
-            jargv[1] ="predictCustom";  // This is for classification
-            jargv[2] =DNN_path[0];
-            jargv[3] =DNN_path[1];
-            jargv[4] =DNN_path[2];
-            jargv[5] =DNN_test_path_resample;
-            jargv[6] = outDir+"/";
-
-            String class_predict;
-
-
-
-            try {
-                class_predict= DnnEngineClassJNI(jargv);
-
-            } catch (Exception e) {
-
-                class_predict="0";
-                e.printStackTrace();
-            }
-
-            System.gc();
-
-
-            Boolean foodClass = classDetect(class_predict, dnnModel.DNN_DB1);
-            Boolean WaterClass = classDetect(class_predict, dnnModel.DNN_DB2);
-            Boolean MounatainClass = classDetect(class_predict, dnnModel.DNN_DB3);
-            Boolean PlayClass = classDetect(class_predict, dnnModel.DNN_DB4);
-
-
-            double [] temp_time = clusterEngine.timeFeatureExtract(timelinePhotoFile);
-            double pic_time = temp_time[3];
-
-            if(foodClass && pic_time!=1997 && !POI_DB2_DETECT)
-            {
-
-                if(pic_time>05 && pic_time< 10){
-                    //Breakfast
-                    hash_string_DNN = "I had breakfast. ";
-                    class_predict =String.format("#%s #%s","breakfast", poi_string);
-                }else if(pic_time>=11 && pic_time< 14){
-                    //Lunch
-                    hash_string_DNN = String.format("%s %s ", "I had a lunch in ", poi_string);
-                    class_predict =String.format("#%s #%s","lunch", poi_string);
-                }else if(pic_time>=17 && pic_time< 19){
-                    //dinner
-                    hash_string_DNN = String.format("%s %s ", "I had a dinner in ", poi_string);
-
-                    class_predict =String.format("#%s #%s","dinner", poi_string);
-                }else if(pic_time>=19) {
-                    //Party
-                    hash_string_DNN = String.format("%s %s %s", "I had party with my friends and colleagues in ", poi_string, ". Awesome food. ");
-
-                    class_predict =String.format("#%s #%s","dinner party", poi_string);
-                }
-
-                DNN_result.add(class_predict);
-
-            }else if(WaterClass){
-
-                hash_string_DNN = "I went outside today and had fun in the water. ";
-                class_predict =String.format("#%s #%s","fun in the water", poi_string);
-                DNN_result.add(class_predict);
-
-
-            }else if(MounatainClass){
-
-                hash_string_DNN = "I went to mountain today. It was great. ";
-                class_predict =String.format("#%s #%s","hiking", poi_string);
-                DNN_result.add(class_predict);
-            }else if(PlayClass && !POI_DB6_DETECT){
-
-                hash_string_DNN = "I went to amusement park today. It was so fun with my family.";
-                class_predict =String.format("#%s #%s","amusement park", poi_string);
-                DNN_result.add(class_predict);
-            }
-
-
-            sentence_cnt++;
-
-
-
-
-
-        }
-
-
-
-        hash_string = hash_string + hash_string_DNN;
-
-
-        return hash_string;
-    }
 
 
     public String SentenceFromPhoto_korean(ClusterEngine clusterEngine, int offset,int size,ArrayList DNN_result_in, String poi_string, ArrayList PhotoList,  int front_cam_width, int rear_cam_width, String [] DNN_path, int weekend_days)
     {
         String hash_string = "";
+        ArrayList<String> hashList = new ArrayList<String>();
         String hash_string_DNN= "";
         String hash_string_POI= "";
-        int photoCount = PhotoList.size();
         DnnModel dnnModel = new DnnModel();
         Random generator = new Random();
         double avg_PhotoCreateTime =0;
 
         EngineDBInterface engineDBInterface = new EngineDBInterface();
-
-        DNN_result =DNN_result_in;
 
         // POI context based string generation
         //POI_DB1 : Coffe and tea
@@ -1058,18 +828,16 @@ public class DnnModel {
         avg_PhotoCreateTime=avg_PhotoCreateTime/size;
 
         // POI context based sentence
-//        boolean POI_DB1_DETECT= poiclassDetect(poi_string,dnnModel.POI_DB1);
+        boolean POI_DB1_DETECT= poiclassDetect(poi_string,dnnModel.POI_DB1);
         boolean POI_DB2_DETECT= poiclassDetect(poi_string,dnnModel.POI_DB2);
-//        boolean POI_DB3_DETECT= poiclassDetect(poi_string,dnnModel.POI_DB3);
-//        boolean POI_DB4_DETECT= poiclassDetect(poi_string,dnnModel.POI_DB4);
-//        boolean POI_DB5_DETECT= poiclassDetect(poi_string,dnnModel.POI_DB5);
+        boolean POI_DB3_DETECT= poiclassDetect(poi_string,dnnModel.POI_DB3);
+        boolean POI_DB4_DETECT= poiclassDetect(poi_string,dnnModel.POI_DB4);
+        boolean POI_DB5_DETECT= poiclassDetect(poi_string,dnnModel.POI_DB5);
         boolean POI_DB6_DETECT= poiclassDetect(poi_string,dnnModel.POI_DB6);
 
-
-
-        hash_string_POI = dnnModel.getPOIstring(poi_string, dnnModel, avg_PhotoCreateTime, weekend_days);
+        // POI category & name based sentence gen
+        hash_string_POI = dnnModel.getPOIstring(poi_string, DNN_result_in, dnnModel, avg_PhotoCreateTime, weekend_days);
         hash_string=hash_string+hash_string_POI;
-
 
         int sentence_cnt =0;
 
@@ -1078,21 +846,16 @@ public class DnnModel {
 
             int Im_width=0;
             int Im_height=0;
-
             float Num_Face=0;
             float Smile_Prob=0;
             int selfie_cnt=0;
             int singlePhoto_cnt=0;
             int groupSelfie_cnt=0;
             int groupPhoto_cnt=0;
-            int nonhumanPhoto_cnt=0;
             int smile_cnt=0;
-
             int n = 0;
 
-
             // Face detectioin : Face number. Eye close. Smile probability
-
             final BitmapFactory.Options options = new BitmapFactory.Options();
             options.inJustDecodeBounds = true;
             BitmapFactory.decodeFile(timelinePhotoFile, options);
@@ -1112,8 +875,6 @@ public class DnnModel {
             bitmap_options.inPreferredConfig = Bitmap.Config.RGB_565;
             bitmap_options.inSampleSize = sample_size;
             Bitmap bMap_temp = BitmapFactory.decodeFile(timelinePhotoFile, bitmap_options);
-
-
 
             if(bMap_temp==null){
                 Im_width = 500 ;
@@ -1125,7 +886,6 @@ public class DnnModel {
             Num_Face =  engineDBInterface.getExtraFeatWithPhotoURL(timelinePhotoFile);
             Smile_Prob =  engineDBInterface.getWeightCoeffWithPhotoURL(timelinePhotoFile);
 
-
             // Selfie, solo , group
             if( Num_Face == 1) {
                 if( Math.abs(front_cam_width - Im_width) < 500)
@@ -1146,81 +906,54 @@ public class DnnModel {
                 smile_cnt++;
 
 
-            String connection="";
-            if(size==1)
-                connection=".";
-            else if(size==2 && (i-offset)==0)
-                connection="and";
-            else if(size==2 && (i-offset)==1)
-                connection=".";
-            else if(size>2 && (i-offset)<size-2)
-                connection=",";
-            else if(size>2 && (i-offset)==size-2)
-                connection="and";
-            else if(size>2 && (i-offset)==size-1)
-                connection=".";
-            else
-                connection="";
-
-
             // Selfie check
             if (selfie_cnt > 0) {
                 // Smile detection
                 n = generator.nextInt(dnnModel.FaceBasedPool_selfie_smile.length);
-
                 if (smile_cnt > 0) {
-                    hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_selfie_smile[n], connection);
+                    hashList.add(String.format("%s", dnnModel.FaceBasedPool_selfie_smile[n]));
                     DNN_result.add(String.format("#%s", "스마일 셀피"));
                 } else {
-                    hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_selfie_nosmile[n], connection);
+                    hashList.add(String.format("%s", dnnModel.FaceBasedPool_selfie_nosmile[n]));
                     DNN_result.add(String.format("#%s", "셀피"));
                 }
-
             }
-
 
             // Group photo, single photo check
             if (singlePhoto_cnt > 0) {
-
                 // Smile detection
                 n = generator.nextInt(dnnModel.FaceBasedPool_single_smile.length);
-
                 if (smile_cnt > 0) {
-                    hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_single_smile[n], connection);
+                    hashList.add(String.format("%s", dnnModel.FaceBasedPool_single_smile[n]));
+                    DNN_result.add(String.format("#%s", "스마일 인물 사진"));
                 } else {
-                    hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_single_nosmile[n], connection);
-
+                    hashList.add(String.format("%s", dnnModel.FaceBasedPool_single_nosmile[n]));
+                    DNN_result.add(String.format("#%s", "인물 사진"));
                 }
             }
 
             if (groupPhoto_cnt > 0) {
-
                 // Smile detection
                 n = generator.nextInt(dnnModel.FaceBasedPool_group_smile.length);
-
                 if (smile_cnt > 0) {
-                    hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_group_smile[n], connection);
+                    hashList.add(String.format("%s", dnnModel.FaceBasedPool_group_smile[n]));
                 } else {
-                    hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_group_nosmile[n], connection);
+                    hashList.add(String.format("%s", dnnModel.FaceBasedPool_group_nosmile[n]));
                 }
                 DNN_result.add(String.format("#%s", "단체사진"));
-
             }
 
             if (groupSelfie_cnt > 0) {
                 // Smile detection
                 n = generator.nextInt(dnnModel.FaceBasedPool_group_selfie.length);
-
                 if (smile_cnt > 0) {
-                    hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_group_selfie[n], connection);
+                    hashList.add(String.format("%s", dnnModel.FaceBasedPool_group_selfie[n]));
                     DNN_result.add(String.format("#%s", "단체 스마일 셀피"));
                 } else {
-                    hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_group_noselfie[n], connection);
+                    hashList.add(String.format("%s", dnnModel.FaceBasedPool_group_noselfie[n]));
                     DNN_result.add(String.format("#%s", "단체 셀피"));
                 }
-
             }
-
 
             // This is to interpret non humand photos such as food and landscape
             // Do nothing at this point
@@ -1230,10 +963,7 @@ public class DnnModel {
             String root = Environment.getExternalStorageDirectory().toString();
             File myDir = new File(root + "/days_resample_images"); //
             String days_moment_resample_image ;
-
             days_moment_resample_image=resampleandsave_single(i, myDir, timelinePhotoFile);
-
-
 
             // Run neural network
             // This is for classification
@@ -1280,347 +1010,68 @@ public class DnnModel {
                 }else if(pic_time>=17 && pic_time< 19){
                     //dinner
                     hash_string_DNN = String.format("%s에서 %s ", poi_string, "저녁을 먹었다. " );
-
                     class_predict =String.format("#%s #%s","저녁", poi_string);
                 }else if(pic_time>=19) {
                     //Party
-//                    hash_string_DNN = String.format("%s %s %s", "I had party with my friends and colleagues in ", poi_string, ". Awesome food. ");
                     hash_string_DNN = String.format("%s에서 %s ", poi_string, "저녁 회식을 했다.");
-
                     class_predict =String.format("#%s #%s","회식", poi_string);
                 }
 
                 DNN_result.add(class_predict);
 
             }else if(WaterClass){
-
                 hash_string_DNN = "오늘 야외에서 물놀이를 했다. ";
                 class_predict =String.format("#%s #%s","물놀이", poi_string);
                 DNN_result.add(class_predict);
-
-
             }else if(MounatainClass){
-
                 hash_string_DNN = "오늘 산에서 즐거운 시간을 보냈다. ";
                 class_predict =String.format("#%s #%s","hiking", poi_string);
                 DNN_result.add(class_predict);
             }else if(PlayClass && !POI_DB6_DETECT){
-
                 hash_string_DNN = "놀이 공원에 가서 신나게 놀았다.";
                 class_predict =String.format("#%s #%s","놀이 공원", poi_string);
                 DNN_result.add(class_predict);
             }
 
-
             sentence_cnt++;
-
-
-
-
 
         }
 
+        // Insert hashList overllapping removal
+        String connection="";
+        int hashList_size= hashList.size();
+        if(hashList_size>0){
+            // Get the unique hash result,  remove overlapping
+            int array_size = AppUtils.arraylistsize_nooverlap(hashList);
+            String [] hashList_nooverlap = new String[array_size];
+            hashList_nooverlap=AppUtils.arraylistTostringarray_nooverlap(hashList);
+            int hashList_nooverlap_size= hashList.size();
+
+            for(int m=0;m<hashList_nooverlap_size;m++){
+
+                if(hashList_nooverlap_size==1)
+                    connection=". ";
+                else if(hashList_nooverlap_size==2 && m==0)
+                    connection=" 그리고";
+                else if(hashList_nooverlap_size==2 && m==1)
+                    connection=". ";
+                else if(hashList_nooverlap_size>2 && m<size-2)
+                    connection=", ";
+                else if(hashList_nooverlap_size>2 && m==size-2)
+                    connection=" 그리고";
+                else if(hashList_nooverlap_size>2 && m==size-1)
+                    connection=". ";
+                else
+                    connection="";
+
+                hash_string= hash_string + hashList_nooverlap[m] + connection;
+            }
+        }
 
 
         hash_string = hash_string + hash_string_DNN;
-
-
         return hash_string;
     }
-
-
-    public ArrayList HashFromPhoto_korean(ClusterEngine clusterEngine,ArrayList DNN_result, int offset,int size,String poi_string, ArrayList PhotoList,  int front_cam_width, int rear_cam_width, String [] DNN_path, int weekend_days)
-    {
-        String hash_string = "";
-        String hash_string_DNN= "";
-        String hash_string_POI= "";
-        int photoCount = PhotoList.size();
-        DnnModel dnnModel = new DnnModel();
-        Random generator = new Random();
-        double avg_PhotoCreateTime =0;
-
-        EngineDBInterface engineDBInterface = new EngineDBInterface();
-
-
-        // POI context based string generation
-        //POI_DB1 : Coffe and tea
-        //POI_DB2 : 식당, Restaurant
-        //POI_DB3 : Park
-        //POI_DB4 : Cinema
-        //POI_DB5 : "shopping"
-        //POI_DB6 : "놀이공원"
-        for (int i = offset; i < offset + size; i++){
-            String timelinePhotoFile = PhotoList.get(i).toString();
-            double temp[] = clusterEngine.timeFeatureExtract(timelinePhotoFile);
-            avg_PhotoCreateTime=avg_PhotoCreateTime+temp[3];
-        }
-        avg_PhotoCreateTime=avg_PhotoCreateTime/size;
-
-        // POI context based sentence
-//        boolean POI_DB1_DETECT= poiclassDetect(poi_string,dnnModel.POI_DB1);
-        boolean POI_DB2_DETECT= poiclassDetect(poi_string,dnnModel.POI_DB2);
-//        boolean POI_DB3_DETECT= poiclassDetect(poi_string,dnnModel.POI_DB3);
-//        boolean POI_DB4_DETECT= poiclassDetect(poi_string,dnnModel.POI_DB4);
-//        boolean POI_DB5_DETECT= poiclassDetect(poi_string,dnnModel.POI_DB5);
-        boolean POI_DB6_DETECT= poiclassDetect(poi_string,dnnModel.POI_DB6);
-
-
-
-        hash_string_POI = dnnModel.getPOIstring(poi_string, dnnModel, avg_PhotoCreateTime, weekend_days);
-        hash_string=hash_string+hash_string_POI;
-
-
-        int sentence_cnt =0;
-
-        for (int i = offset; i < offset + size; i++){
-            String timelinePhotoFile = PhotoList.get(i).toString();
-
-            int Im_width=0;
-            int Im_height=0;
-
-            float Num_Face=0;
-            float Smile_Prob=0;
-            int selfie_cnt=0;
-            int singlePhoto_cnt=0;
-            int groupSelfie_cnt=0;
-            int groupPhoto_cnt=0;
-            int nonhumanPhoto_cnt=0;
-            int smile_cnt=0;
-
-            int n = 0;
-
-
-            // Face detectioin : Face number. Eye close. Smile probability
-
-            final BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            BitmapFactory.decodeFile(timelinePhotoFile, options);
-            int imgHeight = options.outHeight;
-            int sample_size =1;
-
-            if(imgHeight <=300)
-                sample_size =1 ;
-            else if(imgHeight <=1000)
-                sample_size =4 ;
-            else if(imgHeight >1000 && imgHeight<2000)
-                sample_size =6 ;
-            else if(imgHeight >=2000)
-                sample_size =8 ;
-
-            BitmapFactory.Options bitmap_options = new BitmapFactory.Options();
-            bitmap_options.inPreferredConfig = Bitmap.Config.RGB_565;
-            bitmap_options.inSampleSize = sample_size;
-            Bitmap bMap_temp = BitmapFactory.decodeFile(timelinePhotoFile, bitmap_options);
-
-
-
-            if(bMap_temp==null){
-                Im_width = 500 ;
-                return DNN_result;
-            }else {
-                Im_width = bMap_temp.getWidth() * sample_size;
-            }
-
-            Num_Face =  engineDBInterface.getExtraFeatWithPhotoURL(timelinePhotoFile);
-            Smile_Prob =  engineDBInterface.getWeightCoeffWithPhotoURL(timelinePhotoFile);
-
-
-            // Selfie, solo , group
-            if( Num_Face == 1) {
-                if( Math.abs(front_cam_width - Im_width) < 500)
-                    selfie_cnt++;
-                else if ( Math.abs(rear_cam_width - Im_width) < 500)
-                    singlePhoto_cnt ++;
-            }
-            else if( Num_Face >1) {
-
-                if( Math.abs(front_cam_width - Im_width) < 500)
-                    groupSelfie_cnt++;
-                else if ( Math.abs(rear_cam_width - Im_width) < 500)
-                    groupPhoto_cnt++;
-
-            }
-
-            if( Smile_Prob >= 0.6)
-                smile_cnt++;
-
-
-            String connection="";
-            if(size==1)
-                connection=".";
-            else if(size==2 && (i-offset)==0)
-                connection="and";
-            else if(size==2 && (i-offset)==1)
-                connection=".";
-            else if(size>2 && (i-offset)<size-2)
-                connection=",";
-            else if(size>2 && (i-offset)==size-2)
-                connection="and";
-            else if(size>2 && (i-offset)==size-1)
-                connection=".";
-            else
-                connection="";
-
-
-            // Selfie check
-            if (selfie_cnt > 0) {
-                // Smile detection
-                n = generator.nextInt(dnnModel.FaceBasedPool_selfie_smile.length);
-
-                if (smile_cnt > 0) {
-                    hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_selfie_smile[n], connection);
-                    DNN_result.add(String.format("#%s", "스마일 셀피"));
-                } else {
-                    hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_selfie_nosmile[n], connection);
-                    DNN_result.add(String.format("#%s", "셀피"));
-                }
-
-            }
-
-
-            // Group photo, single photo check
-            if (singlePhoto_cnt > 0) {
-
-                // Smile detection
-                n = generator.nextInt(dnnModel.FaceBasedPool_single_smile.length);
-
-                if (smile_cnt > 0) {
-                    hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_single_smile[n], connection);
-                } else {
-                    hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_single_nosmile[n], connection);
-
-                }
-            }
-
-            if (groupPhoto_cnt > 0) {
-
-                // Smile detection
-                n = generator.nextInt(dnnModel.FaceBasedPool_group_smile.length);
-
-                if (smile_cnt > 0) {
-                    hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_group_smile[n], connection);
-                } else {
-                    hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_group_nosmile[n], connection);
-                }
-                DNN_result.add(String.format("#%s", "단체사진"));
-
-            }
-
-            if (groupSelfie_cnt > 0) {
-                // Smile detection
-                n = generator.nextInt(dnnModel.FaceBasedPool_group_selfie.length);
-
-                if (smile_cnt > 0) {
-                    hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_group_selfie[n], connection);
-                    DNN_result.add(String.format("#%s", "단체 스마일 셀피"));
-                } else {
-                    hash_string = hash_string + String.format("%s %s ", dnnModel.FaceBasedPool_group_noselfie[n], connection);
-                    DNN_result.add(String.format("#%s", "단체 셀피"));
-                }
-
-            }
-
-
-            // This is to interpret non humand photos such as food and landscape
-            // Do nothing at this point
-            //4. Deep learning engine
-            // It detects food, mountain, cliff, river, sea, seashore only
-            File outDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString());
-            String root = Environment.getExternalStorageDirectory().toString();
-            File myDir = new File(root + "/days_resample_images"); //
-            String days_moment_resample_image ;
-
-            days_moment_resample_image=resampleandsave_single(i, myDir, timelinePhotoFile);
-
-
-
-            // Run neural network
-            // This is for classification
-            String DNN_test_path_resample =days_moment_resample_image;
-            String[] jargv =new String[7];
-            jargv[0] ="classifier_Class";
-            jargv[1] ="predictCustom";  // This is for classification
-            jargv[2] =DNN_path[0];
-            jargv[3] =DNN_path[1];
-            jargv[4] =DNN_path[2];
-            jargv[5] =DNN_test_path_resample;
-            jargv[6] = outDir+"/";
-
-            String class_predict = DnnEngineClassJNI(jargv);
-            System.gc();
-
-
-            Boolean foodClass = classDetect(class_predict, dnnModel.DNN_DB1);
-            Boolean WaterClass = classDetect(class_predict, dnnModel.DNN_DB2);
-            Boolean MounatainClass = classDetect(class_predict, dnnModel.DNN_DB3);
-            Boolean PlayClass = classDetect(class_predict, dnnModel.DNN_DB4);
-
-
-            double [] temp_time = clusterEngine.timeFeatureExtract(timelinePhotoFile);
-            double pic_time = temp_time[3];
-
-            if(foodClass && pic_time!=1997 && !POI_DB2_DETECT)
-            {
-
-                if(pic_time>05 && pic_time< 10){
-                    //Breakfast
-                    hash_string_DNN = String.format("%s에서 %s ", poi_string, "아침을 먹었다. " );
-                    class_predict =String.format("#%s #%s","아침", poi_string);
-                }else if(pic_time>=11 && pic_time< 14){
-                    //Lunch
-                    hash_string_DNN = String.format("%s에서 %s ", poi_string, "점심을 먹었다. " );
-                    class_predict =String.format("#%s #%s","점심", poi_string);
-                }else if(pic_time>=17 && pic_time< 19){
-                    //dinner
-                    hash_string_DNN = String.format("%s에서 %s ", poi_string, "저녁을 먹었다. " );
-
-                    class_predict =String.format("#%s #%s","저녁", poi_string);
-                }else if(pic_time>=19) {
-                    //Party
-//                    hash_string_DNN = String.format("%s %s %s", "I had party with my friends and colleagues in ", poi_string, ". Awesome food. ");
-                    hash_string_DNN = String.format("%s에서 %s ", poi_string, "저녁 회식을 했다");
-
-                    class_predict =String.format("#%s #%s","회식", poi_string);
-                }
-
-                DNN_result.add(class_predict);
-
-            }else if(WaterClass){
-
-                hash_string_DNN = "오늘 야외에서 물놀이를 했다. ";
-                class_predict =String.format("#%s #%s","물놀이", poi_string);
-                DNN_result.add(class_predict);
-
-
-            }else if(MounatainClass){
-
-                hash_string_DNN = "오늘 산에서 즐거운 시간을 보냈다. ";
-                class_predict =String.format("#%s #%s","hiking", poi_string);
-                DNN_result.add(class_predict);
-            }else if(PlayClass && !POI_DB6_DETECT){
-
-                hash_string_DNN = "놀이 공원에 가서 신나게 놀았다.";
-                class_predict =String.format("#%s #%s","놀이 공원", poi_string);
-                DNN_result.add(class_predict);
-            }
-
-
-            sentence_cnt++;
-
-
-
-
-
-        }
-
-
-
-        hash_string = hash_string + hash_string_DNN;
-
-
-        return DNN_result;
-    }
-
 
 
 
