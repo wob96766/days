@@ -146,7 +146,12 @@ public class DataRestoreActivity extends BaseActivity {
             finish();
         }catch (Exception e){
             e.printStackTrace();
-            showToast(getAppText(R.string.message_restore_error));
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    showToast(getAppText(R.string.message_restore_error));
+                }
+            });
+
             finish();
         }
     }
