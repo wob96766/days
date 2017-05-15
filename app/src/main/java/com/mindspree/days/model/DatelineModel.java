@@ -340,12 +340,12 @@ public class DatelineModel implements Parcelable {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, 0);
         String DateToday = dateFormat.format(cal.getTime()); //your formatted date here
-        cal.add(Calendar.DATE, -2);
+        cal.add(Calendar.DATE, -1);
         String DateYesterday = dateFormat.format(cal.getTime()); //your formatted date here
 
 //        if(mSentence == null || mSentence.equals("") || DateInMomeent.equals(DateToday) ) {   // This is only for debugging
-        if(DateInMomeent.equals(DateYesterday) ) {   // This is only for debugging
-//        if(mSentence == null || mSentence.equals("")  ) {
+//        if(DateInMomeent.equals(DateYesterday)  ) {   // This is only for debugging
+        if(mSentence == null || mSentence.equals("")  ) {
 //        if(true) {
 
             if (sentence_mode.equals("hash"))
@@ -386,7 +386,7 @@ public class DatelineModel implements Parcelable {
             ArrayList poiCRDatesList = getPoiCRDatesList();
             int photoID_size=0;
 
-            if(poiList.size()>1)
+            if(poiList.size()>0)
             {
 
                 // Get photo info retrieval
@@ -463,12 +463,7 @@ public class DatelineModel implements Parcelable {
 
                         hash_string_face= dnnModel.SentenceFromPhoto_korean(clusterEngine, offset,size, DNN_result, poiList.get(key_temp).toString(),photolist,front_cam_width,rear_cam_width, DNN_path, weekend_days);
                         DNN_result = dnnModel.DNN_result;
-
-//                        if(hash_string_face.equals(hash_string_face_buf))
-//                            hash_string_face=""; // This is to prevent the duplication
-
                         hash_string =hash_string+hash_string_face;
-//                        hash_string_face_buf = hash_string_face;
 
                         offset=offset+size;
                     }
@@ -525,11 +520,6 @@ public class DatelineModel implements Parcelable {
 
                 }
 
-            }
-            else if(poiList.size()==1){
-
-                int n = generator.nextInt(dnnModel.dailysummary_nopoi_kr.length);
-                hash_string = hash_string + String.format("%s ", dnnModel.dailysummary_nopoi_kr[n]);
             }
 
             // Save final sentence and hash to DB
