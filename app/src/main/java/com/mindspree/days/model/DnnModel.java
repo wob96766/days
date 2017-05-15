@@ -688,6 +688,9 @@ public class DnnModel {
 
             DNN_result=DNN_result_in;
             String poicat = "";
+
+
+
             for(int j=0;j<poiList_nooverlap.length;j++) {
 
                 poicat=poicatLUT(poiList_nooverlap[j]);

@@ -32,7 +32,7 @@
     <string name="text_lock">패스워드설정</string>
     <string name="text_notification">푸시설정</string>
     <string name="text_trace">트레이스 설정</string>
-    <string name="text_data">데이터</string>
+    <string name="text_data">데이터 백업 및 복원</string>
     <string name="text_mode">모드설정</string>
     <string name="text_connect">컨넥팅</string>
     <string name="text_tutorial">사용안내</string>
@@ -169,7 +169,7 @@
     <string name="main_tab_today">오늘</string>
     <string name="main_tab_summarize">캘린더</string>
     <string name="main_tab_journal">모멘트</string>
-    <string name="main_tab_setting">더보기</string>
+    <string name="main_tab_setting">설정</string>
 
     <!-- Dummy Text for Development -->
     <string name="text_dummy">Empty</string>

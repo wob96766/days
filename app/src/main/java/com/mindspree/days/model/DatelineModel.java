@@ -374,9 +374,30 @@ public class DatelineModel implements Parcelable {
             if(mWeather==null){
                 hash_string = hash_string + "날씨 잘 모르겠음.\n";
             }else{
-                hash_string = hash_string + String.format("날씨 %s. \n", getWeather());//                hash_string = hash_string + String.format("It is %s. ", getWeatherEnglish());
+                hash_string = hash_string + String.format(" %s. \n", getWeather());//                hash_string = hash_string + String.format("It is %s. ", getWeatherEnglish());
                 DNN_result.add(String.format("#%s",mWeather));
             }
+
+            //3 Mood
+            if(mMood!=null) {
+                if(mMood.equals("Happy")){
+                    mMood_kr="기분 대체로 좋았음.";  // For sentence
+                    mMood_hash_kr="행복";     // For hash
+                }else if(mMood.equals("Angry")){
+                    mMood_kr="기분 안 좋았음.";
+                    mMood_hash_kr="화남";
+                }else if(mMood.equals("Sad")){
+                    mMood_kr="기분 꿀꿀.";
+                    mMood_hash_kr="슬픔";
+                }else if(mMood.equals("Busy")){
+                    mMood_kr="많이 바빴음.";
+                    mMood_hash_kr="바쁨";
+                }
+                hash_string = hash_string + String.format(" %s.", mMood_kr);
+                DNN_result.add(String.format("#%s",mMood_hash_kr));
+
+            }
+
 
             ArrayList poiList = getPoiList();
             ArrayList poicatList = getCategoryList();
@@ -394,6 +415,8 @@ public class DatelineModel implements Parcelable {
                 photoID_size= photoIDs.size();
                 PhotoInfoModel[] photoinfos=null;
                 Integer[] PhotoPoi_mapping_index=null;   // This contains POI index for each photo element
+
+
 
                 if(photoID_size==0){
 
@@ -472,7 +495,7 @@ public class DatelineModel implements Parcelable {
                 }
 
 
-                // Phot0 & POI mapping
+
                 // 5. Measure how busy user was
                 if(poiList.size() < 4) {
                     int n = generator.nextInt(dnnModel.dailysummary_nobusy.length);
@@ -490,24 +513,24 @@ public class DatelineModel implements Parcelable {
                 }
 
 
-                if(mMood!=null) {
-                    if(mMood.equals("Happy")){
-                        mMood_kr="그럭저럭 행복한";  // For sentence
-                        mMood_hash_kr="행복";     // For hash
-                    }else if(mMood.equals("Angry")){
-                        mMood_kr="별로 기분이 안 좋은";
-                        mMood_hash_kr="화남";
-                    }else if(mMood.equals("Sad")){
-                        mMood_kr="슬픔";
-                        mMood_hash_kr="행복";
-                    }else if(mMood.equals("Busy")){
-                        mMood_kr="많이 바쁜";
-                        mMood_hash_kr="바쁨";
-                    }
-                    hash_string = hash_string + String.format("\n 오늘은 %s 하루였다. ", mMood_kr);
-                    DNN_result.add(String.format("#%s",mMood_hash_kr));
-
-                }
+//                if(mMood!=null) {
+//                    if(mMood.equals("Happy")){
+//                        mMood_kr="그럭저럭 행복한";  // For sentence
+//                        mMood_hash_kr="행복";     // For hash
+//                    }else if(mMood.equals("Angry")){
+//                        mMood_kr="별로 기분이 안 좋은";
+//                        mMood_hash_kr="화남";
+//                    }else if(mMood.equals("Sad")){
+//                        mMood_kr="왠지 좀 슬픈";
+//                        mMood_hash_kr="슬픔";
+//                    }else if(mMood.equals("Busy")){
+//                        mMood_kr="많이 바쁜";
+//                        mMood_hash_kr="바쁨";
+//                    }
+//                    hash_string = hash_string + String.format("\n 오늘은 %s 하루였다. ", mMood_kr);
+//                    DNN_result.add(String.format("#%s",mMood_hash_kr));
+//
+//                }
 
                 if(DNN_result.size()>0){
                     // Get the unique hash result,  remove overlapping
