@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.androidquery.AQuery;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -154,7 +155,7 @@ public class DataBackupActivity extends BaseActivity {
                                 }
                             }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                 @Override
-                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                public void onSuccess(final UploadTask.TaskSnapshot taskSnapshot) {
                                     String url = taskSnapshot.getDownloadUrl().toString();
                                     StorageMetadata meta = taskSnapshot.getMetadata();
                                     String file_index = meta.getCustomMetadata("file_index");
@@ -172,6 +173,7 @@ public class DataBackupActivity extends BaseActivity {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                FirebaseCrash.report(e);
                 runOnUiThread(new Runnable() {
                     public void run() {
                         showToast(getAppText(R.string.message_backup_error));
@@ -195,12 +197,12 @@ public class DataBackupActivity extends BaseActivity {
     }
 
     private void requestFirebaseBackup() {
-        runOnUiThread(new Runnable() {
+       /* runOnUiThread(new Runnable() {
             public void run() {
                 mTextTitle.setText(getAppText(R.string.message_data_uploading));
                 mProgressBar.setProgress(mProgress%500);
             }
-        });
+        });*/
         mDataMap = new HashMap<>();
         mDBWrapper.setLastTimeline();
         ArrayList<Photo> photolist = mDBWrapper.getPhotoDatalist(mStart, mEnd);
