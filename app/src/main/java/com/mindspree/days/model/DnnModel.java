@@ -804,6 +804,7 @@ public class DnnModel {
     public String SentenceFromPhoto_korean(ClusterEngine clusterEngine, int offset,int size,ArrayList DNN_result_in, String poi_string, ArrayList PhotoList,  int front_cam_width, int rear_cam_width, String [] DNN_path, int weekend_days)
     {
         String hash_string = "";
+        ArrayList<String> hashList = new ArrayList<String>();
         String hash_string_DNN= "";
         String hash_string_POI= "";
         DnnModel dnnModel = new DnnModel();
@@ -834,11 +835,9 @@ public class DnnModel {
         boolean POI_DB5_DETECT= poiclassDetect(poi_string,dnnModel.POI_DB5);
         boolean POI_DB6_DETECT= poiclassDetect(poi_string,dnnModel.POI_DB6);
 
-
         // POI category & name based sentence gen
         hash_string_POI = dnnModel.getPOIstring(poi_string, DNN_result_in, dnnModel, avg_PhotoCreateTime, weekend_days);
         hash_string=hash_string+hash_string_POI;
-
 
         int sentence_cnt =0;
 
@@ -906,32 +905,16 @@ public class DnnModel {
             if( Smile_Prob >= 0.6)
                 smile_cnt++;
 
-            String connection="";
-            if(size==1)
-                connection=". ";
-            else if(size==2 && (i-offset)==0)
-                connection=" 그리고";
-            else if(size==2 && (i-offset)==1)
-                connection=". ";
-            else if(size>2 && (i-offset)<size-2)
-                connection=", ";
-            else if(size>2 && (i-offset)==size-2)
-                connection=" 그리고";
-            else if(size>2 && (i-offset)==size-1)
-                connection=". ";
-            else
-                connection="";
-
 
             // Selfie check
             if (selfie_cnt > 0) {
                 // Smile detection
                 n = generator.nextInt(dnnModel.FaceBasedPool_selfie_smile.length);
                 if (smile_cnt > 0) {
-                    hash_string = hash_string + String.format("%s%s ", dnnModel.FaceBasedPool_selfie_smile[n], connection);
+                    hashList.add(String.format("%s", dnnModel.FaceBasedPool_selfie_smile[n]));
                     DNN_result.add(String.format("#%s", "스마일 셀피"));
                 } else {
-                    hash_string = hash_string + String.format("%s%s ", dnnModel.FaceBasedPool_selfie_nosmile[n], connection);
+                    hashList.add(String.format("%s", dnnModel.FaceBasedPool_selfie_nosmile[n]));
                     DNN_result.add(String.format("#%s", "셀피"));
                 }
             }
@@ -941,10 +924,10 @@ public class DnnModel {
                 // Smile detection
                 n = generator.nextInt(dnnModel.FaceBasedPool_single_smile.length);
                 if (smile_cnt > 0) {
-                    hash_string = hash_string + String.format("%s%s ", dnnModel.FaceBasedPool_single_smile[n], connection);
+                    hashList.add(String.format("%s", dnnModel.FaceBasedPool_single_smile[n]));
                     DNN_result.add(String.format("#%s", "스마일 인물 사진"));
                 } else {
-                    hash_string = hash_string + String.format("%s%s ", dnnModel.FaceBasedPool_single_nosmile[n], connection);
+                    hashList.add(String.format("%s", dnnModel.FaceBasedPool_single_nosmile[n]));
                     DNN_result.add(String.format("#%s", "인물 사진"));
                 }
             }
@@ -953,9 +936,9 @@ public class DnnModel {
                 // Smile detection
                 n = generator.nextInt(dnnModel.FaceBasedPool_group_smile.length);
                 if (smile_cnt > 0) {
-                    hash_string = hash_string + String.format("%s%s ", dnnModel.FaceBasedPool_group_smile[n], connection);
+                    hashList.add(String.format("%s", dnnModel.FaceBasedPool_group_smile[n]));
                 } else {
-                    hash_string = hash_string + String.format("%s%s ", dnnModel.FaceBasedPool_group_nosmile[n], connection);
+                    hashList.add(String.format("%s", dnnModel.FaceBasedPool_group_nosmile[n]));
                 }
                 DNN_result.add(String.format("#%s", "단체사진"));
             }
@@ -964,15 +947,13 @@ public class DnnModel {
                 // Smile detection
                 n = generator.nextInt(dnnModel.FaceBasedPool_group_selfie.length);
                 if (smile_cnt > 0) {
-                    hash_string = hash_string + String.format("%s%s ", dnnModel.FaceBasedPool_group_selfie[n], connection);
+                    hashList.add(String.format("%s", dnnModel.FaceBasedPool_group_selfie[n]));
                     DNN_result.add(String.format("#%s", "단체 스마일 셀피"));
                 } else {
-                    hash_string = hash_string + String.format("%s%s ", dnnModel.FaceBasedPool_group_noselfie[n], connection);
+                    hashList.add(String.format("%s", dnnModel.FaceBasedPool_group_noselfie[n]));
                     DNN_result.add(String.format("#%s", "단체 셀피"));
                 }
             }
-
-
 
             // This is to interpret non humand photos such as food and landscape
             // Do nothing at this point
@@ -1052,13 +1033,43 @@ public class DnnModel {
                 DNN_result.add(class_predict);
             }
 
-
             sentence_cnt++;
 
         }
 
-        hash_string = hash_string + hash_string_DNN;
+        // Insert hashList overllapping removal
+        String connection="";
+        int hashList_size= hashList.size();
+        if(hashList_size>0){
+            // Get the unique hash result,  remove overlapping
+            int array_size = AppUtils.arraylistsize_nooverlap(hashList);
+            String [] hashList_nooverlap = new String[array_size];
+            hashList_nooverlap=AppUtils.arraylistTostringarray_nooverlap(hashList);
+            int hashList_nooverlap_size= hashList.size();
 
+            for(int m=0;m<hashList_nooverlap_size;m++){
+
+                if(hashList_nooverlap_size==1)
+                    connection=". ";
+                else if(hashList_nooverlap_size==2 && m==0)
+                    connection=" 그리고";
+                else if(hashList_nooverlap_size==2 && m==1)
+                    connection=". ";
+                else if(hashList_nooverlap_size>2 && m<size-2)
+                    connection=", ";
+                else if(hashList_nooverlap_size>2 && m==size-2)
+                    connection=" 그리고";
+                else if(hashList_nooverlap_size>2 && m==size-1)
+                    connection=". ";
+                else
+                    connection="";
+
+                hash_string= hash_string + hashList_nooverlap[m] + connection;
+            }
+        }
+
+
+        hash_string = hash_string + hash_string_DNN;
         return hash_string;
     }
 
