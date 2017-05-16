@@ -23,7 +23,7 @@
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
                 android:layout_gravity="center"
-                android:text="@string/title_signup"
+                android:text="@string/title_datepick"
                 />
         </android.support.v7.widget.Toolbar>
 

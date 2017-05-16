@@ -677,8 +677,6 @@ public class MainActivity extends BaseActivity {
         }
         for (int i = 0; i < cursor.getCount(); i++) {
 
-
-
             cursor.moveToPosition(i);
             int dataColumnIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA);
             //Store the path of the image
