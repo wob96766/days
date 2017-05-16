@@ -141,31 +141,33 @@ public class DataBackupActivity extends BaseActivity {
                         File files = new File(item.file_location);
                         if (files.exists() == true) {
                             byte[] dataCompress = AppUtils.compressImageFile(item.file_location);
-                            mPhotoReference = mStorageReference.child(String.format("photos/%s/%s", mPreference.getUserUid(), item.getDatetimeIndex()));
+                            if(dataCompress != null) {
+                                mPhotoReference = mStorageReference.child(String.format("photos/%s/%s", mPreference.getUserUid(), item.getDatetimeIndex()));
 
-                            StorageMetadata metadata = new StorageMetadata.Builder()
-                                    .setCustomMetadata("file_index", String.format("%d", item.file_index))
-                                    .build();
+                                StorageMetadata metadata = new StorageMetadata.Builder()
+                                        .setCustomMetadata("file_index", String.format("%d", item.file_index))
+                                        .build();
 
-                            UploadTask uploadTask = mPhotoReference.putBytes(dataCompress, metadata);
-                            uploadTask.addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(Exception exception) {
-                                    showToast(getAppText(R.string.message_network_error));
-                                }
-                            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                @Override
-                                public void onSuccess(final UploadTask.TaskSnapshot taskSnapshot) {
-                                    String url = taskSnapshot.getDownloadUrl().toString();
-                                    StorageMetadata meta = taskSnapshot.getMetadata();
-                                    String file_index = meta.getCustomMetadata("file_index");
-                                    mDBWrapper.setPhoto(file_index, url);
-                                    mUploadedCount++;
-                                    if (mUploadedCount >= photolist.size() - 1) {
-                                        requestFirebaseBackup();
+                                UploadTask uploadTask = mPhotoReference.putBytes(dataCompress, metadata);
+                                uploadTask.addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(Exception exception) {
+                                        showToast(getAppText(R.string.message_network_error));
                                     }
-                                }
-                            });
+                                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                    @Override
+                                    public void onSuccess(final UploadTask.TaskSnapshot taskSnapshot) {
+                                        String url = taskSnapshot.getDownloadUrl().toString();
+                                        StorageMetadata meta = taskSnapshot.getMetadata();
+                                        String file_index = meta.getCustomMetadata("file_index");
+                                        mDBWrapper.setPhoto(file_index, url);
+                                        mUploadedCount++;
+                                        if (mUploadedCount >= photolist.size() - 1) {
+                                            requestFirebaseBackup();
+                                        }
+                                    }
+                                });
+                            }
                         }
                     }
                 } else {

@@ -407,10 +407,14 @@ public class AppUtils {
     public static byte[] compressImageFile(String filelocation){
         System.gc();
         Bitmap bitmap = BitmapFactory.decodeFile(filelocation);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 30, baos);
-        byte[] dataCompress = baos.toByteArray();
-        return dataCompress;
+        if(bitmap != null) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 30, baos);
+            byte[] dataCompress = baos.toByteArray();
+            return dataCompress;
+        } else {
+            return null;
+        }
     }
 
     public static byte[] compressBitmapFile(String filelocation){
