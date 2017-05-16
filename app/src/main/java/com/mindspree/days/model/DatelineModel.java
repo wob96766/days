@@ -340,12 +340,12 @@ public class DatelineModel implements Parcelable {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, 0);
         String DateToday = dateFormat.format(cal.getTime()); //your formatted date here
-        cal.add(Calendar.DATE, -2);
+        cal.add(Calendar.DATE, -1);
         String DateYesterday = dateFormat.format(cal.getTime()); //your formatted date here
 
 //        if(mSentence == null || mSentence.equals("") || DateInMomeent.equals(DateToday) ) {   // This is only for debugging
-        if(DateInMomeent.equals(DateYesterday) ) {   // This is only for debugging
-//        if(mSentence == null || mSentence.equals("")  ) {
+//        if(DateInMomeent.equals(DateYesterday)  ) {   // This is only for debugging
+        if(mSentence == null || mSentence.equals("")  ) {
 //        if(true) {
 
             if (sentence_mode.equals("hash"))
@@ -374,9 +374,30 @@ public class DatelineModel implements Parcelable {
             if(mWeather==null){
                 hash_string = hash_string + "날씨 잘 모르겠음.\n";
             }else{
-                hash_string = hash_string + String.format("날씨 %s. \n", getWeather());//                hash_string = hash_string + String.format("It is %s. ", getWeatherEnglish());
+                hash_string = hash_string + String.format(" %s. \n", getWeather());//                hash_string = hash_string + String.format("It is %s. ", getWeatherEnglish());
                 DNN_result.add(String.format("#%s",mWeather));
             }
+
+            //3 Mood
+            if(mMood!=null) {
+                if(mMood.equals("Happy")){
+                    mMood_kr="기분 대체로 좋았음.";  // For sentence
+                    mMood_hash_kr="행복";     // For hash
+                }else if(mMood.equals("Angry")){
+                    mMood_kr="기분 안 좋았음.";
+                    mMood_hash_kr="화남";
+                }else if(mMood.equals("Sad")){
+                    mMood_kr="기분 꿀꿀.";
+                    mMood_hash_kr="슬픔";
+                }else if(mMood.equals("Busy")){
+                    mMood_kr="많이 바빴음.";
+                    mMood_hash_kr="바쁨";
+                }
+                hash_string = hash_string + String.format(" %s.", mMood_kr);
+                DNN_result.add(String.format("#%s",mMood_hash_kr));
+
+            }
+
 
             ArrayList poiList = getPoiList();
             ArrayList poicatList = getCategoryList();
@@ -386,7 +407,7 @@ public class DatelineModel implements Parcelable {
             ArrayList poiCRDatesList = getPoiCRDatesList();
             int photoID_size=0;
 
-            if(poiList.size()>1)
+            if(poiList.size()>0)
             {
 
                 // Get photo info retrieval
@@ -394,6 +415,8 @@ public class DatelineModel implements Parcelable {
                 photoID_size= photoIDs.size();
                 PhotoInfoModel[] photoinfos=null;
                 Integer[] PhotoPoi_mapping_index=null;   // This contains POI index for each photo element
+
+
 
                 if(photoID_size==0){
 
@@ -463,12 +486,7 @@ public class DatelineModel implements Parcelable {
 
                         hash_string_face= dnnModel.SentenceFromPhoto_korean(clusterEngine, offset,size, DNN_result, poiList.get(key_temp).toString(),photolist,front_cam_width,rear_cam_width, DNN_path, weekend_days);
                         DNN_result = dnnModel.DNN_result;
-
-//                        if(hash_string_face.equals(hash_string_face_buf))
-//                            hash_string_face=""; // This is to prevent the duplication
-
                         hash_string =hash_string+hash_string_face;
-//                        hash_string_face_buf = hash_string_face;
 
                         offset=offset+size;
                     }
@@ -477,7 +495,7 @@ public class DatelineModel implements Parcelable {
                 }
 
 
-                // Phot0 & POI mapping
+
                 // 5. Measure how busy user was
                 if(poiList.size() < 4) {
                     int n = generator.nextInt(dnnModel.dailysummary_nobusy.length);
@@ -495,24 +513,24 @@ public class DatelineModel implements Parcelable {
                 }
 
 
-                if(mMood!=null) {
-                    if(mMood.equals("Happy")){
-                        mMood_kr="그럭저럭 행복한";  // For sentence
-                        mMood_hash_kr="행복";     // For hash
-                    }else if(mMood.equals("Angry")){
-                        mMood_kr="별로 기분이 안 좋은";
-                        mMood_hash_kr="화남";
-                    }else if(mMood.equals("Sad")){
-                        mMood_kr="슬픔";
-                        mMood_hash_kr="행복";
-                    }else if(mMood.equals("Busy")){
-                        mMood_kr="많이 바쁜";
-                        mMood_hash_kr="바쁨";
-                    }
-                    hash_string = hash_string + String.format("\n 오늘은 %s 하루였다. ", mMood_kr);
-                    DNN_result.add(String.format("#%s",mMood_hash_kr));
-
-                }
+//                if(mMood!=null) {
+//                    if(mMood.equals("Happy")){
+//                        mMood_kr="그럭저럭 행복한";  // For sentence
+//                        mMood_hash_kr="행복";     // For hash
+//                    }else if(mMood.equals("Angry")){
+//                        mMood_kr="별로 기분이 안 좋은";
+//                        mMood_hash_kr="화남";
+//                    }else if(mMood.equals("Sad")){
+//                        mMood_kr="왠지 좀 슬픈";
+//                        mMood_hash_kr="슬픔";
+//                    }else if(mMood.equals("Busy")){
+//                        mMood_kr="많이 바쁜";
+//                        mMood_hash_kr="바쁨";
+//                    }
+//                    hash_string = hash_string + String.format("\n 오늘은 %s 하루였다. ", mMood_kr);
+//                    DNN_result.add(String.format("#%s",mMood_hash_kr));
+//
+//                }
 
                 if(DNN_result.size()>0){
                     // Get the unique hash result,  remove overlapping
@@ -525,11 +543,6 @@ public class DatelineModel implements Parcelable {
 
                 }
 
-            }
-            else if(poiList.size()==1){
-
-                int n = generator.nextInt(dnnModel.dailysummary_nopoi_kr.length);
-                hash_string = hash_string + String.format("%s ", dnnModel.dailysummary_nopoi_kr[n]);
             }
 
             // Save final sentence and hash to DB

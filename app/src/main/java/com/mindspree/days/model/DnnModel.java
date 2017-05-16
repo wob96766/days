@@ -47,6 +47,7 @@ public class DnnModel {
     public String [] POI_DB4 = {"극장","CINEMA","cinema","Cinema" ,"CGV"};
     public String [] POI_DB5 = {"Mall","mall","쇼핑몰","쇼핑","쇼핑센터","쇼핑 센터", "백화점","Department store", "department store", "shopping", "Shopping", "Store", "store"};
     public String [] POI_DB6 = {"월드","Amusement","놀이공원","놀이 공원"};
+    public String [] POI_DB7 = {"mart","Mart","마트","market","Market","마켓"};
 
     public String [] FaceBasedPool_selfie_smile ;
     public String [] FaceBasedPool_selfie_nosmile;
@@ -341,10 +342,9 @@ public class DnnModel {
                 }
 
             } else if (poiclassDetect(poi_string, dnnModel.POI_DB3)) {
-                hash_string_POI = String.format("%s 에서 ", poi_string);
                 if (weekend_days == 1)  // Weekend
                 {
-                    hash_string_POI = hash_string_POI + String.format("%s. ", "주말에 공원에서 산책을 했다.");
+                    hash_string_POI = hash_string_POI + String.format("%s %s %s", "주말", poi_string, " 에서 산책을 했다.");
                     DNN_result.add(String.format("#%s", "주말 공원 산책"));
                 }
 
@@ -353,27 +353,36 @@ public class DnnModel {
                 hash_string_POI = String.format("%s에  ", poi_string);
                 if (weekend_days == 1)  // Weekend
                 {
-                    if (avg_PhotoCreateTime > 19 && avg_PhotoCreateTime < 24) {
+
+                    hash_string_POI = hash_string_POI + String.format("%s. ", "영화 관람하러 극장에 왔다.(신나는 주말 극장 데이트) ");
+                    DNN_result.add(String.format("#%s", "주말 극장 나들이"));
+
+
+                }else{
+                    if (avg_PhotoCreateTime > 19 && avg_PhotoCreateTime < 24){
                         hash_string_POI = hash_string_POI + String.format("%s. ", "간만에 영화보러 왔다.(간만 주중 영화) ");
                         DNN_result.add(String.format("#%s", "주중 극장 나들이"));
-                    } else {
-                        hash_string_POI = hash_string_POI + String.format("%s. ", "영화 관람하러 극장에 왔다.(신나는 주말 극장 데이트) ");
-                        DNN_result.add(String.format("#%s", "주말 극장 나들이"));
                     }
 
-                } else if (poiclassDetect(poi_string, dnnModel.POI_DB5)) {
-
-                    hash_string_POI = String.format("%s에서 ", poi_string);
-                    hash_string_POI = hash_string_POI + String.format("%s. ", "쇼핑을 했다");
-                    DNN_result.add(String.format("#%s", "쇼핑"));
-
-                } else if (poiclassDetect(poi_string, dnnModel.POI_DB6)) {
-
-                    hash_string_POI = String.format("%s ", poi_string);
-                    hash_string_POI = hash_string_POI + String.format("%s. ", "놀이 공원에 갔다");
-                    DNN_result.add(String.format("#%s", "놀이 공원"));
-
                 }
+
+            }else if (poiclassDetect(poi_string, dnnModel.POI_DB5)) {
+
+                hash_string_POI = String.format("%s에서 ", poi_string);
+                hash_string_POI = hash_string_POI + String.format("%s. ", "쇼핑을 했다");
+                DNN_result.add(String.format("#%s", "쇼핑"));
+
+            } else if (poiclassDetect(poi_string, dnnModel.POI_DB6)) {
+
+                hash_string_POI = String.format("%s ", poi_string);
+                hash_string_POI = hash_string_POI + String.format("%s. ", "놀이 공원에 갔다");
+                DNN_result.add(String.format("#%s", "놀이 공원"));
+            }
+            else if (poiclassDetect(poi_string, dnnModel.POI_DB7)) {
+
+                hash_string_POI = String.format("%s에서 ", poi_string);
+                hash_string_POI = hash_string_POI + String.format("%s. ", "장을 봤다");
+                DNN_result.add(String.format("#%s", "장보기"));
             }
         }
 
@@ -679,6 +688,9 @@ public class DnnModel {
 
             DNN_result=DNN_result_in;
             String poicat = "";
+
+
+
             for(int j=0;j<poiList_nooverlap.length;j++) {
 
                 poicat=poicatLUT(poiList_nooverlap[j]);
