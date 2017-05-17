@@ -16,6 +16,9 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Random;
 
+import static com.mindspree.days.lib.AppUtils.arraylistTostringarray_nooverlap;
+import static com.mindspree.days.lib.AppUtils.arraylistsize_nooverlap;
+
 /**
  * Created by mindspree on 2016. 4. 3
  */
@@ -198,9 +201,16 @@ public class DnnModel {
         int index =0;
         String poicat_val ="";
 
+
+        int num_loop =0;
+        if(POICAT_content.size()>=POILIST_key.size())
+            num_loop =POILIST_key.size();
+        else
+            num_loop =POICAT_content.size();
+
         if( (POILIST_key !=null) && (POILIST_key.size() >0) && (poi_String !=null))
         {
-            for(int k=0;k< POILIST_key.size();k++)
+            for(int k=0;k< num_loop;k++)
             {
 
                     if(POILIST_key.get(k).toString().equals(poi_String)) {
@@ -744,26 +754,29 @@ public class DnnModel {
 
 
 
-            }else if(poiList_nooverlap.length>2){
+            }else if(poiList_nooverlap.length>2) {
 
                 // this part describes which places I went to
                 hash_string = hash_string + String.format("%s.", "오늘은 여기 저기 돌아다녔다 ");
 
-                for (int l=0;l<poiList_nooverlap.length;l++){
+                for (int l = 0; l < poiList_nooverlap.length; l++) {
 
-                    if(l==0) {
+                    if (l == 0) {
 
-                        if(poiList_nooverlap[l].contains(AppUtils.getAppText(R.string.text_location_home))){
+                        if (poiList_nooverlap[l].contains(AppUtils.getAppText(R.string.text_location_home))) {
 
-                        }else
+                        } else
                             hash_string = hash_string + String.format("%s", poiList_nooverlap[l]);
 
-                    }else if(l<poiList_nooverlap.length-1) {
-                            hash_string = hash_string + String.format(", %s ", poiList_nooverlap[l]);
-                    }else if(l==poiList_nooverlap.length-1) {
-                            hash_string = hash_string + String.format("그리고 %s에도 들렸다. ", poiList_nooverlap[l]);
+                    } else if (l < poiList_nooverlap.length - 1) {
+                        hash_string = hash_string + String.format(", %s ", poiList_nooverlap[l]);
+                    } else if (l == poiList_nooverlap.length - 1) {
+                        hash_string = hash_string + String.format("그리고 %s에도 들렸다. ", poiList_nooverlap[l]);
                     }
                 }
+            }
+
+
 
                 // this part describes where I took photos
                 if(uniqKeysArray!=null)
@@ -771,46 +784,76 @@ public class DnnModel {
 
                     hash_string = hash_string + String.format("\n");
 
-                    for (int l=0;l<uniqKeysArray.length;l++){
-
-                        int index_key= uniqKeysArray[l];
+                    if(uniqKeysArray.length==1){
+                        int index_key= uniqKeysArray[0];
                         if(index_key >= poiList.size())
                             index_key = poiList.size()-1;
 
-                        if(l==0) {
-
-                            if(uniqKeysArray[l].toString().contains(AppUtils.getAppText(R.string.text_location_home))){
-                                hash_string = hash_string + String.format("집에서 사진도 몇 장 찍었다");
-                            }else{
-                                hash_string = hash_string + String.format(" %s", poiList.get(index_key).toString());
-                            }
-
-
-                        }else if(l<uniqKeysArray.length-1) {
-
-                            if(uniqKeysArray[l].toString().equals(uniqKeysArray[l-1].toString())){
-                                // Do nothing, overlapped .
-                            }else{
-                                hash_string = hash_string + String.format(", %s ", poiList.get(index_key).toString());
-                            }
-
-
-                        }else if(l==uniqKeysArray.length-1) {
-
-                            if(uniqKeysArray[l].toString().equals(uniqKeysArray[l-1].toString())){
-                                // Do nothing, overlapped .
-                            }else{
-                                hash_string = hash_string + String.format("그리고 %s 에서는 사진도 몇 장 남겼다. ", poiList.get(index_key).toString());
-                            }
-
-
+                        if(uniqKeysArray[0].toString().contains(AppUtils.getAppText(R.string.text_location_home))){
+                            hash_string = hash_string + String.format("집에서 사진도 몇 장 찍었다");
+                        }else{
+                            hash_string = hash_string + String.format(" %s 에서 사진도 몇 장 찍었다.", poiList.get(index_key).toString());
                         }
+                    }else if (uniqKeysArray.length>=2) {
+
+                        // Build unique "poi with photo" list
+                        ArrayList<String> poiListwithPhoto = new ArrayList<>();
+                        for (int l = 0; l < uniqKeysArray.length; l++) {
+                            int index_key = uniqKeysArray[l];
+                            if (index_key >= poiList.size())
+                                index_key = poiList.size() - 1;
+
+                            if (poiList.get(index_key).toString() != null)
+                                poiListwithPhoto.add(poiList.get(index_key).toString());
+                        }
+
+
+
+                            int array_size = arraylistsize_nooverlap(poiListwithPhoto);
+                            String[] poiListwithPhoto_nooverlap = new String[array_size];
+                            poiListwithPhoto_nooverlap = arraylistTostringarray_nooverlap(poiListwithPhoto);
+
+                            if(poiListwithPhoto_nooverlap.length==1){
+                                if(poiListwithPhoto_nooverlap[0].contains(AppUtils.getAppText(R.string.text_location_home)))
+                                    hash_string = hash_string + String.format("집에서 사진도 몇 장 찍었다");
+                                else
+                                    hash_string = hash_string + String.format(" %s 에서 사진도 몇 장 찍었다.", poiListwithPhoto_nooverlap[0]);
+
+                            }else if(poiListwithPhoto_nooverlap.length==2){
+
+                                for (int l = 0; l < poiListwithPhoto_nooverlap.length; l++) {
+                                    if (l == 0) {
+                                        if (uniqKeysArray[l].toString().contains(AppUtils.getAppText(R.string.text_location_home)))
+                                            hash_string = hash_string + String.format("집 ");
+                                        else
+                                            hash_string = hash_string + String.format("%s ", poiListwithPhoto_nooverlap[l]);
+
+                                    }else
+                                        hash_string = hash_string + String.format("그리고 %s 에서는 사진도 몇 장 남겼다. ", poiListwithPhoto_nooverlap[l]);
+
+                                }
+
+                            }else if(poiListwithPhoto_nooverlap.length>2){
+
+                                for (int l = 0; l < poiListwithPhoto_nooverlap.length; l++) {
+                                    if (l == 0) {
+                                        if (uniqKeysArray[l].toString().contains(AppUtils.getAppText(R.string.text_location_home)))
+                                            hash_string = hash_string + String.format("집 ");
+                                        else
+                                            hash_string = hash_string + String.format("%s ", poiListwithPhoto_nooverlap[l]);
+
+                                    }else if (l < uniqKeysArray.length - 1)
+                                        hash_string = hash_string + String.format(", %s ", poiListwithPhoto_nooverlap[l]);
+                                    else if (l == uniqKeysArray.length - 1)
+                                        hash_string = hash_string + String.format("그리고 %s 에서는 사진도 몇 장 남겼다. ", poiListwithPhoto_nooverlap[l]);
+                                }
+
+                            }
+
+
                     }
+
                 }
-
-
-
-            }
 
 
 
@@ -1062,9 +1105,9 @@ public class DnnModel {
         int hashList_size= hashList.size();
         if(hashList_size>0){
             // Get the unique hash result,  remove overlapping
-            int array_size = AppUtils.arraylistsize_nooverlap(hashList);
+            int array_size = arraylistsize_nooverlap(hashList);
             String [] hashList_nooverlap = new String[array_size];
-            hashList_nooverlap=AppUtils.arraylistTostringarray_nooverlap(hashList);
+            hashList_nooverlap= arraylistTostringarray_nooverlap(hashList);
             int hashList_nooverlap_size= hashList.size();
 
             for(int m=0;m<hashList_nooverlap_size;m++){

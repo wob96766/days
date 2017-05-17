@@ -338,12 +338,12 @@ public class DatelineModel implements Parcelable {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, 0);
         String DateToday = dateFormat.format(cal.getTime()); //your formatted date here
-        cal.add(Calendar.DATE, -1);
+        cal.add(Calendar.DATE, -2);
         String DateYesterday = dateFormat.format(cal.getTime()); //your formatted date here
 
 //        if(mSentence == null || mSentence.equals("") || DateInMomeent.equals(DateToday) ) {   // This is only for debugging
-        if(DateInMomeent.equals(DateYesterday)  ) {   // This is only for debugging
-//        if(mSentence == null || mSentence.equals("")  ) {
+//        if(DateInMomeent.equals(DateYesterday)  ) {   // This is only for debugging
+        if(mSentence == null || mSentence.equals("")  ) {
 //        if(true) {
 
             if (sentence_mode.equals("hash"))
@@ -394,6 +394,8 @@ public class DatelineModel implements Parcelable {
                 hash_string = hash_string + String.format(" %s\n", mMood_kr);
                 DNN_result.add(String.format("#%s",mMood_hash_kr));
 
+            }else{
+                hash_string = hash_string + String.format(" %s\n", "");
             }
 
 
