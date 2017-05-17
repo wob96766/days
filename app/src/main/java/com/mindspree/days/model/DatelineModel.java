@@ -332,8 +332,6 @@ public class DatelineModel implements Parcelable {
     // hash --> return only hash
     // return --> only sentence
     public String getSummarize(String sentence_mode) {
-
-
         dnnModel = new DnnModel();
         String DateInMomeent= getDate();
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");

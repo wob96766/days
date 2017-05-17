@@ -669,6 +669,9 @@ public class MainActivity extends BaseActivity {
         Date now = new Date();
         String[] arrPath = new String[cursor.getCount()];
         Date originDate;
+        if(mPreference.getInstallDate().contains("  ")) {
+            mPreference.setInstallDate(mPreference.getInstallDate().replace("  ", " "));
+        }
         if(mPreference.getInstallDate().equals("")){
             mPreference.setInstallDate(AppUtils.getTodayDateTimeString(now, "00:00:00"));
             originDate = AppUtils.getTodayDateTime(now, "00:00:00");
