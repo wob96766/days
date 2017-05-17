@@ -109,7 +109,7 @@ public class AppUtils {
 
     public static String getTodayDateTimeString(Date origin, String timeFormat){
         try {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd ", Locale.KOREA);
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.KOREA);
             String dateString = dateFormat.format(origin);
 
 
