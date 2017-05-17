@@ -10,6 +10,14 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <TextView
+            style="@style/font_black_14sp"
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/large"
+            android:text="프로필을 수정하시려면 사진을 터치하세요" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

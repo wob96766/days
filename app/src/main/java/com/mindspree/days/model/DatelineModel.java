@@ -344,8 +344,8 @@ public class DatelineModel implements Parcelable {
         String DateYesterday = dateFormat.format(cal.getTime()); //your formatted date here
 
 //        if(mSentence == null || mSentence.equals("") || DateInMomeent.equals(DateToday) ) {   // This is only for debugging
-//        if(DateInMomeent.equals(DateYesterday)  ) {   // This is only for debugging
-        if(mSentence == null || mSentence.equals("")  ) {
+        if(DateInMomeent.equals(DateYesterday)  ) {   // This is only for debugging
+//        if(mSentence == null || mSentence.equals("")  ) {
 //        if(true) {
 
             if (sentence_mode.equals("hash"))

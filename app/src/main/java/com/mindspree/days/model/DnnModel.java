@@ -198,14 +198,18 @@ public class DnnModel {
         int index =0;
         String poicat_val ="";
 
-        if(POILIST_key !=null)
+        if( (POILIST_key !=null) && (POILIST_key.size() >0) && (poi_String !=null))
         {
             for(int k=0;k< POILIST_key.size();k++)
             {
-                if(poi_String !=null){
-                    if(POILIST_key.get(k).toString().equals(poi_String))
-                        poicat_val = POICAT_content.get(k).toString();  // Where crash happended
-                }
+
+                    if(POILIST_key.get(k).toString().equals(poi_String)) {
+
+                        if( (POICAT_content !=null) && (POICAT_content.size()>0) && (POICAT_content.get(k) !=null))
+                            poicat_val = POICAT_content.get(k).toString();  // Where crash happended
+
+                    }
+
 
 
 
