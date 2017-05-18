@@ -118,6 +118,8 @@ public class AppPreference {
 
 		SharedPreferences.Editor configEditor = config.edit();
 //		configEditor.remove(TAG_HAS_LAUNCH_HISTORY);
+		configEditor.remove(TAG_LATITUDE);
+		configEditor.remove(TAG_LONGITUDE);
 		configEditor.remove(TAG_MEASURE_LATITUDE);
 		configEditor.remove(TAG_MEASURE_LONGITUDE);
         configEditor.remove(TAG_MEASURE_TIME);
@@ -141,6 +143,8 @@ public class AppPreference {
 		configEditor.remove(TAG_POI_TITLE2);
 		configEditor.remove(TAG_POI_LATITUDE2);
 		configEditor.remove(TAG_POI_LONGITUDE2);
+
+		configEditor.remove(TAG_INSTALLDATE);
 
 		configEditor.commit();
 	}

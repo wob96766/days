@@ -111,10 +111,38 @@ public class ShareDialog extends Dialog {
                                             .build();
                                     builder.addMedium(sharePhoto);
                                 } else {
-                                    SharePhoto sharePhoto = new SharePhoto.Builder()
-                                            .setBitmap(BitmapFactory.decodeFile(imageUrl))
-                                            .build();
-                                    builder.addMedium(sharePhoto);
+                                    try {
+                                        Bitmap bitmap = BitmapFactory.decodeFile(imageUrl);
+                                        ExifInterface ei = new ExifInterface(imageUrl);
+                                        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
+
+                                        switch (orientation) {
+
+                                            case ExifInterface.ORIENTATION_ROTATE_90:
+                                                bitmap = AppUtils.rotateBitmap(bitmap, 90);
+                                                break;
+
+                                            case ExifInterface.ORIENTATION_ROTATE_180:
+                                                bitmap = AppUtils.rotateBitmap(bitmap, 180);
+                                                break;
+
+                                            case ExifInterface.ORIENTATION_ROTATE_270:
+                                                bitmap = AppUtils.rotateBitmap(bitmap, 270);
+                                                break;
+
+                                            case ExifInterface.ORIENTATION_NORMAL:
+
+                                            default:
+                                                break;
+                                        }
+                                        SharePhoto sharePhoto = new SharePhoto.Builder()
+                                                .setBitmap(bitmap)
+                                                .build();
+                                        builder.addMedium(sharePhoto);
+                                    } catch(Exception e){
+                                        e.printStackTrace();
+                                        continue;
+                                    }
                                 }
 
                             } else {
