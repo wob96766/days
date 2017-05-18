@@ -180,7 +180,7 @@
                 android:paddingRight="13dp"
                 android:orientation="vertical">
                 <TextView
-                    style="@style/font_black_12sp"
+                    style="@style/font_greylight_12sp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
@@ -202,7 +202,7 @@
                 android:foreground="?attr/selectableItemBackground"
                 android:orientation="vertical">
                 <TextView
-                    style="@style/font_black_12sp"
+                    style="@style/font_greylight_12sp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
