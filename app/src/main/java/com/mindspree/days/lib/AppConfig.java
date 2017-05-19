@@ -33,9 +33,9 @@ public class AppConfig {
     }
 
     public static final class WebUrl {
-        public static final String TERMS                        = "https://firebasestorage.googleapis.com/v0/b/days-bdb6b.appspot.com/o/web%2Flocation_terms.html?alt=media&token=f1bbd8b4-159d-4860-a1bf-e71d87688e33";
-        public static final String POLICY                       = "https://firebasestorage.googleapis.com/v0/b/days-bdb6b.appspot.com/o/web%2Fpolicy.html?alt=media&token=882f7de2-c30d-4e59-87b4-88ca9442463b";
-        public static final String LOCATIONTERMS                = "https://firebasestorage.googleapis.com/v0/b/days-bdb6b.appspot.com/o/web%2Flocation_terms.html?alt=media&token=f1bbd8b4-159d-4860-a1bf-e71d87688e33";
+        public static final String TERMS                        = "http://52.79.97.147/web/location_terms.html";
+        public static final String POLICY                       = "http://52.79.97.147/web/policy.html";
+        public static final String LOCATIONTERMS                = "http://52.79.97.147/web/location_terms.html";
     }
 
     public static final class Broadcast {
