@@ -10,15 +10,18 @@ import android.view.View;
 
 import com.androidquery.AQuery;
 import com.mindspree.days.R;
+import com.mindspree.days.adapter.SampleDecorator;
 import com.mindspree.days.data.DBWrapper;
 import com.mindspree.days.lib.AppConfig;
 import com.mindspree.days.model.DailyModel;
 import com.mindspree.days.model.DatelineModel;
+import com.squareup.timessquare.CalendarCellDecorator;
 import com.squareup.timessquare.CalendarPickerView;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -31,6 +34,7 @@ public class DatePickActivity extends BaseActivity {
     private CalendarPickerView mCalendarView;
     private DBWrapper mDBWrapper;
     private ArrayList<DatelineModel> mDataList;
+    private ArrayList<DatelineModel> mDatelineList;
 
     public static void startActivityForResult(Fragment context, int intentCode) {
         Intent intent = new Intent(context.getActivity(), DatePickActivity.class);
@@ -43,7 +47,11 @@ public class DatePickActivity extends BaseActivity {
         setContentView(R.layout.activity_datepick);
         initData();
         initView();
+
         requestDaily();
+        requestEmotions();
+
+
     }
 
     private void initView() {
@@ -96,9 +104,13 @@ public class DatePickActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void requestEmotions() {
+        mDatelineList = mDBWrapper.getDatelineList();
+        loadView();
+    }
+
     private void requestDaily() {
         mDataList = mDBWrapper.getDatelineList();
-        loadView();
     }
 
     public void initData() {
@@ -109,8 +121,11 @@ public class DatePickActivity extends BaseActivity {
         AQuery aq = new AQuery(this);
         Calendar nextYear = Calendar.getInstance();
         nextYear.add(Calendar.YEAR, 1);
+        SampleDecorator decorator = new SampleDecorator(mDatelineList);
+
 
         mCalendarView = (CalendarPickerView) aq.id(R.id.view_calendar).getView();
+        mCalendarView.setDecorators(Arrays.<CalendarCellDecorator>asList(decorator));
         mCalendarView.setCellClickInterceptor(new CalendarPickerView.CellClickInterceptor() {
             @Override
             public boolean onCellClicked(Date date) {
