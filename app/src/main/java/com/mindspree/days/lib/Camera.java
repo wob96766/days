@@ -12,9 +12,11 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
 import android.widget.ImageView;
 
 import java.io.File;
@@ -52,8 +54,9 @@ public class Camera {
 	private File mFile;
 
 	private Fragment mFragment;
-	
-	public Camera(Context context, int galleryCode, int cameraCode, int cropCode) {
+    private Uri mContentUrl = null;
+
+    public Camera(Context context, int galleryCode, int cameraCode, int cropCode) {
 		mContext = context;
 		initCamera();
 		setCameraCode(galleryCode, cameraCode, cropCode);
@@ -144,8 +147,8 @@ public class Camera {
 
 		if( resultCode == Activity.RESULT_OK ){
 			if (requestCode == REQ_CODE_PICK_GALLERY ) {
-				Uri uri = data.getData();
-				copyUriToFile(uri, getTempImageFile());
+				mContentUrl = data.getData();
+				copyUriToFile(mContentUrl, getTempImageFile());
 				if (mCropRequested) {
 					cropImage();
 				} else {
@@ -459,18 +462,30 @@ public class Camera {
 	
 	private void cropImage() {
 		String device = getDeviceModel();
-		if( device.contains(AppConfig.deviceModel.NEXUS) ){
-			cropImage_Ver02();
-		}
-		else {
-			cropImage_Ver01();
-		}
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            cropImage_Ver03();
+        } else {
+            if( device.contains(AppConfig.deviceModel.NEXUS) ) {
+                cropImage_Ver02();
+            } else {
+                cropImage_Ver01();
+            }
+        }
+
 	}
 
 	private void cropImage_Ver02() {
 
 		Intent intent = new Intent("com.android.camera.action.CROP");
 		intent.setDataAndType(Uri.fromFile(getTempImageFile()), "image/*");
+        //Uri contentUri =FileProvider.getUriForFile(mContext, mContext.getApplicationContext().getPackageName() + ".provider", getTempImageFile());
+        /*mContext.grantUriPermission("com.android.camera", contentUri,
+                Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+*/
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+		//intent.setDataAndType( contentUri, "image/*");
 
 		intent.putExtra("crop", "true");
 		
@@ -481,6 +496,65 @@ public class Camera {
 		else
 			mFragment.startActivityForResult(intent, REQ_CODE_PICK_CROP);
 	}
+
+	private void cropImage_Ver03(){
+        mContext.grantUriPermission("com.android.camera", mContentUrl,
+                Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        Intent intent = new Intent("com.android.camera.action.CROP");
+        intent.setDataAndType(mContentUrl, "image/*");
+
+        List<ResolveInfo> list = mContext.getPackageManager().queryIntentActivities(intent, 0);
+        mContext.grantUriPermission(list.get(0).activityInfo.packageName, mContentUrl,
+                Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        int size = list.size();
+        if (size == 0) {
+            //Toast.makeText(this, "취소 되었습니다.", Toast.LENGTH_SHORT).show();
+            return;
+        } else {
+            //Toast.makeText(this, "용량이 큰 사진의 경우 시간이 오래 걸릴 수 있습니다.", Toast.LENGTH_SHORT).show();
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+            intent.putExtra("crop", "true");
+            intent.putExtra("aspectX", mCropAspectWidth);
+            intent.putExtra("aspectY", mCropAspectHeight);
+            intent.putExtra("scale", true);
+            File croppedFileName = null;
+            try {
+                croppedFileName = getTempImageFile();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            File folder = new File(Environment.getExternalStorageDirectory() + "/days/");
+            File tempFile = new File(folder.toString(), croppedFileName.getName());//getTempImageFile();
+
+            mContentUrl =FileProvider.getUriForFile(mContext, mContext.getApplicationContext().getPackageName() + ".provider",  tempFile);
+
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+
+
+            intent.putExtra("return-data", false);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, mContentUrl);
+            intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString()); //Bitmap 형태로 받기 위해 해당 작업 진행
+
+            Intent i = new Intent(intent);
+            ResolveInfo res = list.get(0);
+            i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            i.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+            mContext.grantUriPermission(res.activityInfo.packageName, mContentUrl,
+                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+            i.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+            if(mFragment == null)
+                ((Activity)mContext).startActivityForResult(i, REQ_CODE_PICK_CROP);
+            else
+                mFragment.startActivityForResult(i, REQ_CODE_PICK_CROP);
+
+
+        }
+
+    }
 	
 	private void cropImage_Ver01() {
 
@@ -531,7 +605,7 @@ public class Camera {
 		mCurrentStep = CAMERA_STEP_ING;
 		
 		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-		intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(getTempImageFile()));
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(mContext, mContext.getApplicationContext().getPackageName() + ".provider", getTempImageFile()));//Uri.fromFile(getTempImageFile()));//Uri.fromFile(getTempImageFile()));
 		intent.putExtra("return-data", true);
 		if(mFragment == null)
 			((Activity)mContext).startActivityForResult(intent, REQ_CODE_PICK_CAMERA);
