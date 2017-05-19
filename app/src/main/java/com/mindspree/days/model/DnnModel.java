@@ -104,7 +104,7 @@ public class DnnModel {
 
     // Korea mode
     public String [] FaceBasedPool_selfie_smile_kr ={"간만에 웃는 사진도 찍었다", "오늘 찍은 최고의 사진인 듯. 크~ 간만에 잘 나온 미소 사진", "오늘 셀피 몇장 찍었다. 좋은 곳에서 셀피 찰칵"};
-    public String [] FaceBasedPool_selfie_nosmile_kr ={"간만에 셀피도 찍었다", "오늘 찍은 최고의 사진인듯. ㅎㅎ 간만에 잘나왔는데 다음엔 좀 더 웃어야지", "여기 온 기념으로 오늘 셀피 몇장 찍었다"};
+    public String [] FaceBasedPool_selfie_nosmile_kr ={"간만에 셀피도 찍었다", "오늘 찍은 최고의 사진인듯. ㅎㅎ 간만에 잘나왔는데 다음엔 좀 더 표정관리를 해야겠군", "여기 온 기념으로 오늘 셀피 몇장 찍었다"};
     public String [] FaceBasedPool_single_smile_kr ={"나이스 스마일 샷 ~ 오늘도 즐거운 하루", "오늘의 베스트 샷. 다들 스마일 ~", " ㅎㅎ "};
     public String [] FaceBasedPool_single_nosmile_kr ={"무표정 시크한 셀피도 남겼다", "간만에 진지한 사진도 한 컷 남겼다", "근엄한 사진도 한 컷 찍었다"};
     public String [] FaceBasedPool_group_smile_kr = {"친구 동료들과 즐거운 사진도 찍었다", "오늘의 베스트 그룹 샷..(다들 표정이 좋네)", "오늘의 베스트 그룹 샷..(다들 표정 좋군)", "오늘도 다들 즐거운 하루를 보냈다"};
@@ -114,7 +114,7 @@ public class DnnModel {
     public String [] FaceBasedPool_group_noselfie_kr ={"간만에 사진은 필수...", "간만에 찍은 사진인데 표정이 영 ㅎㅎ", "그룹 사진 몇장 찍어봤다"};
 
 
-    public String [] dailysummary_nobusy_kr ={"대략 한가한 하루였음. ","평범한 하루였다. ", "오늘은 별로 바쁘지 않았다. 좀 무료한 하루였다. 주말에는 약속 좀 만들어 볼까. "};
+    public String [] dailysummary_nobusy_kr ={"어쨌든 오늘은 대략 한가한 하루였다. ","어쨌든 오늘은 대략 평범한 하루였다. ", "어쨌든 오늘은 전반적으로 무료한 하루였다. 주말에는 약속 좀 만들어 볼까. "};
     public String [] dailysummary_lessbusy_kr ={"약간 바쁜 하루였음. ", "바쁜 스케쥴 덕분에 살짝 뺑이친 하루였다. ㅜㅜ "};
     public String [] dailysummary_busy_kr ={"아 겁나 바쁜 하루였음. ","여기저기 다니느라 겁나 지치고 힘들었다.", "아 오늘은 너무 바빴네. 주말에는 푹 쉬어야겠다 "};
     public String [] dailysummary_nopoi_kr ={"오늘은 별 특별한 일이 없었다. 조금은 지루한 하루 였다. 내일은 어디라도 가야지. ","오늘은 하루 종일 집에만 있었다. 간만에 푹 쉬긴 했네", "결국 하루 종일 방콕...주말엔 어디든 나가봐야겠다. "};
@@ -923,6 +923,7 @@ public class DnnModel {
             options.inJustDecodeBounds = true;
             BitmapFactory.decodeFile(timelinePhotoFile, options);
             int imgHeight = options.outHeight;
+            int imgWidth = options.outWidth;
             int sample_size =1;
 
             if(imgHeight <=300)
@@ -939,28 +940,24 @@ public class DnnModel {
             bitmap_options.inSampleSize = sample_size;
             Bitmap bMap_temp = BitmapFactory.decodeFile(timelinePhotoFile, bitmap_options);
 
-            if(bMap_temp==null){
-                Im_width = 500 ;
+            if(bMap_temp==null)
                 return hash_string;
-            }else {
-                Im_width = bMap_temp.getWidth() * sample_size;
-            }
 
             Num_Face =  engineDBInterface.getExtraFeatWithPhotoURL(timelinePhotoFile);
             Smile_Prob =  engineDBInterface.getWeightCoeffWithPhotoURL(timelinePhotoFile);
 
             // Selfie, solo , group
             if( Num_Face == 1) {
-                if( Math.abs(front_cam_width - Im_width) < 500)
+                if( Math.abs(front_cam_width - imgWidth) < 500)
                     selfie_cnt++;
-                else if ( Math.abs(rear_cam_width - Im_width) < 500)
+                else if ( Math.abs(rear_cam_width - imgWidth) < 500)
                     singlePhoto_cnt ++;
             }
             else if( Num_Face >1) {
 
-                if( Math.abs(front_cam_width - Im_width) < 500)
+                if( Math.abs(front_cam_width - imgWidth) < 500)
                     groupSelfie_cnt++;
-                else if ( Math.abs(rear_cam_width - Im_width) < 500)
+                else if ( Math.abs(rear_cam_width - imgWidth) < 500)
                     groupPhoto_cnt++;
 
             }
