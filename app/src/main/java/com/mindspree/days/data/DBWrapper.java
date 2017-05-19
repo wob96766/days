@@ -142,7 +142,10 @@ public class DBWrapper {
     }
 
     public String getWeatherToday(){
-        return mDbHelper.getWeatherToday(mUserUid);
+        if(mDbHelper.getWeatherToday(mUserUid)== null)
+            return "";
+        else
+            return mDbHelper.getWeatherToday(mUserUid);
     }
 
     // update the set location information.
