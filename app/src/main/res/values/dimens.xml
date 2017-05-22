@@ -88,6 +88,7 @@
     <dimen name="middle">10dp</dimen>
     <dimen name="large">15dp</dimen>
     <dimen name="xlarge">20dp</dimen>
+    <dimen name="xxlarge">40dp</dimen>
 
     <dimen name="height_xsmall">25dp</dimen>
     <dimen name="height_small">40dp</dimen>

@@ -18,6 +18,8 @@ import java.lang.reflect.Field;
 
 import uk.co.senab.photoview.PhotoViewAttacher;
 
+import static com.mindspree.days.R.id.container;
+
 public final class TutorialFragment extends BaseFragment {
 
     public Context mContext;
@@ -72,8 +74,14 @@ public final class TutorialFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        ImageView imageView_tutrial = (ImageView) view.findViewById(R.id.view_first);
+        imageView_tutrial.setScaleType(ImageView.ScaleType.FIT_XY);
         initData();
-        initView();
+        initView(imageView_tutrial);
+
+
+
     }
 
 
@@ -85,26 +93,34 @@ public final class TutorialFragment extends BaseFragment {
     private void initData() {
     }
 
-    private void initView() {
+    private void initView(ImageView imageView_tutrial) {
         AQuery aq = new AQuery(mRootView);
         aq.id(R.id.text_title).text(mTextContent);
 
-        if(mIndex == 0)
+
+
+
+        if(mIndex == 0) {
+            imageView_tutrial.setImageResource(R.mipmap.tutorial_today);
             aq.id(R.id.view_first).visible().text(mTextContent);
-        else
-            aq.id(R.id.view_first).invisible().text(mTextContent);
-        if(mIndex == 1)
-            aq.id(R.id.view_second).visible().text(mTextContent);
-        else
-            aq.id(R.id.view_second).invisible().text(mTextContent);
-        if(mIndex == 2)
-            aq.id(R.id.view_third).visible().text(mTextContent);
-        else
-            aq.id(R.id.view_third).invisible().text(mTextContent);
-        if(mIndex == 3)
-            aq.id(R.id.view_fourth).visible().text(mTextContent);
-        else
-            aq.id(R.id.view_fourth).invisible().text(mTextContent);
+        }
+
+        if(mIndex == 1) {
+            imageView_tutrial.setImageResource(R.mipmap.tutorial_callender);
+            aq.id(R.id.view_first).visible().text(mTextContent);
+        }
+
+        if(mIndex == 2) {
+            imageView_tutrial.setImageResource(R.mipmap.tutorial_moment);
+            aq.id(R.id.view_first).visible().text(mTextContent);
+        }
+
+        if(mIndex == 3) {
+            imageView_tutrial.setImageResource(R.mipmap.tutorial_setting);
+            aq.id(R.id.view_first).visible().text(mTextContent);
+        }
+
+
         aq.dismiss();
     }
 

@@ -13,72 +13,30 @@
             android:id="@+id/text_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_margin="@dimen/middle"
             android:padding="@dimen/middle"
             android:background="@drawable/bg_round_primary"
-            android:text="@string/text_progress_preparedata" />
+            android:text="@string/text_progress_preparedata"
+            android:layout_marginTop="59dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
     </RelativeLayout>
 
 		    
 
 	<LinearLayout
 		android:layout_width="match_parent"
-		android:layout_height="50dp"
-		android:layout_marginBottom="?attr/actionBarSize">
+		android:layout_height="match_parent">
 		<RelativeLayout
-			android:layout_width="0dp"
+			android:layout_width="match_parent"
 			android:layout_height="match_parent"
             android:layout_weight="1">
             <ImageView
                 android:id="@+id/view_first"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_centerHorizontal="true"
-                android:visibility="invisible"
-                android:tint="@color/colorPrimary"
-                android:src="@mipmap/ic_arrow_down_white"/>
+                android:src="@mipmap/tutorial_today"/>
         </RelativeLayout>
 
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-            <ImageView
-                android:id="@+id/view_second"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_centerHorizontal="true"
-                android:visibility="invisible"
-                android:tint="@color/colorPrimary"
-                android:src="@mipmap/ic_arrow_down_white"/>
-        </RelativeLayout>
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-            <ImageView
-                android:id="@+id/view_third"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_centerHorizontal="true"
-                android:visibility="invisible"
-                android:tint="@color/colorPrimary"
-                android:src="@mipmap/ic_arrow_down_white"/>
-        </RelativeLayout>
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-            <ImageView
-                android:id="@+id/view_fourth"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_centerHorizontal="true"
-                android:visibility="invisible"
-                android:tint="@color/colorPrimary"
-                android:src="@mipmap/ic_arrow_down_white"/>
-        </RelativeLayout>
+
 	</LinearLayout>
 </LinearLayout>

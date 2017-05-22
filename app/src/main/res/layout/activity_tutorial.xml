@@ -14,9 +14,14 @@
             android:id="@+id/text_prev"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/large"
+            android:paddingLeft="@dimen/xxlarge"
+            android:gravity="end"
             android:visibility="invisible"
-            android:text="@string/text_prev"/>
+            android:text="@string/text_prev"
+            android:layout_marginLeft="@dimen/large"
+            android:layout_marginRight="@dimen/large"
+            android:layout_marginBottom="@dimen/large"
+            android:layout_alignTop="@+id/text_next" />
 
         <TextView
             style="@style/font_white_16sp"
@@ -24,6 +29,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/large"
+            android:paddingRight="@dimen/xxlarge"
+            android:gravity="start"
             android:layout_alignParentRight="true"
             android:text="@string/text_next"/>
     </RelativeLayout>

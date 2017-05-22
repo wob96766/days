@@ -207,7 +207,7 @@
                 android:gravity="left"
                 android:paddingBottom="2dp"
                 android:paddingTop="2dp"
-                android:text="Days@mindspree:~$ 즐거운 하루가 시작합니다."
+                android:text="Days: 즐거운 하루가 시작합니다."
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
