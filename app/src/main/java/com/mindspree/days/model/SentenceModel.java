@@ -42,7 +42,20 @@ public class SentenceModel{
                 return String.format(AppUtils.getAppText(R.string.format_summarize_date_withweather), mWeather, mLocationCount, mPhotoCount);
             }
         } else {
-            return mSentence;
+
+            ArrayList sentenceHash;
+            sentenceHash = new ArrayList<String>(Arrays.asList(mSentence.split("#")));
+            String sentenceOnly = sentenceHash.get(0).toString();
+            String hashOnly ="";
+
+            if(sentenceHash.size()>=2)
+            {
+                for(int i=1;i<sentenceHash.size();i++)
+                    hashOnly = hashOnly + "#" + sentenceHash.get(i).toString();
+            }
+
+            return String.format("%s \n\n %s", sentenceOnly, hashOnly);
+
         }
     }
 }

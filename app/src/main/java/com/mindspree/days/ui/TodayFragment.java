@@ -71,6 +71,7 @@ public class TodayFragment extends BaseFragment{
     private TextView mTextDate;
     private TextView mTextDay;
     private TextView mTextYearMonth;
+    private TextView mTextDaysbot;
 
     AlertDialog mMoodDialog = null;
     private BroadcastReceiver mRefreshCast;
@@ -188,6 +189,7 @@ public class TodayFragment extends BaseFragment{
         mTextYearMonth = aq.id(R.id.text_yearmonth).getTextView();
         mTextDay = aq.id(R.id.text_day).getTextView();
         mTextDate = aq.id(R.id.text_date).getTextView();
+        mTextDaysbot = aq.id(R.id.textDaysbot).getTextView();
         aq.dismiss();
     }
 
@@ -211,12 +213,15 @@ public class TodayFragment extends BaseFragment{
         mTextPhotocount.setText(String.format("%d",mSentence.mPhotoCount));
         mTextLocationcount.setText(String.format("%d",mSentence.mLocationCount));
 
+
         SimpleDateFormat sdf = new SimpleDateFormat("EEE");
         Date d = new Date();
         String dayOfTheWeek = sdf.format(d);
 
         DateFormat dateFormat1 = new SimpleDateFormat("yyyy/MM");
         Calendar cal = Calendar.getInstance();
+        //24 hour format
+        int hourofday = cal.get(Calendar.HOUR_OF_DAY);
         cal.add(Calendar.DATE, 0);
         String DateToday1 = dateFormat1.format(cal.getTime()); //your formatted date here
 
@@ -229,6 +234,12 @@ public class TodayFragment extends BaseFragment{
 //        SpannableString ss1=  new SpannableString(String.format("%s %s", DateToday2,dayOfTheWeek));
 //        ss1.setSpan(new RelativeSizeSpan(2f), 0,5, 0); // set size
 //        ss1.setSpan(new ForegroundColorSpan(Color.RED), 0, 5, 0);// set color
+
+        // Get current hour
+
+
+
+
 
 
         int textSize1 = getResources().getDimensionPixelSize(R.dimen.text_13)*2;
@@ -272,14 +283,54 @@ public class TodayFragment extends BaseFragment{
             mImageWeather.setImageResource(R.mipmap.ic_sun_2x);
         }
 
-//        if(weather.equals())
 
 
-        int iconId = DailyModel.getIcon(mSentence.mMood);
-        if(iconId>0) {
-            mTextMood.setCompoundDrawablesWithIntrinsicBounds(iconId, 0, 0, 0);
+        //////////////////////////////////////////////
+        //      Days bot notification windows       //
+        //////////////////////////////////////////////
+
+        String mMood = mTextMood.getText().toString();
+        String mMood_kr ="";
+        if(mMood!=null || mMood!="") {
+
+            if(hourofday>=17 && hourofday <=21){
+
+                if(mMood.equals("Happy")){
+                    mMood_kr="Days: 오늘은 기분 좋은 하루군요!";  // For sentence
+                }else if(mMood.equals("Angry")){
+                    mMood_kr="Days: 오늘은 기분이 별로인가 봐요";
+                }else if(mMood.equals("Sad")){
+                    mMood_kr="Days: 오늘은 좀 슬픈신가 봐요";
+                }else if(mMood.equals("Busy")){
+                    mMood_kr="Days: 오늘 하루도 바쁘셨군요!";
+                }
+                mTextDaysbot.setText(mMood_kr);
+
+            }
+
+//            mTextDaysbot.setText("Days:~$ 오늘은 어떤 하루였나요?"+ "\n"+ "mood를 설정해 주세요");
+
+
+        }else {
+            if(hourofday >=3)
+            {
+                mTextDaysbot.setText("Days: 오늘은 어떤 하루였나요?"+ "\n"+ "mood를 설정해 주세요");
+            }
+
+
+
         }
-    }
+
+
+
+
+                int iconId = DailyModel.getIcon(mSentence.mMood);
+                if(iconId>0) {
+                    mTextMood.setCompoundDrawablesWithIntrinsicBounds(iconId, 0, 0, 0);
+                }
+
+        }
+
 
     public String requestWeather() {
         String weather = "";

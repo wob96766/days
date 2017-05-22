@@ -78,7 +78,7 @@
     <string name="text_privacy_agreement">개인정보취급방침에 동의합니다.</string>
 
     <string name="text_progress_preparedata">데이터 확인중. 전송하는 데이터의 양에 따라 최대 10분이상 소요됩니다.</string>
-    <string name="text_progress_imageprocessing">사진을 읽어오는 중입니다.</string>
+    <string name="text_progress_imageprocessing">대표사진을 선택하는 중입니다.</string>
 
     <!-- hint for ui -->
     <string name="hint_noname">이름없음</string>

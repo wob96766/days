@@ -712,10 +712,18 @@ public class DnnModel {
             for(int j=0;j<poiList_nooverlap.length;j++) {
 
                 poicat=poicatLUT(poiList_nooverlap[j]);
-                if(poicat.equals(""))
-                    DNN_result.add(String.format("#%s", poiList_nooverlap[j]));
-                else
-                    DNN_result.add(String.format("#%s, %s", poiList_nooverlap[j], poicat));
+
+                if(poiList_nooverlap[j].equals("none"))
+                {
+                    // Do nothing if poi list is none
+                }else{
+                    if(poicat.equals("") || poicat.equals("none"))
+                        DNN_result.add(String.format("#%s", poiList_nooverlap[j]));
+                    else
+                        DNN_result.add(String.format("#%s, %s", poiList_nooverlap[j], poicat));
+                }
+
+
             }
 
             if(poiList_nooverlap.length==1){

@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -35,8 +36,14 @@ import com.mindspree.days.lib.RotateTransform;
 import com.mindspree.days.model.DatelineModel;
 import com.mindspree.days.model.TimelineModel;
 
+
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
+
+import static com.mindspree.days.lib.AppUtils.collage_gen;
+import static java.lang.Math.round;
 
 
 public class ShareDialog extends Dialog {
@@ -172,47 +179,22 @@ public class ShareDialog extends Dialog {
                     if(AppUtils.isPackageInstalled(mActivity, "com.kakao.talk")){
                         try {
                             if(mDateline.getPhotoList().size() > 0 ) {
-                                for(String imageUrl : mDateline.getPhotoList()) {
-                                    if(imageUrl.contains("http") || imageUrl.contains("https")){
-                                        KakaoLink kakaoLink = KakaoLink.getKakaoLink(mActivity);
 
-                                        final KakaoTalkLinkMessageBuilder kakaoTalkLinkMessageBuilder = kakaoLink.createKakaoTalkLinkMessageBuilder();
-                                        kakaoTalkLinkMessageBuilder
-                                                .addText(mDateline.getSummarize("hash"))
-                                                .addImage(imageUrl, 320, 280);
+                                // Create Collage //
+                                int photo_cnt=0;
+                                Bitmap bitmap_target =null;
+                                bitmap_target=collage_gen(mDateline);
 
-                                        kakaoLink.sendMessage(kakaoTalkLinkMessageBuilder, mActivity);
-                                    } else {
-                                        Bitmap bitmap = BitmapFactory.decodeFile(imageUrl);
-                                        ExifInterface ei = new ExifInterface(imageUrl);
-                                        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
+//                                //////////////////////////////////////////
+//
+                                String imageUrl = mDateline.getPhotoList().get(0).toString();
+                                StorageReference profileRef = mStorageReference.child(String.format("profiles/%s/%s", mPreference.getUserUid(), imageUrl));
+                                ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-                                        switch(orientation) {
-
-                                            case ExifInterface.ORIENTATION_ROTATE_90:
-                                                bitmap = AppUtils.rotateBitmap(bitmap, 90);
-                                                break;
-
-                                            case ExifInterface.ORIENTATION_ROTATE_180:
-                                                bitmap = AppUtils.rotateBitmap(bitmap, 180);
-                                                break;
-
-                                            case ExifInterface.ORIENTATION_ROTATE_270:
-                                                bitmap = AppUtils.rotateBitmap(bitmap, 270);
-                                                break;
-
-                                            case ExifInterface.ORIENTATION_NORMAL:
-
-                                            default:
-                                                break;
-                                        }
-
-                                        StorageReference profileRef = mStorageReference.child(String.format("profiles/%s/%s", mPreference.getUserUid(), imageUrl));
-                                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                                        bitmap.compress(Bitmap.CompressFormat.JPEG, 30, baos);
+                                bitmap_target.compress(Bitmap.CompressFormat.JPEG, 30, baos);
                                         byte[] dataCompress = baos.toByteArray();
-                                        final int width = bitmap.getWidth();
-                                        final int height = bitmap.getHeight();
+                                        final int width = bitmap_target.getWidth();
+                                        final int height = bitmap_target.getHeight();
                                         UploadTask uploadTask = profileRef.putBytes(dataCompress);
                                         uploadTask.addOnFailureListener(new OnFailureListener() {
                                             @Override
@@ -237,9 +219,80 @@ public class ShareDialog extends Dialog {
                                                 }
                                             }
                                         });
-                                    }
-                                    break;
-                                }
+
+
+//                                for(String imageUrl : mDateline.getPhotoList()) {
+//                                    if(imageUrl.contains("http") || imageUrl.contains("https")){
+//                                        KakaoLink kakaoLink = KakaoLink.getKakaoLink(mActivity);
+//
+//                                        final KakaoTalkLinkMessageBuilder kakaoTalkLinkMessageBuilder = kakaoLink.createKakaoTalkLinkMessageBuilder();
+//                                        kakaoTalkLinkMessageBuilder
+//                                                .addText(mDateline.getSummarize("hash"))
+//                                                .addImage(imageUrl, 320, 280);
+//
+//                                        kakaoLink.sendMessage(kakaoTalkLinkMessageBuilder, mActivity);
+//                                    } else {
+//                                        Bitmap bitmap = BitmapFactory.decodeFile(imageUrl);
+//                                        ExifInterface ei = new ExifInterface(imageUrl);
+//                                        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
+//
+//                                        switch(orientation) {
+//
+//                                            case ExifInterface.ORIENTATION_ROTATE_90:
+//                                                bitmap = AppUtils.rotateBitmap(bitmap, 90);
+//                                                break;
+//
+//                                            case ExifInterface.ORIENTATION_ROTATE_180:
+//                                                bitmap = AppUtils.rotateBitmap(bitmap, 180);
+//                                                break;
+//
+//                                            case ExifInterface.ORIENTATION_ROTATE_270:
+//                                                bitmap = AppUtils.rotateBitmap(bitmap, 270);
+//                                                break;
+//
+//                                            case ExifInterface.ORIENTATION_NORMAL:
+//
+//                                            default:
+//                                                break;
+//                                        }
+//
+//                                        StorageReference profileRef = mStorageReference.child(String.format("profiles/%s/%s", mPreference.getUserUid(), imageUrl));
+//                                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//
+//                                        bitmap.compress(Bitmap.CompressFormat.JPEG, 30, baos);
+//                                        byte[] dataCompress = baos.toByteArray();
+//                                        final int width = bitmap.getWidth();
+//                                        final int height = bitmap.getHeight();
+//                                        UploadTask uploadTask = profileRef.putBytes(dataCompress);
+//                                        uploadTask.addOnFailureListener(new OnFailureListener() {
+//                                            @Override
+//                                            public void onFailure(Exception exception) {
+//                                            }
+//                                        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//                                            @Override
+//                                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//                                                String stringUrl = taskSnapshot.getDownloadUrl().toString();
+//                                                try {
+//                                                    KakaoLink kakaoLink = KakaoLink.getKakaoLink(mActivity);
+//
+//                                                    final KakaoTalkLinkMessageBuilder kakaoTalkLinkMessageBuilder = kakaoLink.createKakaoTalkLinkMessageBuilder();
+//                                                    kakaoTalkLinkMessageBuilder
+//                                                            .addText(mDateline.getSummarize("hash"))
+//                                                            .addImage(stringUrl, width, height);
+//
+//                                                    kakaoLink.sendMessage(kakaoTalkLinkMessageBuilder, mActivity);
+//
+//                                                } catch (KakaoParameterException e) {
+//                                                    e.printStackTrace();
+//                                                }
+//                                            }
+//                                        });
+//                                    }
+//                                    break;
+//                                }
+
+
+
                             } else {
                                 try {
                                     KakaoLink kakaoLink = KakaoLink.getKakaoLink(mActivity);
@@ -265,6 +318,41 @@ public class ShareDialog extends Dialog {
                 case R.id.btn_etc:{
                     Intent share = new Intent(Intent.ACTION_SEND);
                     if(mDateline.getPhotoList().size() > 0 ) {
+
+
+                        // Create Collage //
+                        int photo_cnt=0;
+                        Bitmap bitmap_target =null;
+                        bitmap_target=collage_gen(mDateline);
+
+                        String root = Environment.getExternalStorageDirectory().toString();
+                        File myDir = new File(root + "/days_resample_images"); //
+
+                        if(myDir.exists() && myDir.isDirectory()) {
+                            // do nothing
+                        }else{
+                            myDir.mkdirs();
+                        }
+
+                        String fname = "Days_Moment_upload" + ".days";
+                        File file = new File(myDir, fname);
+                        String days_moment_resample_image=file.toString();
+
+                        if (file.exists())
+                            file.delete();
+
+                        try {
+                            FileOutputStream out = new FileOutputStream(file);
+                            bitmap_target.compress(Bitmap.CompressFormat.JPEG, 50, out);
+                            out.flush();
+                            out.close();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+
+
+
                         String imageUrl = mDateline.getPhotoList().get(0);
                         share.setType("image/*");
                         share.putExtra(Intent.EXTRA_SUBJECT, AppUtils.getAppText(R.string.app_name));
@@ -273,7 +361,9 @@ public class ShareDialog extends Dialog {
                         if(imageUrl.contains("http") || imageUrl.contains("https")) {
                             share.putExtra(Intent.EXTRA_STREAM, Uri.parse(imageUrl));
                         } else {
-                            share.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + imageUrl));
+                            share.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + days_moment_resample_image));
+//                            share.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + imageUrl));
+//                            share.putExtra(Intent.EXTRA_STREAM, days_moment_resample_image);
                         }
                     } else {
                         share.setType("text/plain");
@@ -292,6 +382,8 @@ public class ShareDialog extends Dialog {
         }
 
     };
+
+
 
 
 }

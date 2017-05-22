@@ -27,7 +27,39 @@
                 />
         </android.support.v7.widget.Toolbar>
 
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp">
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <TextView
+                android:id="@+id/textView3"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text=" 백업을 시작할 날짜와 끝 날짜를 선택해 주세요"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textView4"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text=" 사진의 용량은 JPEG 표준 압축에 의해 원본 파일의 30% 수준으로 줄어듭니다 "
+                android:textStyle="bold" />
+
+        </LinearLayout>
     </android.support.design.widget.AppBarLayout>
+
+
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -38,15 +70,16 @@
             android:id="@+id/view_calendar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbarStyle="outsideOverlay"
-            android:clipToPadding="false"
             android:background="@color/white"
+            android:clipToPadding="false"
+            android:scrollbarStyle="outsideOverlay"
             app:tsquare_dayBackground="@drawable/color_calendar_cell"
-            app:tsquare_headerTextColor="@color/light_black"
-            app:tsquare_titleTextColor="@color/light_black"
-            app:tsquare_dividerColor="@color/light_grey"
             app:tsquare_dayTextColor="@color/color_calendar_text"
-            />
+            app:tsquare_dividerColor="@color/light_grey"
+            app:tsquare_headerTextColor="@color/light_black"
+            app:tsquare_titleTextColor="@color/light_black" />
     </LinearLayout>
+
+
 
 </android.support.design.widget.CoordinatorLayout>

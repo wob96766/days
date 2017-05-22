@@ -338,7 +338,7 @@ public class DatelineModel implements Parcelable {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, 0);
         String DateToday = dateFormat.format(cal.getTime()); //your formatted date here
-        cal.add(Calendar.DATE, -2);
+        cal.add(Calendar.DATE, -1);
         String DateYesterday = dateFormat.format(cal.getTime()); //your formatted date here
 
 //        if(mSentence == null || mSentence.equals("") || DateInMomeent.equals(DateToday) ) {   // This is only for debugging

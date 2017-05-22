@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
@@ -18,6 +20,7 @@ import android.os.StatFs;
 
 import com.mindspree.days.AppApplication;
 import com.mindspree.days.engine.ClusterEngine;
+import com.mindspree.days.model.DatelineModel;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -348,6 +351,217 @@ public class AppUtils {
         return resizedBitmap;
     }
 
+
+    public static Bitmap collage_gen(DatelineModel mDateline)
+    {
+        int photo_cnt=0;
+        Bitmap bitmap_2photo_target =null;
+        Bitmap bitmap_3photo_target =null;
+        for(String imageUrl : mDateline.getPhotoList()) {
+            if (imageUrl.contains("http") || imageUrl.contains("https")) {
+            }else {
+                Bitmap bitmap = BitmapFactory.decodeFile(imageUrl);
+                if(bitmap.getHeight()>200)
+                    photo_cnt++;
+            }
+
+            if(photo_cnt==3)
+                break;
+        }
+
+
+        Bitmap[] bitmapArray = new Bitmap[photo_cnt];
+        for(int i=0;i<photo_cnt;i++){ // Becareful.... Rank 2 and 3 are processed first.
+            String imageUrl =mDateline.getPhotoList().get(i).toString();
+
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(imageUrl, options);
+
+            int imgHeight = options.outHeight;
+            int sample_size =2;
+
+            if(imgHeight<2000)
+                sample_size =1 ;
+            else if(imgHeight >=2000)
+                sample_size =2 ;
+
+            BitmapFactory.Options bitmap_options = new BitmapFactory.Options();
+            bitmap_options.inPreferredConfig = Bitmap.Config.RGB_565;
+            bitmap_options.inSampleSize = sample_size;
+            bitmapArray[i] = BitmapFactory.decodeFile(imageUrl, bitmap_options);
+
+
+            int orientation =1;
+            ExifInterface ei = null;
+            try {
+                ei = new ExifInterface(imageUrl);
+                orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+                        ExifInterface.ORIENTATION_UNDEFINED);
+
+            } catch (Exception e) {
+                //e.printStackTrace();
+
+                orientation = ExifInterface.ORIENTATION_NORMAL;
+            }
+            switch(orientation) {
+
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    bitmapArray[i] = AppUtils.rotateBitmap(bitmapArray[i], 90);
+                    break;
+
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    bitmapArray[i] = AppUtils.rotateBitmap(bitmapArray[i], 180);
+                    break;
+
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    bitmapArray[i] = AppUtils.rotateBitmap(bitmapArray[i], 270);
+                    break;
+
+                case ExifInterface.ORIENTATION_NORMAL:
+                default:
+                    break;
+            }
+
+
+        }
+
+
+        if(photo_cnt==2){
+            if( (bitmapArray[0].getWidth() >= bitmapArray[0].getHeight()) && (bitmapArray[1].getWidth() >= bitmapArray[1].getHeight()) ) {
+                // Both of them are landscape . Add upd and down
+                bitmap_2photo_target=AppUtils.combineImages_updown(bitmapArray[0],bitmapArray[1]);
+            }else{
+                // Portrait and landscape or Landscape and portrait
+                bitmap_2photo_target=AppUtils.combineImages_side(bitmapArray[0],bitmapArray[1]);
+            }
+
+        }else if(photo_cnt==3) {
+
+            if( (bitmapArray[1].getWidth() >= bitmapArray[1].getHeight()) && (bitmapArray[2].getWidth() >= bitmapArray[2].getHeight()) ) {
+                // Both of them are landscape . Add upd and down
+                bitmap_2photo_target=AppUtils.combineImages_updown(bitmapArray[1],bitmapArray[2]);
+            }else{
+                // Portrait and landscape or Landscape and portrait
+                bitmap_2photo_target=AppUtils.combineImages_side(bitmapArray[1],bitmapArray[2]);
+            }
+
+            if(  bitmapArray[0].getWidth() >= bitmapArray[0].getHeight()  ){
+                // Rank 1 is Landscape
+                // addd up and down
+                bitmap_2photo_target=AppUtils.combineImages_side(bitmapArray[1],bitmapArray[2]);
+                bitmap_3photo_target=AppUtils.combineImages_updown(bitmapArray[0],bitmap_2photo_target);
+
+            }else{
+                // Rank 1 is Portrait
+                // addd side by side
+                bitmap_2photo_target=AppUtils.combineImages_updown(bitmapArray[1],bitmapArray[2]);
+                bitmap_3photo_target=AppUtils.combineImages_side(bitmapArray[0],bitmap_2photo_target);
+            }
+
+
+
+
+        }
+
+        return bitmap_3photo_target;
+
+
+    }
+
+
+    public static Bitmap combineImages_side(Bitmap c, Bitmap s) { // can add a 3rd parameter 'String loc' if you want to save the new image - left some code to do that at the bottom
+        Bitmap cs = null;
+
+        int width, height = 0;
+
+        // Resizing
+        if ( (c.getHeight() > s.getHeight()) ){
+            c= Bitmap.createScaledBitmap(c,  Math.round( (float)c.getWidth() * (float)s.getHeight() / (float)c.getHeight()  ), s.getHeight(), true);
+        }else{
+            s= Bitmap.createScaledBitmap(s,  Math.round( (float)s.getWidth() * (float)c.getHeight() / (float)s.getHeight()  ), c.getHeight(), true);
+        }
+
+
+        if(c.getWidth() > s.getWidth()) {
+            width = c.getWidth() + s.getWidth();
+            height = c.getHeight();
+        } else {
+            width = s.getWidth() + s.getWidth();
+            height = c.getHeight();
+        }
+
+        Bitmap image = Bitmap.createBitmap(20, height, Bitmap.Config.ARGB_8888);
+        image.eraseColor(Color.WHITE);
+
+        cs = Bitmap.createBitmap(width+20, height, Bitmap.Config.ARGB_8888);
+
+        Canvas comboImage = new Canvas(cs);
+
+        comboImage.drawBitmap(c, 0f, 0f, null);
+        comboImage.drawBitmap(image, c.getWidth(), 0f, null);
+        comboImage.drawBitmap(s, c.getWidth()+20, 0f, null);
+
+        // this is an extra bit I added, just incase you want to save the new image somewhere and then return the location
+    /*String tmpImg = String.valueOf(System.currentTimeMillis()) + ".png";
+
+    OutputStream os = null;
+    try {
+      os = new FileOutputStream(loc + tmpImg);
+      cs.compress(CompressFormat.PNG, 100, os);
+    } catch(IOException e) {
+      Log.e("combineImages", "problem combining images", e);
+    }*/
+
+        return cs;
+    }
+
+
+    public static Bitmap combineImages_updown(Bitmap c, Bitmap s) { // can add a 3rd parameter 'String loc' if you want to save the new image - left some code to do that at the bottom
+        Bitmap cs = null;
+
+        int width, height = 0;
+
+        // Resizing
+        if ( (c.getWidth() > s.getWidth()) ){
+            c= Bitmap.createScaledBitmap(c, s.getWidth(), Math.round( (float)c.getHeight() * (float)s.getWidth() / (float)c.getWidth()  ), true);
+        }else{
+            s= Bitmap.createScaledBitmap(s, c.getWidth(), Math.round( (float)s.getHeight() * (float)c.getWidth() / (float)s.getWidth()  ), true);
+        }
+
+
+        if(c.getWidth() > s.getWidth()) {
+            width = c.getWidth();
+            height = c.getHeight() + s.getHeight();
+        } else {
+            width = s.getWidth();
+            height = c.getHeight() + s.getHeight();
+        }
+
+        Bitmap image = Bitmap.createBitmap(width, 20, Bitmap.Config.ARGB_8888);
+        image.eraseColor(Color.WHITE);
+
+        cs = Bitmap.createBitmap(width, height+20, Bitmap.Config.ARGB_8888);
+
+        Canvas comboImage = new Canvas(cs);
+
+        comboImage.drawBitmap(c, 0f, 0f, null);
+        comboImage.drawBitmap(image, 0f, c.getHeight(), null);
+        comboImage.drawBitmap(s, 0f, c.getHeight()+20, null);
+
+        // this is an extra bit I added, just incase you want to save the new image somewhere and then return the location
+    /*String tmpImg = String.valueOf(System.currentTimeMillis()) + ".png";
+
+    OutputStream os = null;
+    try {
+      os = new FileOutputStream(loc + tmpImg);
+      cs.compress(CompressFormat.PNG, 100, os);
+    } catch(IOException e) {
+      Log.e("combineImages", "problem combining images", e);
+    }*/
+
+        return cs;
+    }
 
 
     public static Bitmap downsampleImageFile(String filelocation, int target_ratio_short, int target_ratio_long){
