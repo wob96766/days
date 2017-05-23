@@ -125,6 +125,7 @@ public class MainActivity extends BaseActivity {
     public FaceDetector fdetector;
     // DNN related : Added by Mindspree
     public static String [] DNN_path=null;
+    private ArrayList<TimelineModel> mTimelineList = new ArrayList<TimelineModel>();
 
     public static void startActivity(Context context) {
         final Intent intent = new Intent(context, MainActivity.class);
@@ -193,14 +194,12 @@ public class MainActivity extends BaseActivity {
         asynctask_flag = false;
         asynctask_again_flag =false;
 
-        ArrayList<TimelineModel> timelineList = mDBWrapper.getNonameTimelineList();
-        for(int i=0 ; i<timelineList.size() ; i++) {
-            TimelineModel item = timelineList.get(i);
+        mTimelineList = mDBWrapper.getNonameTimelineList();
+        for(int i=0 ; i<mTimelineList.size() ; i++) {
+            TimelineModel item = mTimelineList.get(i);
 
             mHttpClient.RequestPOI(getContext(), item.getLatitude(), item.getLongitude(), getAppText(R.string.foursquare_key), item, mAsyncHttpResponse);
-            if(i >= timelineList.size()-1){
-                sendBroadcast(new Intent(AppConfig.Broadcast.REFRESH_DATA));
-            }
+
         }
 
         fdetector = new FaceDetector.Builder(getApplicationContext())
@@ -1057,6 +1056,11 @@ public class MainActivity extends BaseActivity {
                                 FoursquareModel model = FoursquareModel.parseData(data);
                                 TimelineModel timeline = (TimelineModel)tag;
                                 mDBWrapper.setLocation(timeline.mLocationId, model.mName, model.mCategory);
+                                if(mTimelineList.size() > 0) {
+                                    if (model.equals(mTimelineList.get(mTimelineList.size()))) {
+                                        sendBroadcast(new Intent(AppConfig.Broadcast.REFRESH_DATA));
+                                    }
+                                }
                             }
                         } catch (Exception e) {
                             //showToast(getString(R.string.message_network_error));

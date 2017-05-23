@@ -709,6 +709,7 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(COLUMN_NAME, title);
         values.put(COLUMN_LATITUDE, latitude);
         values.put(COLUMN_LONGITUDE, longitude);
+        values.put(COLUMN_LOCK, 1);
 
         database.update(TABLE_LOCATIONS, values, COLUMN_LOCATION_INDEX + " =? ", new String[]{String.format("%d", locationId)});
     }

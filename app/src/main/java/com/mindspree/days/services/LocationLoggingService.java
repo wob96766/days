@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -415,9 +416,15 @@ public class LocationLoggingService extends Service {
     //  register a notificaiton to NotificationManager
     private void sendNotification(String title, String message, int messageId) {
         if(mPreference.getPushOnOff()) {
-            Intent intent = new Intent(this, LandingActivity.class);
+            /*Intent intent = new Intent(this, LandingActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);*/
+            Intent i = new Intent();
+            i.setAction(Intent.ACTION_VIEW);
+            i.addCategory(Intent.CATEGORY_DEFAULT);
+            i.addCategory(Intent.CATEGORY_BROWSABLE);
+            i.setData(Uri.parse("mindspree://days"));
+            PendingIntent  pendingIntent = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
 
             NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             Bitmap bm = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
