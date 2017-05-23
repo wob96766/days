@@ -87,18 +87,18 @@ public class TutorialActivity extends BaseActivity {
         @Override
         public void onClick(View view) {
             switch (view.getId()) {
-                case R.id.text_prev:
-                    if(mViewPager.getCurrentItem() > 0) {
-                        mViewPager.setCurrentItem(mViewPager.getCurrentItem() - 1);
-                    }
-                    setActionButton();
-                    break;
+//                case R.id.text_prev:
+//                    if(mViewPager.getCurrentItem() > 0) {
+//                        mViewPager.setCurrentItem(mViewPager.getCurrentItem() - 1);
+//                    }
+//                    setActionButton();
+//                    break;
                 case R.id.text_next:
-                    if(mViewPager.getCurrentItem() < MAX_TAB_NUM-1) {
-                        mViewPager.setCurrentItem(mViewPager.getCurrentItem() +1);
-                    } else{
+//                    if(mViewPager.getCurrentItem() < MAX_TAB_NUM-1) {
+//                        mViewPager.setCurrentItem(mViewPager.getCurrentItem() +1);
+//                    } else{
                         finish();
-                    }
+//                    }
                     setActionButton();
                     break;
             }
@@ -107,9 +107,9 @@ public class TutorialActivity extends BaseActivity {
 
     private void setActionButton() {
         int position = mViewPager.getCurrentItem();
-        if(position > 0)
-            mTextPrev.setVisibility(View.VISIBLE);
-        else
+        if(position > 0) {
+            //mTextPrev.setVisibility(View.VISIBLE);
+        }else
             mTextPrev.setVisibility(View.INVISIBLE);
         if(position <= MAX_TAB_NUM-1)
             mTextNext.setVisibility(View.VISIBLE);
