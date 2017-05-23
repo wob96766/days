@@ -52,8 +52,8 @@ public class CameraServiceReciever extends BroadcastReceiver {
 
         try {
 
-            if (AppUtils.datediffinminutes(now, dateFormat.parse(model.getMeasureDate())) >= (mPreference.getDuration()/2)) {
-                if (dbLocation.distanceTo(location) > mPreference.getDistance()) {
+            if (AppUtils.datediffinminutes(now, dateFormat.parse(model.getCreateDate())) >= (mPreference.getDuration() * 3 / 2)) {
+                if (dbLocation.distanceTo(location) > mPreference.getDistance() * 2) {
                     sendAnalyticsEvent(mPreference.getUserUid(), "photo_location", String.format("%f,%f",location.getLatitude(), location.getLongitude()));
                     mDBWrapper.insertLocationAminute(location.getLatitude(), location.getLongitude());
                 }
