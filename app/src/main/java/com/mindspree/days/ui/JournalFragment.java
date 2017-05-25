@@ -176,63 +176,63 @@ public class JournalFragment extends BaseFragment{
                 case R.id.image_thumnail1: {
                     DatelineModel model = mAdapter.getItem(position);
                     if (model.getPhotoList().size() > 0) {
-                        ImageviewActivity.startActivity(getContext(), model.getPhotoString());
+                        ImageviewActivity.startActivity(getContext(), model.getPhotoString(), model.getPhotoList().get(0));
                     }
                 }
                 break;
                 case R.id.image_thumnail2:{
                     DatelineModel model = mAdapter.getItem(position);
                     if (model.getPhotoList().size() > 1) {
-                        ImageviewActivity.startActivity(getContext(), model.getPhotoString());
+                        ImageviewActivity.startActivity(getContext(), model.getPhotoString(), model.getPhotoList().get(1));
                     }
                 }
                 break;
                 case R.id.image_thumnail3: {
                     DatelineModel model = mAdapter.getItem(position);
                     if (model.getPhotoList().size() > 2) {
-                        ImageviewActivity.startActivity(getContext(), model.getPhotoString());
+                        ImageviewActivity.startActivity(getContext(), model.getPhotoString(), model.getPhotoList().get(2));
                     }
                 }
                     break;
                 case R.id.image_thumnail4:{
                     DatelineModel model = mAdapter.getItem(position);
                     if (model.getPhotoList().size() > 3) {
-                        ImageviewActivity.startActivity(getContext(), model.getPhotoString());
+                        ImageviewActivity.startActivity(getContext(), model.getPhotoString(), model.getPhotoList().get(3));
                     }
                 }
                 break;
                 case R.id.image_thumnail5: {
                     DatelineModel model = mAdapter.getItem(position);
                     if (model.getPhotoList().size() > 4) {
-                        ImageviewActivity.startActivity(getContext(), model.getPhotoString());
+                        ImageviewActivity.startActivity(getContext(), model.getPhotoString(), model.getPhotoList().get(4));
                     }
                 }
                 break;
                 case R.id.image_thumnail6: {
                     DatelineModel model = mAdapter.getItem(position);
                     if (model.getPhotoList().size() > 5) {
-                        ImageviewActivity.startActivity(getContext(), model.getPhotoString());
+                        ImageviewActivity.startActivity(getContext(), model.getPhotoString(), model.getPhotoList().get(5));
                     }
                 }
                 break;
                 case R.id.image_thumnail7:{
                     DatelineModel model = mAdapter.getItem(position);
                     if (model.getPhotoList().size() > 6) {
-                        ImageviewActivity.startActivity(getContext(), model.getPhotoString());
+                        ImageviewActivity.startActivity(getContext(), model.getPhotoString(), model.getPhotoList().get(6));
                     }
                 }
                 break;
                 case R.id.image_thumnail8: {
                     DatelineModel model = mAdapter.getItem(position);
                     if (model.getPhotoList().size() > 7) {
-                        ImageviewActivity.startActivity(getContext(), model.getPhotoString());
+                        ImageviewActivity.startActivity(getContext(), model.getPhotoString(), model.getPhotoList().get(7));
                     }
                 }
                 break;
                 case R.id.image_thumnail9: {
                     DatelineModel model = mAdapter.getItem(position);
                     if (model.getPhotoList().size() > 8) {
-                        ImageviewActivity.startActivity(getContext(), model.getPhotoString());
+                        ImageviewActivity.startActivity(getContext(), model.getPhotoString(), model.getPhotoList().get(8));
                     }
                 }
                 break;

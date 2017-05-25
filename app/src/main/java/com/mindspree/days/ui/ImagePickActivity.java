@@ -29,13 +29,20 @@ public class ImagePickActivity extends BaseActivity {
 	private LinearLayout mHorizontalView;
     private TimelineModel mTimelineModel;
     private DBWrapper mDBWrapper;
+    private String mFileName ="";
 
-	public static void startActivity(Context context, TimelineModel timeline) {
+    public static void startActivity(Context context, TimelineModel timeline) {
 		Intent intent = new Intent(context, ImagePickActivity.class);
 		intent.putExtra(AppConfig.IntentParam.TIMELINE, timeline);
 		context.startActivity(intent);
 	}
-	
+
+    public static void startActivity(Context context,  TimelineModel timeline, String selectedFilename) {
+        Intent intent = new Intent(context, ImagePickActivity.class);
+        intent.putExtra(AppConfig.IntentParam.TIMELINE, timeline);
+        intent.putExtra(AppConfig.IntentParam.FILENAME, selectedFilename);
+        context.startActivity(intent);
+    }
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -92,6 +99,7 @@ public class ImagePickActivity extends BaseActivity {
 	private void initData(){
         mDBWrapper = new DBWrapper(mPreference.getUserUid());
 		mTimelineModel = getIntent().getParcelableExtra(AppConfig.IntentParam.TIMELINE);
+        mFileName = getIntent().getStringExtra(AppConfig.IntentParam.FILENAME);
 	}
 	
 	private void initView(){
@@ -112,13 +120,20 @@ public class ImagePickActivity extends BaseActivity {
 		mHorizontalView = (LinearLayout)aq.id(R.id.view_photo).getView();
 
         requestImage();
+
+
 		aq.dismiss();
 	}
 
     private void requestImage() {
         final ArrayList<String> images = mTimelineModel.getImageList();
         if(images.size() > 0) {
-            Glide.with(getContext()).load(images.get(0)).into(mImageMain);
+            if(!mFileName.equals("")) {
+                Glide.with(getContext()).load(mFileName).into(mImageMain);
+            } else {
+                Glide.with(getContext()).load(images.get(0)).into(mImageMain);
+            }
+
 
             for (int i = 0; i < images.size(); i++) {
                 LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);

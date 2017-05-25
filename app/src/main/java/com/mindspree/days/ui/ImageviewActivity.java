@@ -30,13 +30,21 @@ public class ImageviewActivity extends BaseActivity {
 	private ViewPager mPager;
 	private TextView pageText;
 	private ImageView mBtnDownload;
+	private String mFileName = "";
 
 	public static void startActivity(Context context, String imageUrls) {
 		Intent intent = new Intent(context, ImageviewActivity.class);
 		intent.putExtra(AppConfig.IntentParam.IMAGE, imageUrls);
 		context.startActivity(intent);
 	}
-	
+
+	public static void startActivity(Context context, String imageUrls, String selectedFilename) {
+		Intent intent = new Intent(context, ImageviewActivity.class);
+		intent.putExtra(AppConfig.IntentParam.IMAGE, imageUrls);
+		intent.putExtra(AppConfig.IntentParam.FILENAME, selectedFilename);
+		context.startActivity(intent);
+	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -68,6 +76,7 @@ public class ImageviewActivity extends BaseActivity {
 	private void initData(){
 		String[] imgs = getIntent().getStringExtra(AppConfig.IntentParam.IMAGE).split(Pattern.quote(","));
 		mImages = new ArrayList<String>(Arrays.asList(imgs));
+		mFileName = getIntent().getStringExtra(AppConfig.IntentParam.FILENAME);
 		
 		mImageAdapter = new ImageFragmentAdapter(getSupportFragmentManager(), getContext());
 		mImageAdapter.setDataSource(mImages);
@@ -77,12 +86,20 @@ public class ImageviewActivity extends BaseActivity {
 	private void initView(){
 		
 		AQuery aq = new AQuery(this);
-
+		int position = 1;
 		mPager = (ViewPager)aq.id(R.id.view_pager).getView();
 		mPager.addOnPageChangeListener(mOnPageChangeListener);
 		mImageAdapter.setDataSource(mImages);
 		mPager.setAdapter(mImageAdapter);
-		pageText = aq.id(R.id.text_pager).text("1 / " + mImages.size()).getTextView();
+		if(!mFileName.equals("")) {
+			for(int i=0 ; i<mImages.size() ; i++) {
+				if(mImages.get(i).equals(mFileName)) {
+					mPager.setCurrentItem(i);
+					position = i;
+				}
+			}
+		}
+		pageText = aq.id(R.id.text_pager).text(String.format("%d / %d", position, mImages.size())).getTextView();
 		aq.id(R.id.btn_close).clicked(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {

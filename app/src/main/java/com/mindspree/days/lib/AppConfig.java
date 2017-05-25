@@ -112,6 +112,7 @@ public class AppConfig {
         public static final String EMAIL 					= "EMAIL";
         public static final String PASSWORD 		        = "PASSWORD";
         public static final String IMAGE 					= "IMAGE";
+        public static final String FILENAME 					= "FILENAME";
         public static final String TEXT 					= "TEXT";
         public static final String TIMELINE 				= "TIMELINE";
         public static final String DATELINE 				= "DATELINE";

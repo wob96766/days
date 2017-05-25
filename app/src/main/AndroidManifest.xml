@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.mindspree.days">
 
+    <uses-sdk
+        android:minSdkVersion="21"
+        android:targetSdkVersion="24" />
+
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.MEDIA_CONTENT_CONTROL" />
@@ -19,9 +23,9 @@
 
     <!-- <uses-feature android:name="android.hardware.camera2.full" /> -->
     <uses-feature android:name="android.hardware.camera2.full"
-        android:required="true"/>
+        android:required="false"/>
     <uses-feature android:name="android.hardware.camera"
-        android:required="true" />
+        android:required="false" />
     <uses-permission android:name="android.permission.CAMERA" />
 
     <application
