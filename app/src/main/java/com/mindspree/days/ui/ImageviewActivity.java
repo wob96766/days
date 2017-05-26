@@ -94,24 +94,27 @@ public class ImageviewActivity extends BaseActivity {
 		if(!mFileName.equals("")) {
 			for(int i=0 ; i<mImages.size() ; i++) {
 				if(mImages.get(i).equals(mFileName)) {
-					mPager.setCurrentItem(i);
+
 					position = i;
+					break;
 				}
 			}
 		}
 		pageText = aq.id(R.id.text_pager).text(String.format("%d / %d", position, mImages.size())).getTextView();
-		aq.id(R.id.btn_close).clicked(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				finishActivity();
-			}
-		});
 		mBtnDownload = aq.id(R.id.btn_download).clicked(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				downloadImage(mImages.get(mPager.getCurrentItem()));
 			}
 		}).getImageView();
+		mPager.setCurrentItem(position);
+		aq.id(R.id.btn_close).clicked(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				finishActivity();
+			}
+		});
+
 		aq.dismiss();
 	}
 
