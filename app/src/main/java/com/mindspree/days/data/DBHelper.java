@@ -1578,7 +1578,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public void restoreDaily(String userUid, Daily item) {
-        Cursor cursor = database.query(TABLE_DAILY, null,  String.format("date(%s) = ? and date(%s) = date(?) ", COLUMN_CREATE_DATE, COLUMN_USER_ID), new String[]{item.create_date, userUid}, null, null, COLUMN_CREATE_DATE+ " DESC", null);
+        Cursor cursor = database.query(TABLE_DAILY, null,  String.format("date(%s) = ? and %s = ? ", COLUMN_CREATE_DATE, COLUMN_USER_ID), new String[]{item.create_date, userUid}, null, null, COLUMN_CREATE_DATE+ " DESC", null);
         try {
             if(cursor.getCount() > 0){
             } else {
@@ -1607,6 +1607,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 final ContentValues values = new ContentValues();
 
                 values.put(COLUMN_FILE_URL, item.file_url);
+                values.put(COLUMN_FILE_LOCATION, item.file_location);
                 values.put(COLUMN_FILE_NAME, item.file_name);
                 values.put(COLUMN_IS_BEST, item.is_best);
                 values.put(COLUMN_CLUSER_ID, item.cluster_id);
@@ -1621,9 +1622,10 @@ public class DBHelper extends SQLiteOpenHelper {
                 values.put(COLUMN_DELETE_CHECK, item.delete_check);
                 values.put(COLUMN_UPDATE_DATE, item.update_date);
                 values.put(COLUMN_PHOTO_SIZE, item.photo_size);
+                values.put(COLUMN_FLAG, item.flag);
                 values.put(COLUMN_SORTSEQ, item.sortseq);
                 values.put(COLUMN_USER_ID, item.user_id);
-                values.put(COLUMN_FLAG, item.flag);
+
 
                 database.insert(TABLE_PHOTOS, null, values);
             }
