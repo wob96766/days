@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.mindspree.days.R;
 import com.mindspree.days.model.SearchModel;
+import com.mindspree.days.ui.MainActivity;
 
 import java.util.ArrayList;
 
@@ -62,7 +63,10 @@ public class AutoCompleteAdapter extends BaseAdapter {
         }
 
         holder.mTextTitle.setText(m_List.get(position).title);
+        holder.mTextTitle.setTypeface(MainActivity.mTypeface);
+
         holder.mTextSubTitle.setText(m_List.get(position).address);
+        holder.mTextSubTitle.setTypeface(MainActivity.mTypeface);
 
         return convertView;
     }

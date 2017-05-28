@@ -209,6 +209,7 @@ public class TodayFragment extends BaseFragment{
         mSentence = mDBWrapper.getSentence();
         mSentence.mWeather = weather;
         mTextSentence.setText(mSentence.getSummarize());
+
         mTextMood.setText(mSentence.mMood);
         mTextPhotocount.setText(String.format("%d",mSentence.mPhotoCount));
         mTextLocationcount.setText(String.format("%d",mSentence.mLocationCount));
@@ -328,6 +329,14 @@ public class TodayFragment extends BaseFragment{
                 if(iconId>0) {
                     mTextMood.setCompoundDrawablesWithIntrinsicBounds(iconId, 0, 0, 0);
                 }
+
+
+        // Change font
+        mTextSentence.setTypeface(MainActivity.mTypeface);
+        mTextDaysbot.setTypeface(MainActivity.mBoldTypeface);
+        mTextYearMonth.setTypeface(MainActivity.mBoldTypeface);
+        mTextDate.setTypeface(MainActivity.mBoldTypeface);
+        mTextMood.setTypeface(MainActivity.mBoldTypeface);
 
         }
 

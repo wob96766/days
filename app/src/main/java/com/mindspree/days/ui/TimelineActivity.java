@@ -151,6 +151,7 @@ public class TimelineActivity extends BaseActivity {
         SentenceModel sentence = mPhotoWrapper.getSentence(mSelectedDate);
         sentenceModel = sentence;
         mTextSentence.setText(sentence.getSummarize());
+        mTextSentence.setTypeface(MainActivity.mTypeface);
 //        mTextPhotocount.setText(sentence.mPhotoCount);
 //        mTextLocationcount.setText(sentence.mLocationCount);
     }

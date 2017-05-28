@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -39,6 +40,10 @@ public class JournalFragment extends BaseFragment{
     private BroadcastReceiver mRefreshCast;
     private boolean mIsLoaded = false;
     private int mNextpage = 0;
+
+
+    public Typeface mTypeface;
+    public Typeface mBoldTypeface;
 
 
     @Override

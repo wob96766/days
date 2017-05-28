@@ -16,6 +16,7 @@ import com.bumptech.glide.Glide;
 import com.mindspree.days.R;
 import com.mindspree.days.interfaces.OnItemClickListener;
 import com.mindspree.days.model.TimelineModel;
+import com.mindspree.days.ui.MainActivity;
 import com.mindspree.days.ui.TimelineActivity;
 
 import java.io.BufferedReader;
@@ -124,8 +125,9 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
         holder.mTextSubTitle.setText(mDataSource.get(position).getName());
         holder.mTextContent.setText(mDataSource.get(position).getSummarize(mContext));
 
-
-
+        holder.mTextTitle.setTypeface(MainActivity.mTypeface);
+        holder.mTextSubTitle.setTypeface(MainActivity.mTypeface);
+        holder.mTextContent.setTypeface(MainActivity.mTypeface);
     }
 
 

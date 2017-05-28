@@ -1,6 +1,7 @@
 package com.mindspree.days.adapter;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.Display;
@@ -16,6 +17,8 @@ import com.bumptech.glide.Glide;
 import com.mindspree.days.R;
 import com.mindspree.days.interfaces.OnItemClickListener;
 import com.mindspree.days.model.DatelineModel;
+import com.mindspree.days.ui.BaseActivity;
+import com.mindspree.days.ui.MainActivity;
 
 
 import java.util.ArrayList;
@@ -99,11 +102,18 @@ public class DatelineAdapter extends RecyclerView.Adapter<DatelineAdapter.MyView
             /*Picasso.with(mContext).load(R.drawable.background_white_round).into(holder.mThumnail);*/
         }
         holder.mTextContent.setText(mDataSource.get(position).getSummarize("sentence"));
+        holder.mTextContent.setTypeface(MainActivity.mTypeface);
+
         holder.mTextContent_hash.setText(mDataSource.get(position).getSummarize("hash"));
-//        holder.mTextContenth.setText(mDataSource.get(position).getSummarize());
+        holder.mTextContent_hash.setTypeface(MainActivity.mTypeface);
 
         holder.mTextDay.setText(mDataSource.get(position).getDayFormat());
+        holder.mTextDay.setTypeface(MainActivity.mTypeface);
+
         holder.mTextMonth.setText(mDataSource.get(position).getMonthFormat());
+        holder.mTextMonth.setTypeface(MainActivity.mTypeface);
+
+        //        holder.mTextContenth.setText(mDataSource.get(position).getSummarize());
     }
 
     @Override

@@ -10,6 +10,7 @@ import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.ImageFormat;
+import android.graphics.Typeface;
 import android.hardware.Camera;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
@@ -121,6 +122,8 @@ public class MainActivity extends BaseActivity {
     public int rear_cam_width ;
     public int front_cam_width ;
 
+    public static Typeface mTypeface;
+    public static Typeface mBoldTypeface;
 
     public FaceDetector fdetector;
     // DNN related : Added by Mindspree
@@ -138,6 +141,16 @@ public class MainActivity extends BaseActivity {
         overridePendingTransition(R.anim.slide_in_up, R.anim.hold);
         setContentView(R.layout.activity_main);
 
+        // Custom font regrestration
+        try
+        {
+            mTypeface = Typeface.createFromAsset(getAssets(), "fonts/OSeongandHanEum-Regular.ttf");
+            mBoldTypeface = Typeface.createFromAsset(getAssets(), "fonts/OSeongandHanEum-Bold.ttf");
+        } catch (Exception e)
+        {
+            mTypeface = Typeface.DEFAULT;
+            mBoldTypeface = Typeface.DEFAULT_BOLD;
+        }
 
         // Get camera information
         rear_cam_width=getCamerainfo(0);
@@ -368,7 +381,9 @@ public class MainActivity extends BaseActivity {
         mViewSetting = aq.id(R.id.view_setting).clicked(mOnClickListener).getView();
 
         mViewTitle = (TextView) findViewById(R.id.toolbar_logo);
-        mViewTitle.setText("Today");
+        mViewTitle.setText("오늘");
+        mViewTitle.setTypeface(mBoldTypeface);
+
 
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         mViewPager = (ViewPager) aq.id(R.id.container).getView();
@@ -399,7 +414,8 @@ public class MainActivity extends BaseActivity {
 
         switch (position) {
             case 0:
-                mViewTitle.setText("Today");
+                mViewTitle.setText("오늘");
+                mViewTitle.setTypeface(mBoldTypeface);
                 mViewToday.setBackgroundColor(Color.parseColor("#84c2fd"));
                 mViewSummarize.setBackgroundColor(Color.parseColor("#48afff"));
                 mViewJournal.setBackgroundColor(Color.parseColor("#48afff"));
@@ -412,7 +428,8 @@ public class MainActivity extends BaseActivity {
                 mViewPager.setCurrentItem(position);
                 break;
             case 1:
-                mViewTitle.setText("Calendar");
+                mViewTitle.setText("캘린더");
+                mViewTitle.setTypeface(mBoldTypeface);
                 mViewToday.setBackgroundColor(Color.parseColor("#48afff"));
                 mViewSummarize.setBackgroundColor(Color.parseColor("#84c2fd"));
                 mViewJournal.setBackgroundColor(Color.parseColor("#48afff"));
@@ -425,7 +442,8 @@ public class MainActivity extends BaseActivity {
                 mViewPager.setCurrentItem(position);
                 break;
             case 2:
-                mViewTitle.setText("Moment");
+                mViewTitle.setText("모멘트");
+                mViewTitle.setTypeface(mBoldTypeface);
                 mViewToday.setBackgroundColor(Color.parseColor("#48afff"));
                 mViewSummarize.setBackgroundColor(Color.parseColor("#48afff"));
                 mViewJournal.setBackgroundColor(Color.parseColor("#84c2fd"));
@@ -438,7 +456,8 @@ public class MainActivity extends BaseActivity {
                 mViewPager.setCurrentItem(position);
                 break;
             case 3:
-                mViewTitle.setText("Setting");
+                mViewTitle.setText("설정");
+                mViewTitle.setTypeface(mBoldTypeface);
                 mViewToday.setBackgroundColor(Color.parseColor("#48afff"));
                 mViewSummarize.setBackgroundColor(Color.parseColor("#48afff"));
                 mViewJournal.setBackgroundColor(Color.parseColor("#48afff"));
