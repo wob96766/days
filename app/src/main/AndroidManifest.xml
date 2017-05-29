@@ -243,6 +243,19 @@
             android:enabled="true">
         </service>
 
+        <service
+            android:name="com.mindspree.days.services.MyFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+
+        <service android:name="com.mindspree.days.services.FirebaseIDService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
+        </service>
+
         <receiver
             android:name="com.mindspree.days.services.LocationServiceReciever"
             android:enabled="true"
