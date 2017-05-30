@@ -328,6 +328,9 @@ public class DatelineModel implements Parcelable {
         return AppUtils.getDate(mUpdateDate, "yyyy-MM-dd");
     }
 
+
+
+
     // sentence_mode
     // hash --> return only hash
     // return --> only sentence
@@ -509,7 +512,7 @@ public class DatelineModel implements Parcelable {
                 } else if (poiList.size() > 6) {
                     int n = generator.nextInt(dnnModel.dailysummary_busy.length);
                     hash_string = hash_string + String.format("%s ", dnnModel.dailysummary_busy[n]);
-                    DNN_result.add(String.format("#%s","바쁨"));
+                    DNN_result.add(String.format("#%s#%s","바쁨","피곤"));
                 }
 
 

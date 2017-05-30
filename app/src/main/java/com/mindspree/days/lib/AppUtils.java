@@ -357,6 +357,7 @@ public class AppUtils {
         int photo_cnt=0;
         Bitmap bitmap_2photo_target =null;
         Bitmap bitmap_3photo_target =null;
+        Bitmap bitmap_target =null;
         for(String imageUrl : mDateline.getPhotoList()) {
             if (imageUrl.contains("http") || imageUrl.contains("https")) {
             }else {
@@ -426,8 +427,11 @@ public class AppUtils {
 
         }
 
+        if(photo_cnt==1){
 
-        if(photo_cnt==2){
+            bitmap_target= bitmapArray[0];
+
+        }if(photo_cnt==2){
             if( (bitmapArray[0].getWidth() >= bitmapArray[0].getHeight()) && (bitmapArray[1].getWidth() >= bitmapArray[1].getHeight()) ) {
                 // Both of them are landscape . Add upd and down
                 bitmap_2photo_target=AppUtils.combineImages_updown(bitmapArray[0],bitmapArray[1]);
@@ -435,6 +439,7 @@ public class AppUtils {
                 // Portrait and landscape or Landscape and portrait
                 bitmap_2photo_target=AppUtils.combineImages_side(bitmapArray[0],bitmapArray[1]);
             }
+            bitmap_target= bitmap_2photo_target;
 
         }else if(photo_cnt==3) {
 
@@ -460,12 +465,12 @@ public class AppUtils {
             }
 
 
-
+             bitmap_target= bitmap_3photo_target;
 
         }
 
-        return bitmap_3photo_target;
 
+        return bitmap_target;
 
     }
 

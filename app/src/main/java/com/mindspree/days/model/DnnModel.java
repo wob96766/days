@@ -103,33 +103,42 @@ public class DnnModel {
 
 
     // Korea mode
-    public String [] FaceBasedPool_selfie_smile_kr ={"간만에 웃는 사진도 찍었다", "오늘 찍은 최고의 사진인 듯. 크~ 간만에 잘 나온 미소 사진", "오늘 셀피 몇장 찍었다. 좋은 곳에서 셀피 찰칵"};
-    public String [] FaceBasedPool_selfie_nosmile_kr ={"간만에 셀피도 찍었다", "오늘 찍은 최고의 사진인듯. ㅎㅎ 간만에 잘나왔는데 다음엔 좀 더 표정관리를 해야겠군", "여기 온 기념으로 오늘 셀피 몇장 찍었다"};
-    public String [] FaceBasedPool_single_smile_kr ={"나이스 스마일 샷 ~ 오늘도 즐거운 하루", "오늘의 베스트 샷. 다들 스마일 ~", " ㅎㅎ "};
-    public String [] FaceBasedPool_single_nosmile_kr ={"무표정 시크한 셀피도 남겼다", "간만에 진지한 사진도 한 컷 남겼다", "근엄한 사진도 한 컷 찍었다"};
-    public String [] FaceBasedPool_group_smile_kr = {"친구 동료들과 즐거운 사진도 찍었다", "오늘의 베스트 그룹 샷..(다들 표정이 좋네)", "오늘의 베스트 그룹 샷..(다들 표정 좋군)", "오늘도 다들 즐거운 하루를 보냈다"};
-    public String [] FaceBasedPool_group_nosmile_kr = {"단체 사진을 찍었다", "오늘의 베스트 그룹 샷.", "단체 사진도 몇장 찍었다"};
+    public String [] FaceBasedPool_selfie_smile_kr ={"오늘 셀피 표정 좋구나","오늘 셀피 표정 좋구나", "활짝 웃는 사진도 찍었다", "간만에 웃는 사진도 찍었다", "오늘 찍은 최고의 사진인 듯. 크~ 간만에 잘 나온 미소 사진", "오늘의 베스트 셀피인듯..표정 좋고 Looks good", "오늘 셀피 몇장 찍었다. 나이스 스마일 ~ ", "오늘 셀피 몇장 찍었다. 표정 살아있네 ~"};
+    public String [] FaceBasedPool_selfie_nosmile_kr ={"간만에 셀피도 찍었다", "오늘 찍은 나름 최고의 사진.. ㅎㅎ 간만에 찍었는데 다음엔 좀 더 표정관리를 해야겠군", "기념으로 셀카를 찍었는데 윽.. 표정이 그리 밝지는 않군." , "여기 온 기념으로 오늘 셀피 몇장 찍었다", "그냥 가기 아쉬워서 셀카도 찍었다" , "기념으로 셀카도 한 장 찍었는데 표정이 그리 밝지는 않았다. 아쉽다.", "기념으로 셀카를 찍었는데 표정이 썩 좋지는 않았군. 아쉽.."};
+    public String [] FaceBasedPool_single_smile_kr ={"즐거워 보이는 군 ~ 오늘도 좋은 하루 ~ ", "사진 표정 좋아 ~ 나이스 스마일~ 오늘도 즐거운 하루다", "나이스 스마일 샷 ~ 오늘도 즐거운 하루 ~", "오늘의 베스트 샷. 스마일 ~", "행복한 미소 ~ 보기 좋다", "즐거워 보이는 사진 ~ 보기 좋다"};
+    public String [] FaceBasedPool_single_nosmile_kr ={"무표정 시크한 사진도 남겼다", "진지한 표정의 사진도 한 컷 남겼다", "근엄한 표정의 사진도 한 컷 남겼다.", "기념으로 사진도 좀 찍었다.", "기념 사진도 찍었다", "기념으로 인물 사진도 찍었다", "기념으로 인물 사진도 남겼다", "간만에 인물 사진도 찍었다" , "그냥 인물 사진도 좀 찍었다.", "그냥 사진도 좀 찍었다."};
+    public String [] FaceBasedPool_group_smile_kr = {"친구 동료들과 즐거운 사진도 찍었다", "오늘의 베스트 그룹 샷..(다들 표정이 좋네)", "오늘의 베스트 그룹 샷..(다들 표정 좋군)", "오늘도 다들 즐거운 하루를 보냈다", "오늘 여럿이서 사진도 찍었는데 표정 보니 모두들 즐거운 하루를 보낸 듯 했다"};
+    public String [] FaceBasedPool_group_nosmile_kr = {"단체 사진을 찍었다", "오늘의 베스트 그룹 샷", "단체 사진도 몇장 찍었다"};
 
-    public String [] FaceBasedPool_group_selfie_kr ={"친구들과 사진도 찍고 즐거운 하루였다", "오늘의 베스트 샷. 나름 사진빨 잘 받는 듯.", "간만에 괜찮은 곳에서 그룹 사진도 몇장 찍었다"};
-    public String [] FaceBasedPool_group_noselfie_kr ={"간만에 사진은 필수...", "간만에 찍은 사진인데 표정이 영 ㅎㅎ", "그룹 사진 몇장 찍어봤다"};
+    public String [] FaceBasedPool_group_selfie_kr ={"친구들과 사진도 찍고 즐거운 하루였다", "오늘의 베스트 샷. 나름 사진빨 잘 받는 듯.", "간만에 괜찮은 곳에서 그룹 셀피도 몇장 찍었다", "다들 모여서 그룹 셀피도 찍었다", ""};
+    public String [] FaceBasedPool_group_noselfie_kr ={"다들 모여서 그룹 사진도 찍었다","오늘 여기서 그룹 사진도 찍었다"};
 
 
-    public String [] dailysummary_nobusy_kr ={"어쨌든 오늘은 대략 한가한 하루였다. ","어쨌든 오늘은 대략 평범한 하루였다. ", "어쨌든 오늘은 전반적으로 무료한 하루였다. 주말에는 약속 좀 만들어 볼까. "};
-    public String [] dailysummary_lessbusy_kr ={"약간 바쁜 하루였음. ", "바쁜 스케쥴 덕분에 살짝 뺑이친 하루였다. ㅜㅜ "};
-    public String [] dailysummary_busy_kr ={"아 겁나 바쁜 하루였음. ","여기저기 다니느라 겁나 지치고 힘들었다.", "아 오늘은 너무 바빴네. 주말에는 푹 쉬어야겠다 "};
-    public String [] dailysummary_nopoi_kr ={"오늘은 별 특별한 일이 없었다. 조금은 지루한 하루 였다. 내일은 어디라도 가야지. ","오늘은 하루 종일 집에만 있었다. 간만에 푹 쉬긴 했네", "결국 하루 종일 방콕...주말엔 어디든 나가봐야겠다. "};
+    public String [] dailysummary_nobusy_kr ={"나름 여유있는 하루였다.","그리 바쁜 하루는 아니었다.","그럭저럭 여유있는 하루였다. ","조금 한가한 하루였다. ","대략 한가한 하루였다. ","다소 평범한 하루였다. ", "전반적으로 무료한 하루였다. 주말에는 약속 좀 만들어 볼까. "};
+    public String [] dailysummary_lessbusy_kr ={"약간 바쁜 하루였음. ", "오늘은 조금 바쁜 하루였다", "바쁜 스케쥴 덕분에 살짝 뺑이친 하루였다. ㅜㅜ ", "여기저리 다니느라 조금 바쁜 하루였음.", "그래도 꽤 돌아다녀서 좀 바쁜 하루였다."};
+    public String [] dailysummary_busy_kr ={"오늘은 무지 바쁜 하루였음.","아 겁나 바쁜 하루였음.","여기저기 다니느라 겁나 지치고 힘들었다.", "아 오늘은 너무 바빴네. 주말에는 푹 쉬어야겠다." , "도데체 몇군데나 돌아다닌 건지..꽤 바쁜 하루 였다.", "오늘 여기저기 많이 돌아다녔고 꽤 바쁜 하루 였다.", "오늘은 여기저기 다니느라 너무 바빴다." };
+    public String [] dailysummary_nopoi_kr ={"오늘은 별 특별한 일이 없었다. 조금은 지루한 하루 였다. 내일은 어디라도 가야지. ","오늘은 하루 종일 집에만 있었다. 간만에 푹 쉬긴 했네", "결국 하루 종일 집에서 시간을 보냈다... 주말엔 어디든 나가봐야겠다. ", "결국 하루 종일 집에 있었다...주말엔 좀 나가봐야겠다"};
 
     // Only for today activity
-    public String [] FaceBasedPool_selfie_hash_kr ={"잘생김","최고", "나", "My life", "나의 하루", "My style"};
-    public String [] FaceBasedPool_singlePhoto_hash_kr ={"저 잘생긴 친구는 누구?" , "I see you~" , "나이스", "날 보세요"};
-    public String [] FaceBasedPool_groupPhoto_hash_kr ={"Best People !", "그룹 모임", "기념"};
-    public String [] FaceBasedPool_groudSelfiehash_kr ={"멋진 사람들", "Gangs", "Dudes", "Thugs", "Guys"};
-    public String [] FaceBasedPool_smileSingle_hash_kr ={"아름다운 미소~", "Smile", "행복"};
-    public String [] FaceBasedPool_smileGroup_hash_kr ={"멋진 하루 ~", "즐거움"};
+    public String [] FaceBasedPool_selfie_hash_kr ={"쿨가이","핸섬가이", "최고", "나", "My life", "나의 하루", "My style", "Me", "Cool face"};
+    public String [] FaceBasedPool_singlePhoto_hash_kr ={"나이스 샷", "당신은 멋쟁이" , "I see you~" , "나이스", "날 보세요"};
+    public String [] FaceBasedPool_groupPhoto_hash_kr ={"Best People !", "그룹 모임", "그룹 모임 기념", "단체 사진", "단체 기념 사진"};
+    public String [] FaceBasedPool_groudSelfiehash_kr ={"멋진 사람들", "Gangs", "Dudes", "Thugs", "Guys" , "다들 모여~" , "친구/동료/가족"};
+    public String [] FaceBasedPool_smileSingle_hash_kr ={"아름다운 미소~", "Smile", "행복", "미소", "스마일", "좋은 표정", "행복한 순간", "즐거운 이 순간"};
+    public String [] FaceBasedPool_smileGroup_hash_kr ={"멋진 하루 ~", "즐거움", "모두들 행복한 순간", "모두들 즐거운 순간"};
 
+    // Week end & Week days
+    public String [] Sentence_weekend ={"기다리던 주말이다"};
+    public String [] Sentence_weekdays ={"주말", "주말"};
+    public String [] Hash_weekend ={"즐거운 주말"};
+    public String [] Hash_weekdays ={"주말"};
 
+    // POI based sentence
+    public String [] Sentence_POI_onlyhome ={"오늘은 하루종일 집에만 있었다", "오늘은 집에서 대부분 시간을 보냈다", "오늘은 집에서 뒹굴뒹굴 했다", "오늘은 집에만 있었던 날이다"};
+    public String [] Hash_POI_onlyhome ={"집에서 뒹굴", "방콕"};
 
-
+    // if POI size is more than 3
+    public String [] Sentence_POI_multiPlace ={"오늘은 여기저기 좀 다녔다", "오늘은 바쁘게 이곳 저곳 다녔다", "오늘은 꽤 이곳 저곳을 돌아다녔다", "오늘은 평소보다는 좀 많이 돌아다녔다", "오늘은 평소에 비해 여기저기 많이 돌아다닌 하루였다", "오늘은 여기저기 많이 돌아다녔다"};
 
     DnnModel()
     {
@@ -708,6 +717,7 @@ public class DnnModel {
             String poicat = "";
 
 
+            int n = 0;
 
             for(int j=0;j<poiList_nooverlap.length;j++) {
 
@@ -727,8 +737,15 @@ public class DnnModel {
             }
 
             if(poiList_nooverlap.length==1){
+
+
                 if(poiList_nooverlap[0].contains(AppUtils.getAppText(R.string.text_location_home))) {
-                    hash_string = hash_string + String.format("%s . ", "오늘은 아무데도 가지 않고 하루종일 집에서 있었다");
+                    n=generator.nextInt(Sentence_POI_onlyhome.length);
+                    hash_string = hash_string + String.format("%s. ", Sentence_POI_onlyhome[n]);
+
+                    n=generator.nextInt(Hash_POI_onlyhome.length);
+                    DNN_result.add(String.format("#%s", Hash_POI_onlyhome[n]));
+
                 }else{
                     hash_string = hash_string + String.format("%s %s %s. ", "오늘은 주로 ", poiList_nooverlap[0], " 에만 있었다");
                 }
@@ -765,7 +782,8 @@ public class DnnModel {
             }else if(poiList_nooverlap.length>2) {
 
                 // this part describes which places I went to
-                hash_string = hash_string + String.format("%s.", "오늘은 여기 저기 돌아다녔다 ");
+                n=generator.nextInt(Sentence_POI_multiPlace.length);
+                hash_string = hash_string + String.format("%s. ", Sentence_POI_multiPlace[n]);
 
                 for (int l = 0; l < poiList_nooverlap.length; l++) {
 
@@ -912,6 +930,20 @@ public class DnnModel {
 
         int sentence_cnt =0;
 
+        // This flag make sure only one selfie, single, group, group selfie expressions are created
+        int flag_selfie_smile =0;
+        int flag_selfie_nosmile =0;
+
+        int flag_single_smile =0;
+        int flag_single_nosmile =0;
+
+        int flag_groupselfie_smile=0;
+        int flag_groupselfie_nosmile=0;
+
+        int flag_group_smile =0;
+        int flag_group_nosmile =0;
+
+
         for (int i = offset; i < offset + size; i++){
             String timelinePhotoFile = PhotoList.get(i).toString();
 
@@ -978,12 +1010,14 @@ public class DnnModel {
             if (selfie_cnt > 0) {
                 // Smile detection
                 n = generator.nextInt(dnnModel.FaceBasedPool_selfie_smile.length);
-                if (smile_cnt > 0) {
+                if (smile_cnt > 0 && flag_selfie_smile ==0) {
                     hashList.add(String.format("%s", dnnModel.FaceBasedPool_selfie_smile[n]));
                     DNN_result.add(String.format("#%s", "스마일 셀피"));
-                } else {
+                    flag_selfie_smile=1;
+                } else if(smile_cnt ==0 && flag_selfie_nosmile ==0){
                     hashList.add(String.format("%s", dnnModel.FaceBasedPool_selfie_nosmile[n]));
                     DNN_result.add(String.format("#%s", "셀피"));
+                    flag_selfie_nosmile=1;
                 }
             }
 
@@ -991,22 +1025,26 @@ public class DnnModel {
             if (singlePhoto_cnt > 0) {
                 // Smile detection
                 n = generator.nextInt(dnnModel.FaceBasedPool_single_smile.length);
-                if (smile_cnt > 0) {
+                if (smile_cnt > 0 && flag_single_smile==0) {
                     hashList.add(String.format("%s", dnnModel.FaceBasedPool_single_smile[n]));
                     DNN_result.add(String.format("#%s", "스마일 인물 사진"));
-                } else {
+                    flag_single_smile =1;
+                } else if (smile_cnt ==0 && flag_single_nosmile==0){
                     hashList.add(String.format("%s", dnnModel.FaceBasedPool_single_nosmile[n]));
                     DNN_result.add(String.format("#%s", "인물 사진"));
+                    flag_single_nosmile =1;
                 }
             }
 
             if (groupPhoto_cnt > 0) {
                 // Smile detection
                 n = generator.nextInt(dnnModel.FaceBasedPool_group_smile.length);
-                if (smile_cnt > 0) {
+                if (smile_cnt > 0 && flag_group_smile==0) {
                     hashList.add(String.format("%s", dnnModel.FaceBasedPool_group_smile[n]));
-                } else {
+                    flag_group_smile =1;
+                } else if(smile_cnt ==0 && flag_group_nosmile==0) {
                     hashList.add(String.format("%s", dnnModel.FaceBasedPool_group_nosmile[n]));
+                    flag_group_nosmile =1;
                 }
                 DNN_result.add(String.format("#%s", "단체사진"));
             }
@@ -1014,12 +1052,14 @@ public class DnnModel {
             if (groupSelfie_cnt > 0) {
                 // Smile detection
                 n = generator.nextInt(dnnModel.FaceBasedPool_group_selfie.length);
-                if (smile_cnt > 0) {
+                if (smile_cnt > 0 && flag_groupselfie_smile==0) {
                     hashList.add(String.format("%s", dnnModel.FaceBasedPool_group_selfie[n]));
                     DNN_result.add(String.format("#%s", "단체 스마일 셀피"));
-                } else {
+                    flag_groupselfie_smile =1;
+                } else if(smile_cnt ==0 && flag_groupselfie_nosmile==0) {
                     hashList.add(String.format("%s", dnnModel.FaceBasedPool_group_noselfie[n]));
                     DNN_result.add(String.format("#%s", "단체 셀피"));
+                    flag_groupselfie_nosmile =1;
                 }
             }
 
@@ -1051,7 +1091,9 @@ public class DnnModel {
             Boolean MounatainClass=false ;
             Boolean PlayClass =false;
 
-            if((!POI_DB2_DETECT || !POI_DB6_DETECT || selfie_cnt==0 || groupPhoto_cnt==0 || groupSelfie_cnt==0 ||singlePhoto_cnt==0) && (i == offset)) {
+            // Currently Deep learning engine will run one piture per POI.
+//            if((!POI_DB2_DETECT || !POI_DB6_DETECT || selfie_cnt==0 || groupPhoto_cnt==0 || groupSelfie_cnt==0 ||singlePhoto_cnt==0) && (i == offset) ) {
+            if((!POI_DB2_DETECT || !POI_DB6_DETECT || selfie_cnt==0 || groupPhoto_cnt==0 || groupSelfie_cnt==0 ||singlePhoto_cnt==0) && (i <3) ) {
                 class_predict = DnnEngineClassJNI(jargv);
                 foodClass = classDetect(class_predict, dnnModel.DNN_DB1);
                 WaterClass = classDetect(class_predict, dnnModel.DNN_DB2);
