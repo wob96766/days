@@ -187,64 +187,64 @@ public class TimelineActivity extends BaseActivity {
             switch (view.getId()){
                 case R.id.image_thumnail1: {
                     TimelineModel model = mAdapter.getItem(position);
-                    if (model.getImageList().size() > 0) {
-                        ImagePickActivity.startActivity(getContext(), model);
+                    if (model.getPhotoList().size() > 0) {
+                        ImagePickActivity.startActivity(getContext(), model, model.getPhotoList().get(0));
                     }
                 }
                 break;
                 case R.id.image_thumnail2: {
                     TimelineModel model = mAdapter.getItem(position);
-                    if (model.getImageList().size() > 1) {
-                        ImagePickActivity.startActivity(getContext(), model);
+                    if (model.getPhotoList().size() > 1) {
+                        ImagePickActivity.startActivity(getContext(), model, model.getPhotoList().get(1));
                     }
                 }
                 break;
                 case R.id.image_thumnail3: {
                     TimelineModel model = mAdapter.getItem(position);
-                    if(model.getImageList().size() > 2) {
-                        ImagePickActivity.startActivity(getContext(), model);
+                    if(model.getPhotoList().size() > 2) {
+                        ImagePickActivity.startActivity(getContext(), model, model.getPhotoList().get(2));
                     }
                 }
                 break;
                 case R.id.image_thumnail4: {
                     TimelineModel model = mAdapter.getItem(position);
-                    if (model.getImageList().size() > 3) {
-                        ImagePickActivity.startActivity(getContext(), model);
+                    if (model.getPhotoList().size() > 3) {
+                        ImagePickActivity.startActivity(getContext(), model, model.getPhotoList().get(3));
                     }
                 }
                 break;
                 case R.id.image_thumnail5: {
                     TimelineModel model = mAdapter.getItem(position);
-                    if (model.getImageList().size() > 4) {
-                        ImagePickActivity.startActivity(getContext(), model);
+                    if (model.getPhotoList().size() > 4) {
+                        ImagePickActivity.startActivity(getContext(), model, model.getPhotoList().get(4));
                     }
                 }
                 break;
                 case R.id.image_thumnail6: {
                     TimelineModel model = mAdapter.getItem(position);
-                    if(model.getImageList().size() > 5) {
-                        ImagePickActivity.startActivity(getContext(), model);
+                    if(model.getPhotoList().size() > 5) {
+                        ImagePickActivity.startActivity(getContext(), model, model.getPhotoList().get(5));
                     }
                 }
                 break;
                 case R.id.image_thumnail7: {
                     TimelineModel model = mAdapter.getItem(position);
-                    if (model.getImageList().size() > 6) {
-                        ImagePickActivity.startActivity(getContext(), model);
+                    if (model.getPhotoList().size() > 6) {
+                        ImagePickActivity.startActivity(getContext(), model, model.getPhotoList().get(6));
                     }
                 }
                 break;
                 case R.id.image_thumnail8: {
                     TimelineModel model = mAdapter.getItem(position);
-                    if (model.getImageList().size() > 7) {
-                        ImagePickActivity.startActivity(getContext(), model);
+                    if (model.getPhotoList().size() > 7) {
+                        ImagePickActivity.startActivity(getContext(), model, model.getPhotoList().get(7));
                     }
                 }
                 break;
                 case R.id.image_thumnail9: {
                     TimelineModel model = mAdapter.getItem(position);
-                    if(model.getImageList().size() > 8) {
-                        ImagePickActivity.startActivity(getContext(), model);
+                    if(model.getPhotoList().size() > 8) {
+                        ImagePickActivity.startActivity(getContext(), model, model.getPhotoList().get(8));
                     }
                 }
                 break;
