@@ -33,9 +33,9 @@ public class AppConfig {
     }
 
     public static final class WebUrl {
-        public static final String TERMS                        = "http://52.79.97.147/web/location_terms.html";
-        public static final String POLICY                       = "http://52.79.97.147/web/policy.html";
-        public static final String LOCATIONTERMS                = "http://52.79.97.147/web/location_terms.html";
+        public static final String TERMS                        = "http://mindspree.co/days/location_terms.html";
+        public static final String POLICY                       = "http://mindspree.co/days/policy.html";
+        public static final String LOCATIONTERMS                = "http://mindspree.co/days/location_terms.html";
     }
 
     public static final class Broadcast {
