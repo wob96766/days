@@ -4,9 +4,12 @@ package com.mindspree.days.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -39,6 +42,9 @@ import com.mindspree.days.model.Photo;
 import com.mindspree.days.view.AnimatingProgressBar;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -51,6 +57,8 @@ public class DataBackupActivity extends BaseActivity {
     private FirebaseStorage mStorage;
     private StorageReference mStorageReference;
     private StorageReference mPhotoReference;
+    private StorageReference mDBReference;
+
     private AnimatingProgressBar mProgressBar;
 
     private HashMap<String, Object> mDataMap;
@@ -134,6 +142,34 @@ public class DataBackupActivity extends BaseActivity {
         protected String doInBackground(String... f_url) {
 
             try {
+
+                // DB export to firebase
+                File bkDB = sqliteExport();
+
+                if(bkDB !=null) {
+                    mDBReference = mStorageReference.child(String.format("localdb/%s/%s", mPreference.getUserUid(), "PicnpicsDB.db"));
+
+                    Uri file = Uri.fromFile(bkDB);
+                    StorageReference riversRef = mStorageReference.child(String.format("localdb/%s/%s", mPreference.getUserUid(), "PicnpicsDB.db"));
+                    UploadTask uploadTask_db = riversRef.putFile(file);
+
+                    // Register observers to listen for when the download is done or if it fails
+                    uploadTask_db.addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            // Handle unsuccessful uploads
+                        }
+                    }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+//                        Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                        }
+                    });
+
+                }
+
+
                 mUploadedCount = 0;
                 final ArrayList<Photo> photolist = mDBWrapper.getPhotoDatalist(mStart, mEnd);
                 if(photolist.size() > 0) {
@@ -197,6 +233,54 @@ public class DataBackupActivity extends BaseActivity {
 
         }
     }
+
+
+    public File sqliteExport(){
+
+        File bkDB1 =null;
+
+        try {
+            File sdDir = Environment.getExternalStorageDirectory();
+            File dataDir = Environment.getDataDirectory();
+            String crDBPath = "//data//com.mindspree.days//databases//PicnpicsDB.db";
+            String bkDBPath = "PicnpicsDB.sqlite";
+
+            File crDB = new File(dataDir, crDBPath);
+            File bkDB = new File(sdDir, bkDBPath);
+
+            if(sdDir.canWrite()){
+                //String crDBPath = "/data/data/com.mindspree.picsnpics/databases/PicnpicsDB.db";
+
+
+                if(bkDB.exists()){
+                    bkDB.delete();
+                }
+
+
+                if(crDB.exists()){
+                    FileChannel src = new FileInputStream(crDB).getChannel();
+                    FileChannel dst = new FileOutputStream(bkDB).getChannel();
+                    dst.transferFrom(src, 0, src.size());
+                    src.close();
+                    dst.close();
+                }
+
+                /*if(bkDB.exists()){
+                    Toast.makeText(this, "DB file Export Success!", Toast.LENGTH_SHORT).show();
+                }*/
+                bkDB1 =bkDB;
+                return bkDB;
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+//        sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://" + Environment.getExternalStorageDirectory())));
+
+        return bkDB1;
+
+    }
+
+
 
     private void requestFirebaseBackup() {
        /* runOnUiThread(new Runnable() {
