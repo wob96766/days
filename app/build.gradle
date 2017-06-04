@@ -7,8 +7,8 @@ android {
         applicationId "com.mindspree.days"
         minSdkVersion 21
         targetSdkVersion 24
-        versionCode 10
-        versionName "1.0.39"
+        versionCode 13
+        versionName "1.0.43"
         multiDexEnabled true
         externalNativeBuild {
             cmake {

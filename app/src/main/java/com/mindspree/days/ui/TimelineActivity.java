@@ -36,6 +36,7 @@ public class TimelineActivity extends BaseActivity {
     private int mPastVisibleItemCount = 0;
     private DBWrapper mPhotoWrapper;
     private String mSelectedDate = "";
+    private String mMode ="";
 
     private ArrayList<TimelineModel> mDataList;
     private TextView mTextSentence;
@@ -46,11 +47,12 @@ public class TimelineActivity extends BaseActivity {
     public SentenceModel sentenceModel;
 
 
-    public static void startActivity(Context context, String dateString, DatelineModel dateline)
+    public static void startActivity(Context context, String dateString, DatelineModel dateline, String mode)
     {
         Intent intent = new Intent(context, TimelineActivity.class);
         intent.putExtra(AppConfig.IntentParam.DATE, dateString);
         intent.putExtra(AppConfig.IntentParam.DATELINE, dateline);
+        intent.putExtra(AppConfig.IntentParam.TIMELINE_MODE, mode);
         context.startActivity(intent);
     }
 
@@ -63,6 +65,21 @@ public class TimelineActivity extends BaseActivity {
         initView();
         requestSentence();
         requestTimeline();
+
+        if(mMode.equals("Share")){
+            ShareDialog dialog = new ShareDialog(this, mSelectedDate, mDateline);
+            dialog.show();
+        }else if(mMode.equals("Edit")){
+            EditTextDialog dialog = new EditTextDialog(getActivity(), mDateline, mTextSentence.getText().toString());
+            dialog.show();
+            dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    requestSentence();
+                }
+            });
+        }
+
     }
 
     @Override
@@ -87,11 +104,13 @@ public class TimelineActivity extends BaseActivity {
         overridePendingTransition(R.anim.hold, R.anim.slide_out_right);
     }
 
+
     public void initData() {
 
         mPhotoWrapper = new DBWrapper(mPreference.getUserUid());
         mDateline = getIntent().getParcelableExtra(AppConfig.IntentParam.DATELINE);
         mSelectedDate = getIntent().getStringExtra(AppConfig.IntentParam.DATE);
+        mMode = getIntent().getStringExtra(AppConfig.IntentParam.TIMELINE_MODE);
     }
 
     public void initView() {

@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import com.androidquery.AQuery;
 import com.mindspree.days.R;
 import com.mindspree.days.adapter.DatelineAdapter;
+import com.mindspree.days.adapter.TimelineAdapter;
 import com.mindspree.days.data.DBWrapper;
 import com.mindspree.days.interfaces.OnItemClickListener;
 import com.mindspree.days.lib.AppConfig;
@@ -40,7 +41,6 @@ public class JournalFragment extends BaseFragment{
     private BroadcastReceiver mRefreshCast;
     private boolean mIsLoaded = false;
     private int mNextpage = 0;
-
 
     public Typeface mTypeface;
     public Typeface mBoldTypeface;
@@ -244,9 +244,19 @@ public class JournalFragment extends BaseFragment{
                 case R.id.text_month:
                 case R.id.text_day:{
                     DatelineModel model = mAdapter.getItem(position);
-                    TimelineActivity.startActivity(getContext(), model.getDate(), model);
+                    TimelineActivity.startActivity(getContext(), model.getDate(), model, "");
                 }
-                    break;
+                break;
+                case R.id.image_share:{
+                    DatelineModel model = mAdapter.getItem(position);
+                    TimelineActivity.startActivity(getContext(), model.getDate(), model, "Share");
+                }
+                break;
+                case R.id.image_edit:{
+                    DatelineModel model = mAdapter.getItem(position);
+                    TimelineActivity.startActivity(getContext(), model.getDate(), model, "Edit");
+                }
+                break;
             }
         }
     };

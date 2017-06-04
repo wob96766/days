@@ -126,7 +126,7 @@ public class SummarizedFragment extends BaseFragment{
                 // cancel all highlight
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.KOREA);
                 String dateString = dateFormat.format(date);
-                TimelineActivity.startActivity(getContext(), dateString, mDBWrapper.getDateline(dateString));
+                TimelineActivity.startActivity(getContext(), dateString, mDBWrapper.getDateline(dateString),"");
                 mCalendarView.selectDate(date);
             }
 

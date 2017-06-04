@@ -184,7 +184,7 @@ public class SearchActivity extends BaseActivity{
                 case R.id.text_month:
                 case R.id.text_day:{
                     DatelineModel model = mAdapter.getItem(position);
-                    TimelineActivity.startActivity(getContext(), model.getDate(), model);
+                    TimelineActivity.startActivity(getContext(), model.getDate(), model,"");
                 }
                 break;
             }

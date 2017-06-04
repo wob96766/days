@@ -1,6 +1,7 @@
 package com.mindspree.days.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
@@ -103,12 +104,27 @@ public class DatelineAdapter extends RecyclerView.Adapter<DatelineAdapter.MyView
         }
         holder.mTextContent.setText(mDataSource.get(position).getSummarize("sentence"));
         holder.mTextContent.setTypeface(MainActivity.mTypeface);
+        holder.mTextContent.setTypeface(holder.mTextContent.getTypeface(),Typeface.BOLD);
+
 
         holder.mTextContent_hash.setText(mDataSource.get(position).getSummarize("hash"));
         holder.mTextContent_hash.setTypeface(MainActivity.mTypeface);
+        holder.mTextContent_hash.setTypeface(holder.mTextContent_hash.getTypeface(),Typeface.BOLD);
 
         holder.mTextDay.setText(mDataSource.get(position).getDayFormat());
         holder.mTextDay.setTypeface(MainActivity.mTypeface);
+        String date_temp = mDataSource.get(position).getDayFormat();
+        if(date_temp.contains("토")) {
+            holder.mTextDay.setTextColor(Color.parseColor("#EF5350"));
+            holder.mTextDay.setTypeface(holder.mTextDay.getTypeface(), Typeface.BOLD);
+        }
+        else if (date_temp.contains("일")){
+            holder.mTextDay.setTextColor(Color.parseColor("#EF5350"));
+            holder.mTextDay.setTypeface(holder.mTextDay.getTypeface(), Typeface.BOLD);
+        }else{
+            holder.mTextDay.setTextColor(Color.parseColor("#48afff"));
+            holder.mTextDay.setTypeface(holder.mTextDay.getTypeface(), Typeface.BOLD);
+        }
 
         holder.mTextMonth.setText(mDataSource.get(position).getMonthFormat());
         holder.mTextMonth.setTypeface(MainActivity.mTypeface);
@@ -165,6 +181,9 @@ public class DatelineAdapter extends RecyclerView.Adapter<DatelineAdapter.MyView
         public TextView mTextMonth;
         public ViewGroup mViewPhoto;
 
+        public ImageView mimageShare;
+        public ImageView mimageEdit;
+
         public View mViewPhoto1;
         public View mViewPhoto2;
         public View mViewPhoto3;
@@ -205,6 +224,9 @@ public class DatelineAdapter extends RecyclerView.Adapter<DatelineAdapter.MyView
             mTextMonth = aq.id(R.id.text_month).clicked(mOnClickListener).getTextView();
             mTextContent = aq.id(R.id.text_content).getTextView();
             mTextContent_hash = aq.id(R.id.text_content_hash).getTextView();
+
+            mimageShare = aq.id(R.id.image_share).clicked(mOnClickListener).getImageView();
+            mimageEdit = aq.id(R.id.image_edit).clicked(mOnClickListener).getImageView();
 
             mLikeCount = aq.id(R.id.text_like).getTextView();
             mCommentCount = aq.id(R.id.text_comment).getTextView();

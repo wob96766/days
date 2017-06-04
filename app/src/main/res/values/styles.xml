@@ -277,6 +277,12 @@
         <item name="android:textSize">40sp</item>
     </style>
 
+    <style name="font_bluelight_bold_20sp">
+        <item name="android:textColor">@color/light_blue</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <style name="font_orange_12sp">
         <item name="android:textColor">@color/orange</item>
         <item name="android:textSize">12sp</item>
