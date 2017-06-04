@@ -532,7 +532,9 @@ public class DatelineModel implements Parcelable {
 
             // Save final sentence and hash to DB
             hash_string = hash_string + hashString_DNN;
-            mDBWrapper.setSentence(DateInMomeent,hash_string);
+            if(!hash_string.contains("none")) {
+                mDBWrapper.setSentence(DateInMomeent, hash_string);
+            }
             return hash_string;
 
 
