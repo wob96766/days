@@ -441,7 +441,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         cal.setTime(date);
         // 2 minutes before
-        cal.add(Calendar.MINUTE, -2);
+        cal.add(Calendar.MINUTE, -1);
 
 
         Cursor cursor = database.query(TABLE_LOCATIONS, null, null, null, null, null, COLUMN_CREATE_DATE+ " DESC", null);
@@ -450,7 +450,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 do {
                     int locationIndex = cursor.getInt(cursor.getColumnIndex(COLUMN_LOCATION_INDEX));
                     ContentValues cv = new ContentValues();
-                    cv.put(COLUMN_UPDATE_DATE, dateFormat.format(date));
+                    cv.put(COLUMN_UPDATE_DATE, dateFormat.format(cal.getTime()));
                     database.update(TABLE_LOCATIONS, cv, COLUMN_LOCATION_INDEX + " =? ", new String[]{String.format("%d", locationIndex)});
                     break;
                 } while (cursor.moveToNext());
@@ -978,19 +978,19 @@ public class DBHelper extends SQLiteOpenHelper {
                             "  from LOCATIONS a" +
                             " where date(a.create_date) = '" + dateString + "' and user_id = '" + userUid + "'"
                             , null);*/
-                    "SELECT a.location_index, a.name, a.latitude, a.longitude, a.create_date," +
-                            "(SELECT group_concat(ifnull(x.file_location, x.file_location_url))" +
-                            "   FROM (SELECT c.file_location, c.file_location_url" +
-                            "           FROM (SELECT cluster_id, MAX(quality_rank) as quality_rank FROM PHOTOS GROUP BY  cluster_id, sortseq ) b" +
-                            "               INNER JOIN PHOTOS c ON b.cluster_id = c.cluster_id AND b.quality_rank = c.quality_rank " +
-                            "          WHERE c.update_date between ifnull(a.create_date, date('now','localtime')) and ifnull(a.update_date, datetime('now', 'localtime'))" +
-                            "          ORDER BY  c.sortseq asc, c.quality_rank desc) x) files," +
-                            "(SELECT group_concat(ifnull(c.file_location, c.file_location_url))" +
-                            "   FROM PHOTOS c " +
-                            "  WHERE c.update_date between ifnull(a.create_date, date('now','localtime')) and ifnull(a.update_date, datetime('now', 'localtime'))" +
-                            "  ORDER BY  c.sortseq asc, c.quality_rank desc) images" +
-                            "  from LOCATIONS a" +
-                            " where date(a.create_date) = '" + dateString + "' and user_id = '" + userUid + "'"
+                        "SELECT a.location_index, a.name, a.latitude, a.longitude, a.create_date," +
+                                "(SELECT group_concat(ifnull(x.file_location, x.file_location_url))" +
+                                "   FROM (SELECT c.file_location, c.file_location_url" +
+                                "           FROM (SELECT cluster_id, MAX(quality_rank) as quality_rank FROM PHOTOS GROUP BY  cluster_id, sortseq ) b" +
+                                "               INNER JOIN PHOTOS c ON b.cluster_id = c.cluster_id AND b.quality_rank = c.quality_rank " +
+                                "          WHERE c.update_date between ifnull(a.create_date, date('now','localtime')) and ifnull(a.update_date, datetime('now', 'localtime'))" +
+                                "          ORDER BY  c.sortseq asc, c.quality_rank desc) x) files," +
+                                "(SELECT group_concat(ifnull(c.file_location, c.file_location_url))" +
+                                "   FROM PHOTOS c " +
+                                "  WHERE c.update_date between ifnull(a.create_date, date('now','localtime')) and ifnull(a.update_date, datetime('now', 'localtime'))" +
+                                "  ORDER BY  c.sortseq asc, c.quality_rank desc) images" +
+                                "  from LOCATIONS a" +
+                                " where date(a.create_date) = '" + dateString + "' and user_id = '" + userUid + "'"
 
                     , null);
             if (cursor.moveToFirst()) {

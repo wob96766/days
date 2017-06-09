@@ -69,9 +69,9 @@ public class CameraServiceReciever extends BroadcastReceiver {
         bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, name);
         bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, content);
 
-        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.VIEW_ITEM, bundle);*/
+        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.VIEW_ITEM, bundle);
         HttpAdapter httpClient = HttpAdapter.getInstance(mContext);
-        httpClient.RequestAnalytics(mContext, id, name, content, mAsyncHttpResponse);
+        httpClient.RequestAnalytics(mContext, id, name, content, mAsyncHttpResponse);*/
     }
 
     // 서버 응답 처리
