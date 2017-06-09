@@ -455,9 +455,9 @@ public class LocationLoggingService extends Service {
         bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, name);
         bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, content);
 
-        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.VIEW_ITEM, bundle);*/
+        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.VIEW_ITEM, bundle);
         HttpAdapter httpClient = HttpAdapter.getInstance(this);
-        httpClient.RequestAnalytics(this, id, name, content, mAsyncHttpResponse);
+        httpClient.RequestAnalytics(this, id, name, content, mAsyncHttpResponse);*/
     }
 
     // 서버 응답 처리
