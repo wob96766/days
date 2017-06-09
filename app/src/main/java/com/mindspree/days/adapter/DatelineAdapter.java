@@ -122,7 +122,7 @@ public class DatelineAdapter extends RecyclerView.Adapter<DatelineAdapter.MyView
             holder.mTextDay.setTextColor(Color.parseColor("#EF5350"));
             holder.mTextDay.setTypeface(holder.mTextDay.getTypeface(), Typeface.BOLD);
         }else{
-            holder.mTextDay.setTextColor(Color.parseColor("#48afff"));
+            holder.mTextDay.setTextColor(Color.parseColor("#000000"));
             holder.mTextDay.setTypeface(holder.mTextDay.getTypeface(), Typeface.BOLD);
         }
 
@@ -181,6 +181,7 @@ public class DatelineAdapter extends RecyclerView.Adapter<DatelineAdapter.MyView
         public TextView mTextMonth;
         public ViewGroup mViewPhoto;
 
+        public ImageView mTodayview;
         public ImageView mimageShare;
         public ImageView mimageEdit;
 
@@ -225,6 +226,7 @@ public class DatelineAdapter extends RecyclerView.Adapter<DatelineAdapter.MyView
             mTextContent = aq.id(R.id.text_content).getTextView();
             mTextContent_hash = aq.id(R.id.text_content_hash).getTextView();
 
+            mTodayview = aq.id(R.id.image_today).clicked(mOnClickListener).getImageView();
             mimageShare = aq.id(R.id.image_share).clicked(mOnClickListener).getImageView();
             mimageEdit = aq.id(R.id.image_edit).clicked(mOnClickListener).getImageView();
 

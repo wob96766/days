@@ -345,8 +345,8 @@ public class DatelineModel implements Parcelable {
         String DateYesterday = dateFormat.format(cal.getTime()); //your formatted date here
 
 //        if(mSentence == null || mSentence.equals("") || DateInMomeent.equals(DateToday) ) {   // This is only for debugging
-//        if(DateInMomeent.equals(DateYesterday)  ) {   // This is only for debugging
-        if(mSentence == null || mSentence.equals("")  ) {
+        if(DateInMomeent.equals(DateYesterday)  ) {   // This is only for debugging
+//        if(mSentence == null || mSentence.equals("")  ) {
 //        if(true) {
 
             if (sentence_mode.equals("hash"))
@@ -544,17 +544,28 @@ public class DatelineModel implements Parcelable {
             sentenceHash = new ArrayList<String>(Arrays.asList(mSentence.split("#")));
             String sentenceOnly = sentenceHash.get(0).toString();
             String hashOnly ="";
+            String ShortSentence ="";
 
             if(sentenceHash.size()>=2)
             {
                 for(int i=1;i<sentenceHash.size();i++)
                     hashOnly = hashOnly + "#" + sentenceHash.get(i).toString();
+
+
+                ShortSentence = ShortSentence + "#" + sentenceHash.get(1).toString();
+                for(int i=2;i<sentenceHash.size();i++)
+                    ShortSentence = ShortSentence + "," + sentenceHash.get(i).toString();
             }
+
 
 
             if (sentence_mode.equals("sentence")) {
                 return sentenceOnly;
-            }else{
+            }else if (sentence_mode.equals("hash")) {
+                return hashOnly;
+            }else if (sentence_mode.equals("ShortSentence")){
+                return ShortSentence;
+            }else {
                 return hashOnly;
             }
 

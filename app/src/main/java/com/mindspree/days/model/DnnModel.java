@@ -110,7 +110,7 @@ public class DnnModel {
     public String [] FaceBasedPool_group_smile_kr = {"친구 동료들과 즐거운 사진도 찍었다", "오늘의 베스트 그룹 샷..(다들 표정이 좋네)", "오늘의 베스트 그룹 샷..(다들 표정 좋군)", "오늘도 다들 즐거운 하루를 보냈다", "오늘 여럿이서 사진도 찍었는데 표정 보니 모두들 즐거운 하루를 보낸 듯 했다"};
     public String [] FaceBasedPool_group_nosmile_kr = {"단체 사진을 찍었다", "오늘의 베스트 그룹 샷", "단체 사진도 몇장 찍었다"};
 
-    public String [] FaceBasedPool_group_selfie_kr ={"친구들과 사진도 찍고 즐거운 하루였다", "오늘의 베스트 샷. 나름 사진빨 잘 받는 듯.", "간만에 괜찮은 곳에서 그룹 셀피도 몇장 찍었다", "다들 모여서 그룹 셀피도 찍었다", ""};
+    public String [] FaceBasedPool_group_selfie_kr ={"친구들과 사진도 찍고 즐거운 하루였다", "오늘의 베스트 샷. 나름 사진빨 잘 받는 듯.", "간만에 괜찮은 곳에서 그룹 셀피도 몇장 찍었다", "다들 모여서 그룹 셀피도 찍었다"};
     public String [] FaceBasedPool_group_noselfie_kr ={"다들 모여서 그룹 사진도 찍었다","오늘 여기서 그룹 사진도 찍었다"};
 
 
@@ -646,7 +646,7 @@ public class DnnModel {
 
                 n = generator.nextInt(FaceBasedPool_groudSelfiehash.length);
                 if (groupSelfie_cnt > 0) {
-                    hash_string = hash_string + String.format("#%d %s ", selfie_cnt, "Group Selfie");
+                    hash_string = hash_string + String.format("#%d %s ", groupSelfie_cnt, "Group Selfie");
                     hash_string = hash_string + String.format("#%s ", FaceBasedPool_groudSelfiehash[n]);
                 }
 
@@ -665,26 +665,26 @@ public class DnnModel {
                 // Selfie check
                 n = generator.nextInt(FaceBasedPool_selfie_hash.length);
                 if (selfie_cnt > 0) {
-                    hash_string = hash_string + String.format("#%s %d장", "셀피" , selfie_cnt);
+                    hash_string = hash_string + String.format("#%s %d 장", "셀피" , selfie_cnt);
                     hash_string = hash_string + String.format("#%s ", FaceBasedPool_selfie_hash[n]);
                 }
 
                 // Group photo, single photo check
                 n = generator.nextInt(FaceBasedPool_singlePhoto_hash.length);
                 if (singlePhoto_cnt > 0) {
-                    hash_string = hash_string + String.format("#%s %d장", "사진" , selfie_cnt);
+                    hash_string = hash_string + String.format("#%s %d 장", "사진" , singlePhoto_cnt);
                     hash_string = hash_string + String.format("#%s ", FaceBasedPool_singlePhoto_hash[n]);
                 }
 
                 n = generator.nextInt(FaceBasedPool_groupPhoto_hash.length);
                 if (groupPhoto_cnt > 0) {
-                    hash_string = hash_string + String.format("#%s %d장", "그룹 사진" , selfie_cnt);
+                    hash_string = hash_string + String.format("#%s %d 장", "그룹 사진" , groupPhoto_cnt);
                     hash_string = hash_string + String.format("#%s ", FaceBasedPool_groupPhoto_hash[n]);
                 }
 
                 n = generator.nextInt(FaceBasedPool_groudSelfiehash.length);
                 if (groupSelfie_cnt > 0) {
-                    hash_string = hash_string + String.format("#%s %d장", "그룹 셀피" , selfie_cnt);
+                    hash_string = hash_string + String.format("#%s %d 장", "그룹 셀피" , groupSelfie_cnt);
                     hash_string = hash_string + String.format("#%s ", FaceBasedPool_groudSelfiehash[n]);
                 }
 
@@ -868,9 +868,9 @@ public class DnnModel {
                                         else
                                             hash_string = hash_string + String.format("%s ", poiListwithPhoto_nooverlap[l]);
 
-                                    }else if (l < uniqKeysArray.length - 1)
+                                    }else if (l < poiListwithPhoto_nooverlap.length - 1)
                                         hash_string = hash_string + String.format(", %s ", poiListwithPhoto_nooverlap[l]);
-                                    else if (l == uniqKeysArray.length - 1)
+                                    else if (l == poiListwithPhoto_nooverlap.length - 1)
                                         hash_string = hash_string + String.format("그리고 %s 에서는 사진도 몇 장 남겼다. ", poiListwithPhoto_nooverlap[l]);
                                 }
 
@@ -1009,12 +1009,14 @@ public class DnnModel {
             // Selfie check
             if (selfie_cnt > 0) {
                 // Smile detection
-                n = generator.nextInt(dnnModel.FaceBasedPool_selfie_smile.length);
+
                 if (smile_cnt > 0 && flag_selfie_smile ==0) {
+                    n = generator.nextInt(dnnModel.FaceBasedPool_selfie_smile.length);
                     hashList.add(String.format("%s", dnnModel.FaceBasedPool_selfie_smile[n]));
                     DNN_result.add(String.format("#%s", "스마일 셀피"));
                     flag_selfie_smile=1;
                 } else if(smile_cnt ==0 && flag_selfie_nosmile ==0){
+                    n = generator.nextInt(dnnModel.FaceBasedPool_selfie_nosmile.length);
                     hashList.add(String.format("%s", dnnModel.FaceBasedPool_selfie_nosmile[n]));
                     DNN_result.add(String.format("#%s", "셀피"));
                     flag_selfie_nosmile=1;
@@ -1024,12 +1026,14 @@ public class DnnModel {
             // Group photo, single photo check
             if (singlePhoto_cnt > 0) {
                 // Smile detection
-                n = generator.nextInt(dnnModel.FaceBasedPool_single_smile.length);
+
                 if (smile_cnt > 0 && flag_single_smile==0) {
+                    n = generator.nextInt(dnnModel.FaceBasedPool_single_smile.length);
                     hashList.add(String.format("%s", dnnModel.FaceBasedPool_single_smile[n]));
                     DNN_result.add(String.format("#%s", "스마일 인물 사진"));
                     flag_single_smile =1;
                 } else if (smile_cnt ==0 && flag_single_nosmile==0){
+                    n = generator.nextInt(dnnModel.FaceBasedPool_single_nosmile.length);
                     hashList.add(String.format("%s", dnnModel.FaceBasedPool_single_nosmile[n]));
                     DNN_result.add(String.format("#%s", "인물 사진"));
                     flag_single_nosmile =1;
@@ -1038,11 +1042,13 @@ public class DnnModel {
 
             if (groupPhoto_cnt > 0) {
                 // Smile detection
-                n = generator.nextInt(dnnModel.FaceBasedPool_group_smile.length);
+
                 if (smile_cnt > 0 && flag_group_smile==0) {
+                    n = generator.nextInt(dnnModel.FaceBasedPool_group_smile.length);
                     hashList.add(String.format("%s", dnnModel.FaceBasedPool_group_smile[n]));
                     flag_group_smile =1;
                 } else if(smile_cnt ==0 && flag_group_nosmile==0) {
+                    n = generator.nextInt(dnnModel.FaceBasedPool_group_nosmile.length);
                     hashList.add(String.format("%s", dnnModel.FaceBasedPool_group_nosmile[n]));
                     flag_group_nosmile =1;
                 }
@@ -1051,12 +1057,14 @@ public class DnnModel {
 
             if (groupSelfie_cnt > 0) {
                 // Smile detection
-                n = generator.nextInt(dnnModel.FaceBasedPool_group_selfie.length);
+
                 if (smile_cnt > 0 && flag_groupselfie_smile==0) {
+                    n = generator.nextInt(dnnModel.FaceBasedPool_group_selfie.length);
                     hashList.add(String.format("%s", dnnModel.FaceBasedPool_group_selfie[n]));
                     DNN_result.add(String.format("#%s", "단체 스마일 셀피"));
                     flag_groupselfie_smile =1;
                 } else if(smile_cnt ==0 && flag_groupselfie_nosmile==0) {
+                    n = generator.nextInt(dnnModel.FaceBasedPool_group_noselfie.length);
                     hashList.add(String.format("%s", dnnModel.FaceBasedPool_group_noselfie[n]));
                     DNN_result.add(String.format("#%s", "단체 셀피"));
                     flag_groupselfie_nosmile =1;

@@ -161,8 +161,15 @@ public class ShareDialog extends Dialog {
 //                                .setHashtag("#"+mDateline.getSummarize("sentence").replace(" ",""))
 //                                .build());
 
+//                        builder.setShareHashtag(new ShareHashtag.Builder()
+//                                .setHashtag(mDateline.getSummarize("ShortSentence").replace(" ",""))
+//                                .build());
+
+
+
+
                         builder.setShareHashtag(new ShareHashtag.Builder()
-                                .setHashtag(mDateline.getSummarize("hash"))
+                                .setHashtag("#fgh#fgh")
                                 .build());
 
                         ShareContent shareContent =  builder.build();
@@ -334,7 +341,7 @@ public class ShareDialog extends Dialog {
                             myDir.mkdirs();
                         }
 
-                        String fname = "Days_Moment_upload" + ".days";
+                        String fname = "Days_Moment_upload" + ".jpg";
                         File file = new File(myDir, fname);
                         String days_moment_resample_image=file.toString();
 
@@ -350,9 +357,6 @@ public class ShareDialog extends Dialog {
                             e.printStackTrace();
                         }
 
-
-
-
                         String imageUrl = mDateline.getPhotoList().get(0);
                         share.setType("image/*");
                         share.putExtra(Intent.EXTRA_SUBJECT, AppUtils.getAppText(R.string.app_name));
@@ -365,13 +369,20 @@ public class ShareDialog extends Dialog {
 //                            share.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + imageUrl));
 //                            share.putExtra(Intent.EXTRA_STREAM, days_moment_resample_image);
                         }
+
+
                     } else {
                         share.setType("text/plain");
                         share.putExtra(Intent.EXTRA_SUBJECT, AppUtils.getAppText(R.string.app_name));
                         share.putExtra(Intent.EXTRA_TEXT, mDateline.getSummarize("hash"));
                         share.putExtra(Intent.EXTRA_TITLE, AppUtils.getAppText(R.string.app_name));
                     }
+
+
                     mActivity.startActivity(Intent.createChooser(share, AppUtils.getAppText(R.string.text_share)));
+
+
+
                     close();
                 }
                 break;

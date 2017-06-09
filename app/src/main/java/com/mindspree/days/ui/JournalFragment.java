@@ -247,6 +247,11 @@ public class JournalFragment extends BaseFragment{
                     TimelineActivity.startActivity(getContext(), model.getDate(), model, "");
                 }
                 break;
+                case R.id.image_today:{
+                    DatelineModel model = mAdapter.getItem(position);
+                    TimelineActivity.startActivity(getContext(), model.getDate(), model, "");
+                }
+                break;
                 case R.id.image_share:{
                     DatelineModel model = mAdapter.getItem(position);
                     TimelineActivity.startActivity(getContext(), model.getDate(), model, "Share");
