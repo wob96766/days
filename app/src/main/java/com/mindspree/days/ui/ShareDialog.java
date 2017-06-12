@@ -228,76 +228,6 @@ public class ShareDialog extends Dialog {
                                         });
 
 
-//                                for(String imageUrl : mDateline.getPhotoList()) {
-//                                    if(imageUrl.contains("http") || imageUrl.contains("https")){
-//                                        KakaoLink kakaoLink = KakaoLink.getKakaoLink(mActivity);
-//
-//                                        final KakaoTalkLinkMessageBuilder kakaoTalkLinkMessageBuilder = kakaoLink.createKakaoTalkLinkMessageBuilder();
-//                                        kakaoTalkLinkMessageBuilder
-//                                                .addText(mDateline.getSummarize("hash"))
-//                                                .addImage(imageUrl, 320, 280);
-//
-//                                        kakaoLink.sendMessage(kakaoTalkLinkMessageBuilder, mActivity);
-//                                    } else {
-//                                        Bitmap bitmap = BitmapFactory.decodeFile(imageUrl);
-//                                        ExifInterface ei = new ExifInterface(imageUrl);
-//                                        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
-//
-//                                        switch(orientation) {
-//
-//                                            case ExifInterface.ORIENTATION_ROTATE_90:
-//                                                bitmap = AppUtils.rotateBitmap(bitmap, 90);
-//                                                break;
-//
-//                                            case ExifInterface.ORIENTATION_ROTATE_180:
-//                                                bitmap = AppUtils.rotateBitmap(bitmap, 180);
-//                                                break;
-//
-//                                            case ExifInterface.ORIENTATION_ROTATE_270:
-//                                                bitmap = AppUtils.rotateBitmap(bitmap, 270);
-//                                                break;
-//
-//                                            case ExifInterface.ORIENTATION_NORMAL:
-//
-//                                            default:
-//                                                break;
-//                                        }
-//
-//                                        StorageReference profileRef = mStorageReference.child(String.format("profiles/%s/%s", mPreference.getUserUid(), imageUrl));
-//                                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//
-//                                        bitmap.compress(Bitmap.CompressFormat.JPEG, 30, baos);
-//                                        byte[] dataCompress = baos.toByteArray();
-//                                        final int width = bitmap.getWidth();
-//                                        final int height = bitmap.getHeight();
-//                                        UploadTask uploadTask = profileRef.putBytes(dataCompress);
-//                                        uploadTask.addOnFailureListener(new OnFailureListener() {
-//                                            @Override
-//                                            public void onFailure(Exception exception) {
-//                                            }
-//                                        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//                                            @Override
-//                                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                                                String stringUrl = taskSnapshot.getDownloadUrl().toString();
-//                                                try {
-//                                                    KakaoLink kakaoLink = KakaoLink.getKakaoLink(mActivity);
-//
-//                                                    final KakaoTalkLinkMessageBuilder kakaoTalkLinkMessageBuilder = kakaoLink.createKakaoTalkLinkMessageBuilder();
-//                                                    kakaoTalkLinkMessageBuilder
-//                                                            .addText(mDateline.getSummarize("hash"))
-//                                                            .addImage(stringUrl, width, height);
-//
-//                                                    kakaoLink.sendMessage(kakaoTalkLinkMessageBuilder, mActivity);
-//
-//                                                } catch (KakaoParameterException e) {
-//                                                    e.printStackTrace();
-//                                                }
-//                                            }
-//                                        });
-//                                    }
-//                                    break;
-//                                }
-
 
 
                             } else {
@@ -324,6 +254,9 @@ public class ShareDialog extends Dialog {
                 break;
                 case R.id.btn_etc:{
                     Intent share = new Intent(Intent.ACTION_SEND);
+
+                    int temp= mDateline.getPhotoList().size();
+
                     if(mDateline.getPhotoList().size() > 0 ) {
 
 

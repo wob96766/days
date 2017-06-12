@@ -43,17 +43,21 @@ public class TimelineActivity extends BaseActivity {
     private TextView mTextLocationcount;
     private TextView mTextPhotocount;
     private DatelineModel mDateline;
+    private TimelineModel mTimeline;
 
     public SentenceModel sentenceModel;
 
 
-    public static void startActivity(Context context, String dateString, DatelineModel dateline, String mode)
+    public static void startActivity(Context context, String dateString, DatelineModel dateline, TimelineModel timeline, String mode)
     {
         Intent intent = new Intent(context, TimelineActivity.class);
         intent.putExtra(AppConfig.IntentParam.DATE, dateString);
         intent.putExtra(AppConfig.IntentParam.DATELINE, dateline);
+        intent.putExtra(AppConfig.IntentParam.TIMELINE, timeline);
         intent.putExtra(AppConfig.IntentParam.TIMELINE_MODE, mode);
         context.startActivity(intent);
+
+
     }
 
     @Override
@@ -75,10 +79,23 @@ public class TimelineActivity extends BaseActivity {
             dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                 @Override
                 public void onDismiss(DialogInterface dialog) {
+
+
                     requestSentence();
                 }
             });
+        }else if(mMode.equals("ShareTimeline")){
+            ShareDialogTimeline dialog = new ShareDialogTimeline(this, mSelectedDate, mTimeline);
+            dialog.show();
+            dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+
+                    onBackPressed();
+                }
+            });
         }
+
 
     }
 
@@ -100,6 +117,7 @@ public class TimelineActivity extends BaseActivity {
 
     @Override
     public void finish() {
+
         super.finish();
         overridePendingTransition(R.anim.hold, R.anim.slide_out_right);
     }
@@ -109,6 +127,7 @@ public class TimelineActivity extends BaseActivity {
 
         mPhotoWrapper = new DBWrapper(mPreference.getUserUid());
         mDateline = getIntent().getParcelableExtra(AppConfig.IntentParam.DATELINE);
+        mTimeline = getIntent().getParcelableExtra(AppConfig.IntentParam.TIMELINE);
         mSelectedDate = getIntent().getStringExtra(AppConfig.IntentParam.DATE);
         mMode = getIntent().getStringExtra(AppConfig.IntentParam.TIMELINE_MODE);
     }
@@ -169,7 +188,9 @@ public class TimelineActivity extends BaseActivity {
     public void requestSentence() {
         SentenceModel sentence = mPhotoWrapper.getSentence(mSelectedDate);
         sentenceModel = sentence;
-        mTextSentence.setText(sentence.getSummarize());
+//        mTextSentence.setText(sentence.getSummarize());
+
+        mTextSentence.setText(mTimeline.getSummarize(getContext()));
         mTextSentence.setTypeface(MainActivity.mTypeface);
 //        mTextPhotocount.setText(sentence.mPhotoCount);
 //        mTextLocationcount.setText(sentence.mLocationCount);
@@ -178,6 +199,7 @@ public class TimelineActivity extends BaseActivity {
     public void finishView() {
 
     }
+
 
 
     View.OnClickListener mOnClickListener = new View.OnClickListener(){

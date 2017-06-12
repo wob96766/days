@@ -175,6 +175,8 @@ public class DatelineModel implements Parcelable {
         }
         return mPhotoList;
     }
+
+
     //junyong - get image's "photo_index" to be displayed on the screen
     public ArrayList<String> getDisplayPhotoIds() {
         ArrayList<String> result = new ArrayList<String>();
@@ -341,12 +343,12 @@ public class DatelineModel implements Parcelable {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, 0);
         String DateToday = dateFormat.format(cal.getTime()); //your formatted date here
-        cal.add(Calendar.DATE, -1);
+        cal.add(Calendar.DATE, -2);
         String DateYesterday = dateFormat.format(cal.getTime()); //your formatted date here
 
 //        if(mSentence == null || mSentence.equals("") || DateInMomeent.equals(DateToday) ) {   // This is only for debugging
-        if(DateInMomeent.equals(DateYesterday)  ) {   // This is only for debugging
-//        if(mSentence == null || mSentence.equals("")  ) {
+//        if(DateInMomeent.equals(DateYesterday)  ) {   // This is only for debugging
+        if(mSentence == null || mSentence.equals("")  ) {
 //        if(true) {
 
             if (sentence_mode.equals("hash"))
@@ -489,6 +491,10 @@ public class DatelineModel implements Parcelable {
 
                         hash_string_face= dnnModel.SentenceFromPhoto_korean(clusterEngine, offset,size, DNN_result, poiList.get(key_temp).toString(),photolist,front_cam_width,rear_cam_width, DNN_path, weekend_days);
                         DNN_result = dnnModel.DNN_result;
+
+                        if (hash_string_face.length() > 1 )
+                            hash_string = hash_string + String.format("\n\n o %s  \n", poiList.get(key_temp).toString());
+
                         hash_string =hash_string+hash_string_face;
 
                         offset=offset+size;
@@ -496,7 +502,7 @@ public class DatelineModel implements Parcelable {
 
 
                 }
-
+                hash_string = hash_string + String.format("\n\n%s", "");
 
 
                 // 5. Measure how busy user was

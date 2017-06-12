@@ -30,17 +30,26 @@ public class SentenceModel{
     public String getSummarize(){
 
 
+        String hash_string="";
 
         if(mSentence == null || mSentence.equals("")) {
             if (mWeather.equals("")) {
+                hash_string = hash_string + String.format(" %s \n\n", "원하시는 문구를 직접 작성하실 수도 있습니다 ");
+
+                hash_string = hash_string + String.format(AppUtils.getAppText(R.string.format_summarize_date_withweather), mWeather, mLocationCount, mPhotoCount);
+
                 return String.format(AppUtils.getAppText(R.string.format_summarize_date), mLocationCount, mPhotoCount);
             } else {
 
 
+                hash_string = hash_string + String.format(" %s \n\n", "원하시는 문구를 직접 작성하실 수도 있습니다 ");
+
+                hash_string = hash_string + String.format(AppUtils.getAppText(R.string.format_summarize_date_withweather), mWeather, mLocationCount, mPhotoCount);
 
 
-                return String.format(AppUtils.getAppText(R.string.format_summarize_date_withweather), mWeather, mLocationCount, mPhotoCount);
             }
+            return hash_string;
+
         } else {
 
             ArrayList sentenceHash;

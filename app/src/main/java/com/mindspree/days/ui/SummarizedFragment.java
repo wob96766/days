@@ -18,6 +18,7 @@ import com.mindspree.days.data.DBWrapper;
 import com.mindspree.days.lib.AppConfig;
 import com.mindspree.days.model.DailyModel;
 import com.mindspree.days.model.DatelineModel;
+import com.mindspree.days.model.TimelineModel;
 import com.squareup.timessquare.CalendarCellDecorator;
 import com.squareup.timessquare.CalendarPickerView;
 
@@ -126,7 +127,8 @@ public class SummarizedFragment extends BaseFragment{
                 // cancel all highlight
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.KOREA);
                 String dateString = dateFormat.format(date);
-                TimelineActivity.startActivity(getContext(), dateString, mDBWrapper.getDateline(dateString),"");
+                TimelineModel model_timeline = new TimelineModel();
+                TimelineActivity.startActivity(getContext(), dateString, mDBWrapper.getDateline(dateString),model_timeline,"");
                 mCalendarView.selectDate(date);
             }
 

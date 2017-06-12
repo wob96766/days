@@ -128,6 +128,16 @@
                             android:maxLines="1"
                             android:layout_weight="0.77" />
 
+                        <ImageView
+                            android:id="@+id/image_share_timeline"
+                            android:layout_marginLeft="@dimen/middle"
+                            android:layout_width="23dp"
+                            android:layout_height="23dp"
+                            android:gravity="right"
+                            android:layout_alignParentRight="true"
+                            android:src="@mipmap/ic_share_normal" />
+
+
                     </LinearLayout>
 
 

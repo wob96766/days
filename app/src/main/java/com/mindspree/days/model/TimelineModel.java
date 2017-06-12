@@ -62,6 +62,8 @@ public class TimelineModel implements Parcelable {
     public double mMeasureLatitude = 0;
     public double mMeasureLogitude = 0;
 
+    public String mUpdateDate = "";
+
     public AppPreference mPreference;
     public Location mHomeLocation;
     public Location mCurrentLocation = new Location("other");;
@@ -172,6 +174,9 @@ public class TimelineModel implements Parcelable {
 
     }
 
+
+
+
     public ArrayList<String> getImageList() {
         if(mImageList == null) {
             mImageList = new ArrayList<String>();
@@ -239,7 +244,9 @@ public class TimelineModel implements Parcelable {
 
 
 
-
+    public String getDate() {
+        return AppUtils.getDate(mUpdateDate, "yyyy-MM-dd");
+    }
 
     private void writeToFile(String data, String filename, Context context) {
         try {
@@ -351,7 +358,8 @@ public class TimelineModel implements Parcelable {
         return mImageGroup;
     }
 
-    public String getSummarize(Context context) {
+//    public String getSummarize() {
+        public String getSummarize(Context context) {
 
         DNN_path = MainActivity.DNN_path;
         DNN_result = new ArrayList();

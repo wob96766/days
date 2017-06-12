@@ -8,6 +8,8 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.graphics.Typeface;
@@ -55,6 +57,7 @@ import com.mindspree.days.lib.AppConfig;
 import com.mindspree.days.lib.AppUtils;
 import com.mindspree.days.model.Cluster_input;
 import com.mindspree.days.model.FoursquareModel;
+import com.mindspree.days.model.PhotosTableModel;
 import com.mindspree.days.model.TimelineModel;
 import com.mindspree.days.network.AsyncHttpResponse;
 import com.mindspree.days.network.RequestCode;
@@ -82,6 +85,11 @@ import cz.msebera.android.httpclient.Header;
 
 import com.google.android.gms.vision.face.Face;
 import com.google.android.gms.vision.face.Landmark;
+
+import org.opencv.android.OpenCVLoader;
+import org.opencv.android.Utils;
+import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
 
 /**
  * Created by Admin on 21-10-2015.
@@ -129,6 +137,18 @@ public class MainActivity extends BaseActivity {
     // DNN related : Added by Mindspree
     public static String [] DNN_path=null;
     private ArrayList<TimelineModel> mTimelineList = new ArrayList<TimelineModel>();
+
+
+    private static final String TAG = "MainActivity";
+
+    static {
+        if(!OpenCVLoader.initDebug()){
+            Log.d(TAG, "OpenCV not loaded");
+        } else {
+            Log.d(TAG, "OpenCV loaded");
+        }
+    }
+
 
     public static void startActivity(Context context) {
         final Intent intent = new Intent(context, MainActivity.class);
@@ -922,6 +942,29 @@ public class MainActivity extends BaseActivity {
                 // Return file list that needs to be clustered.
                 EngineDBInterface engineDBInterface= new EngineDBInterface();
                 ArrayList fileArrayList = engineDBInterface.getPhotoListWithoutClusterId();
+
+
+                // Open CV integration example
+//                // Get file name in string
+//                PhotosTableModel fileParrayList= (PhotosTableModel)fileArrayList.get(0);
+//                String photoPath = (String) fileParrayList.getFile_location();
+//
+//                // Create input Bitmap object
+//                BitmapFactory.Options options = new BitmapFactory.Options();
+//                options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+//                Bitmap photo = BitmapFactory.decodeFile(photoPath, options);
+//
+//                // Image processing
+//                Mat imageMat = new Mat();
+//                Utils.bitmapToMat(photo, imageMat);
+//                Imgproc.cvtColor(imageMat, imageMat, Imgproc.COLOR_BGR2GRAY);
+//                Imgproc.GaussianBlur(imageMat, imageMat, new org.opencv.core.Size(3,3), 0);
+//                Imgproc.adaptiveThreshold(imageMat, imageMat, 255, Imgproc.ADAPTIVE_THRESH_MEAN_C, Imgproc.THRESH_BINARY_INV, 5, 4);
+//
+//                // Convert Mat to Bitmap
+//                Bitmap photo_out = Bitmap.createBitmap(imageMat.cols(), imageMat.rows(), Bitmap.Config.ARGB_8888);
+//                Utils.matToBitmap(imageMat,photo_out);
+
 
                 Cluster_input cluster_input =new Cluster_input();
                 cluster_input.createVar(fileArrayList);

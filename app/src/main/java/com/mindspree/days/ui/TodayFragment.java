@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.icu.text.DateTimePatternGenerator;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -32,6 +33,7 @@ import com.mindspree.days.interfaces.OnItemClickListener;
 import com.mindspree.days.lib.AppConfig;
 import com.mindspree.days.lib.AppUtils;
 import com.mindspree.days.model.DailyModel;
+import com.mindspree.days.model.DatelineModel;
 import com.mindspree.days.model.TimelineModel;
 import com.mindspree.days.model.SentenceModel;
 import com.mindspree.days.model.WeatherModel;
@@ -493,6 +495,14 @@ public class TodayFragment extends BaseFragment{
                     SearchMapActivity.startActivity(getContext(), model.mLocationId, model.mLatitude, model.mLogitude);
                 }
                     break;
+
+                case R.id.image_share_timeline:{
+                    TimelineModel model = mAdapter.getItem(position);
+                    DatelineModel model_date = new DatelineModel();
+                    ArrayList temp = model.getPhotoList();
+                    String test = model.getSummarize(getContext());
+                    TimelineActivity.startActivity(getContext(), model_date.getDate(), model_date, model, "ShareTimeline");
+                }
             }
         }
     };

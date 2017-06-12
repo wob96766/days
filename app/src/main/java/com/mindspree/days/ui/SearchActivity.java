@@ -22,6 +22,7 @@ import com.mindspree.days.data.DBWrapper;
 import com.mindspree.days.interfaces.OnItemClickListener;
 import com.mindspree.days.model.DatelineModel;
 import com.mindspree.days.model.SearchModel;
+import com.mindspree.days.model.TimelineModel;
 
 import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
@@ -184,7 +185,8 @@ public class SearchActivity extends BaseActivity{
                 case R.id.text_month:
                 case R.id.text_day:{
                     DatelineModel model = mAdapter.getItem(position);
-                    TimelineActivity.startActivity(getContext(), model.getDate(), model,"");
+                    TimelineModel model_timeline = new TimelineModel();
+                    TimelineActivity.startActivity(getContext(), model.getDate(), model,model_timeline,"");
                 }
                 break;
             }

@@ -1173,11 +1173,11 @@ public class DnnModel {
                     connection=" 그리고";
                 else if(hashList_nooverlap_size==2 && m==1)
                     connection=". ";
-                else if(hashList_nooverlap_size>2 && m<size-2)
+                else if(hashList_nooverlap_size>2 && m<hashList_nooverlap_size-2)
                     connection=", ";
-                else if(hashList_nooverlap_size>2 && m==size-2)
+                else if(hashList_nooverlap_size>2 && m==hashList_nooverlap_size-2)
                     connection=" 그리고";
-                else if(hashList_nooverlap_size>2 && m==size-1)
+                else if(hashList_nooverlap_size>2 && m==hashList_nooverlap_size-1)
                     connection=". ";
                 else
                     connection="";

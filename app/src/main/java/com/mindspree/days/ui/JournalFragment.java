@@ -22,6 +22,7 @@ import com.mindspree.days.data.DBWrapper;
 import com.mindspree.days.interfaces.OnItemClickListener;
 import com.mindspree.days.lib.AppConfig;
 import com.mindspree.days.model.DatelineModel;
+import com.mindspree.days.model.TimelineModel;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -244,22 +245,26 @@ public class JournalFragment extends BaseFragment{
                 case R.id.text_month:
                 case R.id.text_day:{
                     DatelineModel model = mAdapter.getItem(position);
-                    TimelineActivity.startActivity(getContext(), model.getDate(), model, "");
+                    TimelineModel model_timeline = new TimelineModel();
+                    TimelineActivity.startActivity(getContext(), model.getDate(), model, model_timeline, "");
                 }
                 break;
                 case R.id.image_today:{
                     DatelineModel model = mAdapter.getItem(position);
-                    TimelineActivity.startActivity(getContext(), model.getDate(), model, "");
+                    TimelineModel model_timeline = new TimelineModel();
+                    TimelineActivity.startActivity(getContext(), model.getDate(), model,model_timeline, "");
                 }
                 break;
                 case R.id.image_share:{
                     DatelineModel model = mAdapter.getItem(position);
-                    TimelineActivity.startActivity(getContext(), model.getDate(), model, "Share");
+                    TimelineModel model_timeline = new TimelineModel();
+                    TimelineActivity.startActivity(getContext(), model.getDate(), model,model_timeline, "Share");
                 }
                 break;
                 case R.id.image_edit:{
                     DatelineModel model = mAdapter.getItem(position);
-                    TimelineActivity.startActivity(getContext(), model.getDate(), model, "Edit");
+                    TimelineModel model_timeline = new TimelineModel();
+                    TimelineActivity.startActivity(getContext(), model.getDate(), model,model_timeline, "Edit");
                 }
                 break;
             }

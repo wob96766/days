@@ -189,6 +189,8 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
         public View mTopLine;
         public View mBottomLine;
 
+        public ImageView mimageShare;
+
         public View mViewPhoto1;
         public View mViewPhoto2;
         public View mViewPhoto3;
@@ -228,6 +230,8 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
             mTextContent = aq.id(R.id.text_content).getTextView();
             mLikeCount = aq.id(R.id.text_like).getTextView();
             mCommentCount = aq.id(R.id.text_comment).getTextView();
+
+            mimageShare = aq.id(R.id.image_share_timeline).clicked(mOnClickListener).getImageView();
 
             mTextLocationcount = aq.id(R.id.textLocationcount).getTextView();
             mTextPhotocount = aq.id(R.id.textPhotocount).getTextView();

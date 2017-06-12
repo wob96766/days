@@ -21,6 +21,7 @@ import android.os.StatFs;
 import com.mindspree.days.AppApplication;
 import com.mindspree.days.engine.ClusterEngine;
 import com.mindspree.days.model.DatelineModel;
+import com.mindspree.days.model.TimelineModel;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -474,6 +475,127 @@ public class AppUtils {
 
     }
 
+    public static Bitmap collage_gen_Timeline(TimelineModel mDateline)
+    {
+        int photo_cnt=0;
+        Bitmap bitmap_2photo_target =null;
+        Bitmap bitmap_3photo_target =null;
+        Bitmap bitmap_target =null;
+        for(String imageUrl : mDateline.getPhotoList()) {
+            if (imageUrl.contains("http") || imageUrl.contains("https")) {
+            }else {
+                Bitmap bitmap = BitmapFactory.decodeFile(imageUrl);
+                if(bitmap.getHeight()>200)
+                    photo_cnt++;
+            }
+
+            if(photo_cnt==3)
+                break;
+        }
+
+
+        Bitmap[] bitmapArray = new Bitmap[photo_cnt];
+        for(int i=0;i<photo_cnt;i++){ // Becareful.... Rank 2 and 3 are processed first.
+            String imageUrl =mDateline.getPhotoList().get(i).toString();
+
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(imageUrl, options);
+
+            int imgHeight = options.outHeight;
+            int sample_size =2;
+
+            if(imgHeight<2000)
+                sample_size =1 ;
+            else if(imgHeight >=2000)
+                sample_size =2 ;
+
+            BitmapFactory.Options bitmap_options = new BitmapFactory.Options();
+            bitmap_options.inPreferredConfig = Bitmap.Config.RGB_565;
+            bitmap_options.inSampleSize = sample_size;
+            bitmapArray[i] = BitmapFactory.decodeFile(imageUrl, bitmap_options);
+
+
+            int orientation =1;
+            ExifInterface ei = null;
+            try {
+                ei = new ExifInterface(imageUrl);
+                orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+                        ExifInterface.ORIENTATION_UNDEFINED);
+
+            } catch (Exception e) {
+                //e.printStackTrace();
+
+                orientation = ExifInterface.ORIENTATION_NORMAL;
+            }
+            switch(orientation) {
+
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    bitmapArray[i] = AppUtils.rotateBitmap(bitmapArray[i], 90);
+                    break;
+
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    bitmapArray[i] = AppUtils.rotateBitmap(bitmapArray[i], 180);
+                    break;
+
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    bitmapArray[i] = AppUtils.rotateBitmap(bitmapArray[i], 270);
+                    break;
+
+                case ExifInterface.ORIENTATION_NORMAL:
+                default:
+                    break;
+            }
+
+
+        }
+
+        if(photo_cnt==1){
+
+            bitmap_target= bitmapArray[0];
+
+        }if(photo_cnt==2){
+        if( (bitmapArray[0].getWidth() >= bitmapArray[0].getHeight()) && (bitmapArray[1].getWidth() >= bitmapArray[1].getHeight()) ) {
+            // Both of them are landscape . Add upd and down
+            bitmap_2photo_target=AppUtils.combineImages_updown(bitmapArray[0],bitmapArray[1]);
+        }else{
+            // Portrait and landscape or Landscape and portrait
+            bitmap_2photo_target=AppUtils.combineImages_side(bitmapArray[0],bitmapArray[1]);
+        }
+        bitmap_target= bitmap_2photo_target;
+
+    }else if(photo_cnt==3) {
+
+        if( (bitmapArray[1].getWidth() >= bitmapArray[1].getHeight()) && (bitmapArray[2].getWidth() >= bitmapArray[2].getHeight()) ) {
+            // Both of them are landscape . Add upd and down
+            bitmap_2photo_target=AppUtils.combineImages_updown(bitmapArray[1],bitmapArray[2]);
+        }else{
+            // Portrait and landscape or Landscape and portrait
+            bitmap_2photo_target=AppUtils.combineImages_side(bitmapArray[1],bitmapArray[2]);
+        }
+
+        if(  bitmapArray[0].getWidth() >= bitmapArray[0].getHeight()  ){
+            // Rank 1 is Landscape
+            // addd up and down
+            bitmap_2photo_target=AppUtils.combineImages_side(bitmapArray[1],bitmapArray[2]);
+            bitmap_3photo_target=AppUtils.combineImages_updown(bitmapArray[0],bitmap_2photo_target);
+
+        }else{
+            // Rank 1 is Portrait
+            // addd side by side
+            bitmap_2photo_target=AppUtils.combineImages_updown(bitmapArray[1],bitmapArray[2]);
+            bitmap_3photo_target=AppUtils.combineImages_side(bitmapArray[0],bitmap_2photo_target);
+        }
+
+
+        bitmap_target= bitmap_3photo_target;
+
+    }
+
+
+        return bitmap_target;
+
+    }
 
     public static Bitmap combineImages_side(Bitmap c, Bitmap s) { // can add a 3rd parameter 'String loc' if you want to save the new image - left some code to do that at the bottom
         Bitmap cs = null;
