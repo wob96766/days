@@ -393,8 +393,8 @@ public class DatelineModel implements Parcelable {
                     mMood_kr="기분 꿀꿀";
                     mMood_hash_kr="슬픔";
                 }else if(mMood.equals("Busy")){
-                    mMood_kr="바쁜 하루";
-                    mMood_hash_kr="바쁨";
+                    mMood_kr="피곤한 하루";
+                    mMood_hash_kr="피곤";
                 }
                 hash_string = hash_string + String.format(" %s\n", mMood_kr);
                 DNN_result.add(String.format("#%s",mMood_hash_kr));

@@ -15,17 +15,17 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:gravity="center_vertical"
+            android:orientation="horizontal"
             android:paddingLeft="@dimen/large"
             android:paddingRight="@dimen/large">
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="0.06"
                 android:layout_marginLeft="40dp"
                 android:layout_marginRight="20dp"
+                android:layout_weight="0.02"
                 android:gravity="top"
                 android:orientation="vertical">
 
@@ -41,7 +41,7 @@
                 <TextView
                     android:id="@+id/text_yearmonth"
                     style="@style/font_black_30sp"
-                    android:layout_width="123dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="top"
                     android:textSize="15sp" />
@@ -50,18 +50,38 @@
                     android:id="@+id/text_sentence"
                     style="@style/font_black_12sp"
                     android:layout_width="123dp"
-                    android:gravity="top"
-                    android:layout_height="0dp" />
+                    android:layout_height="0dp"
+                    android:gravity="top" />
 
                 <TextView
                     android:id="@+id/text_date"
                     style="@style/font_black_30sp"
-                    android:layout_width="94dp"
-                    android:gravity="top"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:gravity="top"
                     android:textSize="15sp" />
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="20dp"
+                android:layout_weight="0.015"
+                android:gravity="top"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/imageProfile"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.50"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/bg_round_blue_40dp"
+                    android:visibility="invisible"
+                    android:src="@mipmap/ic_person_small" />
+
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -70,36 +90,36 @@
                 android:gravity="right"
                 android:orientation="vertical"
                 android:weightSum="1">
-            <TextView
-                android:id="@+id/text_dummy"
-                style="@style/font_black_30sp"
-                android:layout_width="57dp"
-                android:gravity="top"
-                android:layout_height="10dp"
-                android:textSize="15sp"
-                android:layout_weight="0.78" />
+
+                <TextView
+                    android:id="@+id/text_dummy"
+                    style="@style/font_black_30sp"
+                    android:layout_width="57dp"
+                    android:layout_height="5dp"
+                    android:layout_weight="0.78"
+                    android:gravity="top"
+                    android:textSize="15sp" />
 
                 <TextView
                     android:id="@+id/text_mood"
                     style="@style/font_black_14sp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="27dp"
-                    android:paddingLeft="@dimen/small"
+                    android:layout_width="match_parent"
+                    android:layout_height="33dp"
                     android:layout_marginRight="21dp"
                     android:gravity="center"
                     android:hint="  mood"
-                    android:textStyle="bold"
                     android:orientation="vertical"
-                    android:layout_weight="0.02" />
+                    android:paddingLeft="@dimen/small"
+                    android:textStyle="bold" />
             </LinearLayout>
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="13dp"
-            android:orientation="horizontal"
+            android:layout_height="5dp"
             android:gravity="center_vertical"
+            android:orientation="horizontal"
             android:paddingLeft="@dimen/large"
             android:paddingRight="@dimen/large">
 
@@ -132,30 +152,32 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
             android:layout_marginLeft="40dp"
             android:layout_marginRight="10dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingBottom="3dp"
             android:paddingLeft="@dimen/large"
-            android:paddingRight="@dimen/large"
-            android:paddingBottom="3dp">
+            android:paddingRight="@dimen/large">
 
             <ImageView
                 android:id="@+id/imageWeather"
                 android:layout_width="wrap_content"
                 android:layout_height="21dp"
+                android:layout_weight="1"
                 android:gravity="left"
                 app:srcCompat="@mipmap/ic_cloud_2x" />
 
             <Space
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.01" />
+                android:layout_weight="1" />
 
             <ImageView
                 android:id="@+id/imageLocation"
                 android:layout_width="wrap_content"
                 android:layout_height="21dp"
+                android:layout_weight="1"
                 android:gravity="right"
                 app:srcCompat="@mipmap/ic_place_2x" />
 
@@ -163,6 +185,7 @@
                 android:id="@+id/textLocationcount"
                 android:layout_width="38dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:gravity="left"
                 android:text="0"
                 android:textSize="14sp"
@@ -172,6 +195,7 @@
                 android:id="@+id/imagePhotocount"
                 android:layout_width="wrap_content"
                 android:layout_height="21dp"
+                android:layout_weight="1"
                 android:gravity="right"
                 app:srcCompat="@mipmap/ic_photo_2x" />
 
@@ -179,6 +203,7 @@
                 android:id="@+id/textPhotocount"
                 android:layout_width="43dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:gravity="left"
                 android:text="0"
                 android:textSize="14sp"
@@ -191,13 +216,13 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
             android:layout_marginLeft="40dp"
             android:layout_marginRight="10dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingBottom="3dp"
             android:paddingLeft="@dimen/large"
-            android:paddingRight="@dimen/large"
-            android:paddingBottom="3dp">
+            android:paddingRight="@dimen/large">
 
 
             <TextView

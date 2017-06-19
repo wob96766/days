@@ -25,6 +25,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.androidquery.AQuery;
+import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.mindspree.days.R;
 import com.mindspree.days.adapter.MoodAdapter;
 import com.mindspree.days.adapter.TimelineAdapter;
@@ -32,8 +41,10 @@ import com.mindspree.days.data.DBWrapper;
 import com.mindspree.days.interfaces.OnItemClickListener;
 import com.mindspree.days.lib.AppConfig;
 import com.mindspree.days.lib.AppUtils;
+import com.mindspree.days.lib.CircleTransform;
 import com.mindspree.days.model.DailyModel;
 import com.mindspree.days.model.DatelineModel;
+import com.mindspree.days.model.Profile;
 import com.mindspree.days.model.TimelineModel;
 import com.mindspree.days.model.SentenceModel;
 import com.mindspree.days.model.WeatherModel;
@@ -80,6 +91,15 @@ public class TodayFragment extends BaseFragment{
     private SentenceModel mSentence;
 
 
+    String[] mGenderList ;
+    private FirebaseAuth mAuth;
+
+    private FirebaseStorage mStorage;
+    private StorageReference mStorageReference;
+
+    private DatabaseReference mDatabase;
+    private DatabaseReference mProfileReference;
+    private Profile mProfile =  new Profile();
 
     @Override
     public void onDetach() {
@@ -118,11 +138,14 @@ public class TodayFragment extends BaseFragment{
         super.onViewCreated(view, savedInstanceState);
 
         initData();
+
         initView();
         requestSentence();
         requestTimeline();
         RequestWeather();
     }
+
+
 
     private void RequestWeather() {
         mHttpClient.RequestWeather(getContext(), mPreference.getLatitude(), mPreference.getLongitude(), getAppText(R.string.openweather_key), mAsyncHttpResponse);
@@ -145,9 +168,50 @@ public class TodayFragment extends BaseFragment{
 
     public void initData() {
         mDBWrapper = new DBWrapper(mPreference.getUserUid());
+
+        mGenderList = getResources().getStringArray(R.array.array_gender);
+        mAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mProfileReference = mDatabase.child("users").child(mPreference.getUserUid()).child("profile");
+        mStorage = FirebaseStorage.getInstance();
+        mStorageReference = mStorage.getReferenceFromUrl(getAppText(R.string.firebase_bucket_name));
+
+        RequestUserProfile();
+
+
         RegistDateRefreshCast();
     }
 
+    private void RequestUserProfile() {
+        showLoadingDialog();
+        mProfileReference.addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        // Get user value
+                        Profile profile = dataSnapshot.getValue(Profile.class);
+                        dismissLoadingDialog();
+                        if(profile != null){
+                            mProfile = profile;
+                            if(mProfile != null) {
+//                                mEditName.setText(mProfile.name);
+//                                mEditGender.setText(mProfile.gender);
+//                                mEditBirthday.setText(mProfile.birthday);
+//                                mEditAddress1.setText(mProfile.address1);
+//                                mEditAddress2.setText(mProfile.address2);
+//
+                            }
+                        } else {
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        showToast(getAppText(R.string.message_network_error));
+                    }
+                });
+    }
     public void initView() {
         AQuery aq = new AQuery(mRootView);
 
@@ -294,36 +358,67 @@ public class TodayFragment extends BaseFragment{
 
         String mMood = mTextMood.getText().toString();
         String mMood_kr ="";
-        if(mMood!=null || mMood!="") {
 
-            if(hourofday>=17 && hourofday <=21){
 
-                if(mMood.equals("Happy")){
-                    mMood_kr="Days: 오늘은 기분 좋은 하루군요!";  // For sentence
-                }else if(mMood.equals("Angry")){
-                    mMood_kr="Days: 오늘은 기분이 별로인가 봐요";
-                }else if(mMood.equals("Sad")){
-                    mMood_kr="Days: 오늘은 좀 슬픈신가 봐요";
-                }else if(mMood.equals("Busy")){
-                    mMood_kr="Days: 오늘 하루도 바쁘셨군요!";
+        if(mProfile.address1 != null && !mProfile.address1.equals(""))
+        {
+            if(mMood!=null || mMood!="") {
+
+                if(hourofday>=17 && hourofday <=21){
+
+                    if(mMood.equals("Happy")){
+                        mMood_kr="Days: 오늘은 기분 좋은 하루군요!";  // For sentence
+                    }else if(mMood.equals("Angry")){
+                        mMood_kr="Days: 오늘은 기분이 별로인가 봐요";
+                    }else if(mMood.equals("Sad")){
+                        mMood_kr="Days: 오늘은 좀 슬픈신가 봐요";
+                    }else if(mMood.equals("Busy")){
+                        mMood_kr="Days: 오늘 하루도 바쁘셨군요!";
+                    }
+                    mTextDaysbot.setText(mMood_kr);
                 }
-                mTextDaysbot.setText(mMood_kr);
+
+            }else {
+                if(hourofday >=3)
+                {
+                    mTextDaysbot.setText("Days: 오늘은 어떤 하루였나요?"+ "\n"+ "mood를 설정해 주세요");
+                }
 
             }
+        }else{
 
-//            mTextDaysbot.setText("Days:~$ 오늘은 어떤 하루였나요?"+ "\n"+ "mood를 설정해 주세요");
+            if(hourofday>=9 && hourofday <=10)
+                mTextDaysbot.setText("설정에서 프로필을 완성하시면 문장이 더욱 정교해집니다.");
+            else if(hourofday>=13 && hourofday <=14)
+                mTextDaysbot.setText("설정에서 프로필을 완성하시면 문장이 더욱 정교해집니다.");
+            else{
 
+                if(mMood!=null || mMood!="") {
 
-        }else {
-            if(hourofday >=3)
-            {
-                mTextDaysbot.setText("Days: 오늘은 어떤 하루였나요?"+ "\n"+ "mood를 설정해 주세요");
+                    if(hourofday>=17 && hourofday <=21){
+
+                        if(mMood.equals("Happy")){
+                            mMood_kr="Days: 오늘은 기분 좋은 하루군요!";  // For sentence
+                        }else if(mMood.equals("Angry")){
+                            mMood_kr="Days: 오늘은 기분이 별로인가 봐요";
+                        }else if(mMood.equals("Sad")){
+                            mMood_kr="Days: 오늘은 좀 슬픈신가 봐요";
+                        }else if(mMood.equals("Busy")){
+                            mMood_kr="Days: 오늘 하루도 바쁘셨군요!";
+                        }
+                        mTextDaysbot.setText(mMood_kr);
+                    }
+
+                }else {
+                    if(hourofday >=3)
+                    {
+                        mTextDaysbot.setText("Days: 오늘은 어떤 하루였나요?"+ "\n"+ "mood를 설정해 주세요");
+                    }
+
+                }
+
             }
-
-
-
         }
-
 
 
 

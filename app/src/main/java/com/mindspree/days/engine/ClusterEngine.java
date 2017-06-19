@@ -21,6 +21,10 @@ import com.mindspree.days.ui.MainActivity.ExecuteEngines;
 import com.mindspree.days.ui.MainActivity.ExecuteEnginesAgain;
 import com.mindspree.days.model.PhotosTableModel;
 
+import org.opencv.android.Utils;
+import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
+
 // This is for AI
 
 
@@ -155,8 +159,8 @@ public class ClusterEngine {
             cluster_input.ClusTer[i] =cluster_input.Cluster_cnt;
         }
 
-        System.out.printf("#Cluster score# : %s, %f%n",fname, cluster_input.kdist[i]);
-        System.out.printf("#Cluster cnt# : %s, %d%n",fname,  (int)cluster_input.Cluster_cnt);
+        //System.out.printf("#Cluster score# : %s, %f%n",fname, cluster_input.kdist[i]);
+        //System.out.printf("#Cluster cnt# : %s, %d%n",fname,  (int)cluster_input.Cluster_cnt);
 
         /////////////////////////////////////////////////////////////////
             /*                          DB update                          */
@@ -178,7 +182,7 @@ public class ClusterEngine {
         cluster_input.RLenergy_level[1] = cluster_input.RLenergy_level[0];
 
 
-        System.out.printf("#####");
+        //System.out.printf("#####");
         return (int)cluster_input.Cluster_cnt;
     }
 
@@ -543,7 +547,7 @@ public class ClusterEngine {
 
 
         Bitmap bMap = Bitmap.createBitmap(bMap_temp, bMap_temp.getWidth() / 6, bMap_temp.getHeight() / 6, bMap_temp.getWidth() / 6 * 5, bMap_temp.getHeight() / 6*5);
-
+        bMap_temp.recycle();
         /////////////////////////////////////////////////////////
         /*          Get image orientation and rerotation       */
         /////////////////////////////////////////////////////////
@@ -562,7 +566,7 @@ public class ClusterEngine {
             orientation = ExifInterface.ORIENTATION_NORMAL;
         }
         Bitmap bmRotated = rotateBitmap(bMap, orientation);
-
+        bMap.recycle();
         ///////////////////////////////////////////////////////////////
         /*             Edge detection for quality score              */
         ///////////////////////////////////////////////////////////////
@@ -594,6 +598,7 @@ public class ClusterEngine {
         /////////////////////////////////////////////////////////
         /*          FAce detection                             */
         /////////////////////////////////////////////////////////
+
         Frame frame = new Frame.Builder().setBitmap(bmRotated).build();
         SparseArray<Face> faces = fdetector.detect(frame);
 
@@ -659,19 +664,19 @@ public class ClusterEngine {
 
 
 
-        Log.d("Avg_dist_from_center", ":: " + String.valueOf(avg_dist_from_center));
+        //Log.d("Avg_dist_from_center", ":: " + String.valueOf(avg_dist_from_center));
 
         //
         //double score_quality = var_sobel_out;
         double score_quality = face_dist_score + avg_face_weight * 5 + var_sobel_out + faces.size() * (30*30) / (Math.sqrt((imgW - imgW / 2.0) * (imgW - imgW / 2.0) + (imgH - imgH / 2.0) * (imgH - imgH / 2.0))) ;
 
 
-        System.out.printf("#face_dist_score# : %s, %f%n", fname, face_dist_score);
-        System.out.printf("#avg_face_weight# : %s, %f%n", fname, avg_face_weight);
-        System.out.printf("#var_sobel_out# : %s, %f%n", fname, var_sobel_out);
-
-
-        System.out.printf("#score_quality score# : %s, %f%n", fname, score_quality);
+//        System.out.printf("#face_dist_score# : %s, %f%n", fname, face_dist_score);
+//        System.out.printf("#avg_face_weight# : %s, %f%n", fname, avg_face_weight);
+//        System.out.printf("#var_sobel_out# : %s, %f%n", fname, var_sobel_out);
+//
+//
+//        System.out.printf("#score_quality score# : %s, %f%n", fname, score_quality);
 
 
         /////////////////////////////////////////////////////////
@@ -777,6 +782,9 @@ public class ClusterEngine {
             engineDBInterface.updateCBlurryIndex(fname, 1);  // Image is blurred
         }
 
+
+        bMap2.recycle();
+        bmRotated.recycle();
 
         return garray_row;
     }

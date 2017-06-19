@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
@@ -40,6 +41,7 @@ import com.mindspree.days.model.Profile;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -145,6 +147,35 @@ public class ProfileActivity extends BaseActivity {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 30, baos);
                 byte[] dataCompress = baos.toByteArray();
+
+//                //  Save Profile file begin
+//
+//                String root = Environment.getExternalStorageDirectory().toString();
+//                File myDir = new File(root + "/days_resample_images_profile"); //
+//
+//                if(myDir.exists() && myDir.isDirectory()) {
+//                    // do nothing
+//                }else{
+//                    myDir.mkdirs();
+//                }
+//
+//                String fname = "Days_profile" + ".days";
+//                File file = new File(myDir, fname);
+//                String days_profile_image=file.toString();
+//
+//                if (file.exists())
+//                    file.delete();
+//
+//                try {
+//                    FileOutputStream out = new FileOutputStream(file);
+//                    bitmap.compress(Bitmap.CompressFormat.JPEG, 50, out);
+//                    out.flush();
+//                    out.close();
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//
+//                //  Save Profile file end
 
                 UploadTask uploadTask = profileRef.putBytes(dataCompress);
                 showLoadingDialog();

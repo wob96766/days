@@ -10,8 +10,10 @@ import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ImageFormat;
+import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.hardware.Camera;
 import android.hardware.camera2.CameraAccessException;
@@ -37,6 +39,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -46,6 +49,7 @@ import com.androidquery.AQuery;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.images.Size;
+import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.face.FaceDetector;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -89,7 +93,13 @@ import com.google.android.gms.vision.face.Landmark;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint2f;
+import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
+
+import android.graphics.Color;
+
+import static com.mindspree.days.engine.ClusterEngine.rotateBitmap;
 
 /**
  * Created by Admin on 21-10-2015.
@@ -283,6 +293,176 @@ public class MainActivity extends BaseActivity {
         //getCamerainfo();
 
 
+        // Test debug only
+
+
+        /////////////////////////////////////////////////////////
+        /*          Load image to bitmap                        */
+        /////////////////////////////////////////////////////////
+        // First decode with inJustDecodeBounds=true to check dimensions
+        int debug_face =0;
+        if(debug_face==1)
+        {
+            File outDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString());
+            String fname = outDir + "/data/test.jpg";
+
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(fname, options);
+
+            int sample_size =1;
+            BitmapFactory.Options bitmap_options = new BitmapFactory.Options();
+            bitmap_options.inPreferredConfig =Bitmap.Config.ARGB_8888;
+            bitmap_options.inMutable =true;
+            bitmap_options.inSampleSize = sample_size;
+            Bitmap bMap = BitmapFactory.decodeFile(fname, bitmap_options);
+
+            /////////////////////////////////////////////////////////
+        /*          Get image orientation and rerotation       */
+            /////////////////////////////////////////////////////////
+            // This is not necesary when face detection is turned off
+            int orientation =1;
+            ExifInterface exif = null;
+            try {
+                exif = new ExifInterface(fname);
+                orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+                        ExifInterface.ORIENTATION_UNDEFINED);
+
+            } catch (Exception e) {
+                orientation = ExifInterface.ORIENTATION_NORMAL;
+            }
+            Bitmap bmRotated = rotateBitmap(bMap, orientation);
+
+            /////////////////////////////////////////////////////////
+        /*          FAce detection                             */
+            /////////////////////////////////////////////////////////
+
+            Frame frame = new Frame.Builder().setBitmap(bmRotated).build();
+            SparseArray<Face> faces = fdetector.detect(frame);
+
+            int Size_Face=faces.size();
+            Canvas canvas = new Canvas(bmRotated);
+            Paint paint = new Paint();                          //define paint and paint color
+            paint.setColor(Color.RED);
+            paint.setStyle(Paint.Style.FILL_AND_STROKE);
+            paint.setAntiAlias(true);
+
+            float x= 0;
+            float y = 0;
+            float[] tempx=new float[8];
+            float[] tempy =new float[8];
+            if(Size_Face>0)
+            {
+                for (int i = 0; i < Size_Face; ++i) {
+                    Face face = faces.valueAt(i);
+
+                    x= face.getPosition().x;
+                    y= face.getPosition().y;
+
+                    // This defines the face area
+                    x= face.getPosition().x;
+                    y = face.getPosition().y;
+
+                    canvas.drawCircle(x, y, 3, paint);
+                    canvas.drawCircle(x + face.getWidth(), y+face.getHeight(), 3, paint);
+
+                    float face_width= face.getWidth();
+                    float face_height=face.getHeight();
+
+                    //   j=0,1,2,3,4,5,6,7
+                    //   0 = left eye. 1= right eye, 2= nose center, 3= right cheek, 4= left cheek, 5= right side of mouth, 6= left side of mouth, 7= center bottom of mouth
+                    for (int j = 0; j < 8; ++j) {
+                        tempx[j]=face.getLandmarks().get(j).getPosition().x;
+                        tempy[j]=face.getLandmarks().get(j).getPosition().y;
+                        canvas.drawCircle(face.getLandmarks().get(j).getPosition().x, face.getLandmarks().get(j).getPosition().y, 3, paint);
+                    }
+
+
+                    Bitmap bMap_faceCrop = Bitmap.createBitmap(bmRotated, Math.round(x), Math.round(y), Math.round(face_width), Math.round(face_height));
+
+                    // Rescale to match reference coordinates before affine transform
+
+
+
+
+                    /////////////////////////////////////////////////////////
+                /*          Affine transformation                      */
+                    /////////////////////////////////////////////////////////
+                /*     Baseline face crop image reference coordinates
+                width = 138
+                height = 174
+
+                let eye center = 45,92
+                right eye center = 92 92
+                nose center = 68 126
+                right cheek = 95 119
+                left cheek = 42 119
+                right side of mouth= 88 144
+                left side of mouth=49 144
+                center bottom of mouth= 69 155   */
+
+
+                    Mat warp_dst;
+                    Point [] srcTri = new Point[3];
+                    Point [] dstTri = new Point[3];
+                    MatOfPoint2f  srcPoints;
+                    MatOfPoint2f  dstPoints;
+                    Mat warpMat;
+
+                    Mat mat1 = new Mat();
+                    Utils.bitmapToMat(bMap_faceCrop, mat1);
+                    Imgproc.cvtColor(mat1, mat1, Imgproc.COLOR_BGR2GRAY);
+
+                    warp_dst = Mat.zeros(mat1.rows(), mat1.cols(), mat1.type());
+
+                    srcTri[0] = new Point(tempx[0],tempy[0]);
+                    srcTri[1] = new Point(tempx[1],tempy[1]);
+                    srcTri[2] = new Point(tempx[2],tempy[2]);
+
+                    dstTri[0] = new Point( tempx[0],tempy[0]);
+                    dstTri[1] = new Point( tempx[1]-8,tempy[1]+35);
+                    dstTri[2] = new Point( tempx[2]-5,tempy[2]+20);
+
+                    srcPoints = new MatOfPoint2f(srcTri);
+                    dstPoints = new MatOfPoint2f(dstTri);
+                    warpMat = Imgproc.getAffineTransform(srcPoints, dstPoints);
+
+                    Imgproc.warpAffine(mat1, warp_dst, warpMat, warp_dst.size());
+
+                    Bitmap photo_out = Bitmap.createBitmap(warp_dst.cols(), warp_dst.rows(), Bitmap.Config.ARGB_8888);
+                    Utils.matToBitmap(warp_dst,photo_out);
+
+
+                    // Crop images to acquire only the facial area
+
+
+                    // Save image
+
+
+                    String fname_crop = fname + String.format(".%d", i)+".crop";
+                }
+
+            }
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+
+        /////////////////////// Debug ends   ////////////////////
+
+
+
+
+
         if (!mPreference.getLaunchHistory().equals(mPreference.getUserUid())) {
             TutorialActivity.startActivity(getContext());
             mPreference.setLaunchHistory(mPreference.getUserUid());
@@ -385,6 +565,8 @@ public class MainActivity extends BaseActivity {
 //        String DNN_weight = "cifar_custom100.weights";
 
         DNN_path = load_DNN_resource(DNN_dataset,DNN_cfg,DNN_weight);
+
+
     }
 
     private void initView() {

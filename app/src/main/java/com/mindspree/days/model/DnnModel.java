@@ -114,18 +114,18 @@ public class DnnModel {
     public String [] FaceBasedPool_group_noselfie_kr ={"다들 모여서 그룹 사진도 찍었다","오늘 여기서 그룹 사진도 찍었다"};
 
 
-    public String [] dailysummary_nobusy_kr ={"나름 여유있는 하루였다.","그리 바쁜 하루는 아니었다.","그럭저럭 여유있는 하루였다. ","조금 한가한 하루였다. ","대략 한가한 하루였다. ","다소 평범한 하루였다. ", "전반적으로 무료한 하루였다. 주말에는 약속 좀 만들어 볼까. "};
+    public String [] dailysummary_nobusy_kr ={"나름 여유있는 하루였다.","그리 바쁜 하루는 아니었다.","그럭저럭 여유있는 하루였다. ","조금 한가한 하루였다. ","좀 한가한 하루였다. ","다소 평범한 하루였다. ", "무료한 하루였다. 약속 좀 만들어 볼까. "};
     public String [] dailysummary_lessbusy_kr ={"약간 바쁜 하루였음. ", "오늘은 조금 바쁜 하루였다", "바쁜 스케쥴 덕분에 살짝 뺑이친 하루였다. ㅜㅜ ", "여기저리 다니느라 조금 바쁜 하루였음.", "그래도 꽤 돌아다녀서 좀 바쁜 하루였다."};
     public String [] dailysummary_busy_kr ={"오늘은 무지 바쁜 하루였음.","아 겁나 바쁜 하루였음.","여기저기 다니느라 겁나 지치고 힘들었다.", "아 오늘은 너무 바빴네. 주말에는 푹 쉬어야겠다." , "도데체 몇군데나 돌아다닌 건지..꽤 바쁜 하루 였다.", "오늘 여기저기 많이 돌아다녔고 꽤 바쁜 하루 였다.", "오늘은 여기저기 다니느라 너무 바빴다." };
     public String [] dailysummary_nopoi_kr ={"오늘은 별 특별한 일이 없었다. 조금은 지루한 하루 였다. 내일은 어디라도 가야지. ","오늘은 하루 종일 집에만 있었다. 간만에 푹 쉬긴 했네", "결국 하루 종일 집에서 시간을 보냈다... 주말엔 어디든 나가봐야겠다. ", "결국 하루 종일 집에 있었다...주말엔 좀 나가봐야겠다"};
 
     // Only for today activity
-    public String [] FaceBasedPool_selfie_hash_kr ={"쿨가이","핸섬가이", "최고", "나", "My life", "나의 하루", "My style", "Me", "Cool face"};
-    public String [] FaceBasedPool_singlePhoto_hash_kr ={"나이스 샷", "당신은 멋쟁이" , "I see you~" , "나이스", "날 보세요"};
-    public String [] FaceBasedPool_groupPhoto_hash_kr ={"Best People !", "그룹 모임", "그룹 모임 기념", "단체 사진", "단체 기념 사진"};
-    public String [] FaceBasedPool_groudSelfiehash_kr ={"멋진 사람들", "Gangs", "Dudes", "Thugs", "Guys" , "다들 모여~" , "친구/동료/가족"};
-    public String [] FaceBasedPool_smileSingle_hash_kr ={"아름다운 미소~", "Smile", "행복", "미소", "스마일", "좋은 표정", "행복한 순간", "즐거운 이 순간"};
-    public String [] FaceBasedPool_smileGroup_hash_kr ={"멋진 하루 ~", "즐거움", "모두들 행복한 순간", "모두들 즐거운 순간"};
+    public String [] FaceBasedPool_selfie_hash_kr ={"쿨가이","핸섬가이", "최고", "나", "My life", "나의 하루", "My style", "Me", "Cool face" , "셀피", "셀카" , "셀스타그램" ,"간만에 셀카" , "일상 셀카"};
+    public String [] FaceBasedPool_singlePhoto_hash_kr ={"나이스 샷" , "나이스", "날 보세요" , "3!2!1!", "여기 봐", "찍어줘!" , "잘 나왔다", "순간 포착"};
+    public String [] FaceBasedPool_groupPhoto_hash_kr ={"Best People !", "그룹 모임", "그룹 모임 기념", "단체 사진", "단체 기념 사진" , "친스타그램"};
+    public String [] FaceBasedPool_groudSelfiehash_kr ={"멋진 사람들", "Gangs", "Dudes", "Thugs", "Guys" , "다들 모여~" , "친구/동료/가족" , "그룹 셀피" , "그룹 셀카", "몬스터 클럽" , "스웩" , "그룹 셀스타그램"};
+    public String [] FaceBasedPool_smileSingle_hash_kr ={"아름다운 미소~", "Smile", "행복", "미소", "스마일", "좋은 표정", "행복한 순간", "즐거운 이 순간" , "치즈~" , "김치~" , "행복" , "멋진" ,"표정 좋아"};
+    public String [] FaceBasedPool_smileGroup_hash_kr ={"멋진 하루 ~", "즐거움", "모두들 행복한 순간", "모두들 즐거운 순간" , "얼스타그램" , "친스타그램"};
 
     // Week end & Week days
     public String [] Sentence_weekend ={"기다리던 주말이다"};
@@ -595,6 +595,7 @@ public class DnnModel {
                 bitmap_options.inSampleSize = sample_size;
                 Bitmap bMap_temp = BitmapFactory.decodeFile(timelinePhotoFile, bitmap_options);
                 Im_width = bMap_temp.getWidth() * sample_size;
+                bMap_temp.recycle();
 
                 Num_Face = engineDBInterface.getExtraFeatWithPhotoURL(timelinePhotoFile);
                 Smile_Prob = engineDBInterface.getWeightCoeffWithPhotoURL(timelinePhotoFile);
@@ -705,6 +706,7 @@ public class DnnModel {
         } else {
 //            hash_string = hash_string + String.format("#Nothing much ~");
         }
+
 
         System.gc();
         return hash_string;
@@ -983,6 +985,8 @@ public class DnnModel {
             if(bMap_temp==null)
                 return hash_string;
 
+            bMap_temp.recycle();
+
             Num_Face =  engineDBInterface.getExtraFeatWithPhotoURL(timelinePhotoFile);
             Smile_Prob =  engineDBInterface.getWeightCoeffWithPhotoURL(timelinePhotoFile);
 
@@ -1099,7 +1103,7 @@ public class DnnModel {
             Boolean MounatainClass=false ;
             Boolean PlayClass =false;
 
-            // Currently Deep learning engine will run one piture per POI.
+            // Currently Deep learning engine will run 3 piㅊture per POI.
 //            if((!POI_DB2_DETECT || !POI_DB6_DETECT || selfie_cnt==0 || groupPhoto_cnt==0 || groupSelfie_cnt==0 ||singlePhoto_cnt==0) && (i == offset) ) {
             if((!POI_DB2_DETECT || !POI_DB6_DETECT || selfie_cnt==0 || groupPhoto_cnt==0 || groupSelfie_cnt==0 ||singlePhoto_cnt==0) && (i <3) ) {
                 class_predict = DnnEngineClassJNI(jargv);
