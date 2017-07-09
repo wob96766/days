@@ -412,6 +412,8 @@ public class DatelineModel implements Parcelable {
             ArrayList poiCRDatesList = getPoiCRDatesList();
             int photoID_size=0;
 
+
+            // 4 & 5 : POI and Face based
             if(poiList.size()>0)
             {
 
@@ -420,7 +422,6 @@ public class DatelineModel implements Parcelable {
                 photoID_size= photoIDs.size();
                 PhotoInfoModel[] photoinfos=null;
                 Integer[] PhotoPoi_mapping_index=null;   // This contains POI index for each photo element
-
 
 
                 if(photoID_size==0){
@@ -432,7 +433,7 @@ public class DatelineModel implements Parcelable {
                     String [] poiList_nooverlap = new String[array_size];
                     poiList_nooverlap=arraylistTostringarray_nooverlap(poiList);
 
-                    hash_string = dnnModel.POIbasedSentence(uniqKeysArray, DNN_result, poiList_nooverlap,poiList,hash_string);
+                    hash_string = dnnModel.POIbasedSentence(uniqKeysArray, DNN_result, poiList_nooverlap,poiList,hash_string,weekend_days);
                     DNN_result = dnnModel.DNN_result;
 
                 }else if(photoID_size>0){
@@ -472,7 +473,7 @@ public class DatelineModel implements Parcelable {
                     String [] poiList_nooverlap = new String[array_size];
 
                     poiList_nooverlap=arraylistTostringarray_nooverlap(poiList);
-                    hash_string = dnnModel.POIbasedSentence(uniqKeysArray, DNN_result, poiList_nooverlap,poiList,hash_string);
+                    hash_string = dnnModel.POIbasedSentence(uniqKeysArray, DNN_result, poiList_nooverlap,poiList,hash_string, weekend_days);
 
                     //4. Face & Deep learning
                     int offset =0;
@@ -480,6 +481,7 @@ public class DatelineModel implements Parcelable {
                     ArrayList photolist = getPhotoList();
                     String hash_string_face ="";
                     String hash_string_face_buf ="";
+
                     for (int m=0;m<uniqKeysArray.length;m++){
                         // key is unique poi index
                         Integer key_temp = uniqKeysArray[m];  //This is POI index that has photos

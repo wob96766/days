@@ -47,7 +47,8 @@ public class TimelineActivity extends BaseActivity {
 
     public SentenceModel sentenceModel;
 
-
+    // caller_ID = today
+    // caller_ID = moment
     public static void startActivity(Context context, String dateString, DatelineModel dateline, TimelineModel timeline, String mode)
     {
         Intent intent = new Intent(context, TimelineActivity.class);
@@ -188,9 +189,19 @@ public class TimelineActivity extends BaseActivity {
     public void requestSentence() {
         SentenceModel sentence = mPhotoWrapper.getSentence(mSelectedDate);
         sentenceModel = sentence;
-//        mTextSentence.setText(sentence.getSummarize());
 
-        mTextSentence.setText(mTimeline.getSummarize(getContext()));
+        //ShareTimeline is unique mode in today
+        if(mMode.equals("ShareTimeline")){
+            mTextSentence.setText(mTimeline.getSummarize(getContext()));  // This is used in Today
+        }else{
+            mTextSentence.setText(sentence.getSummarize()); // This is used in Moment
+        }
+
+
+
+
+
+
         mTextSentence.setTypeface(MainActivity.mTypeface);
 //        mTextPhotocount.setText(sentence.mPhotoCount);
 //        mTextLocationcount.setText(sentence.mLocationCount);

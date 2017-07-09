@@ -115,7 +115,7 @@ public class DnnModel {
 
 
     public String [] dailysummary_nobusy_kr ={"나름 여유있는 하루였다.","그리 바쁜 하루는 아니었다.","그럭저럭 여유있는 하루였다. ","조금 한가한 하루였다. ","좀 한가한 하루였다. ","다소 평범한 하루였다. ", "무료한 하루였다. 약속 좀 만들어 볼까. "};
-    public String [] dailysummary_lessbusy_kr ={"약간 바쁜 하루였음. ", "오늘은 조금 바쁜 하루였다", "바쁜 스케쥴 덕분에 살짝 뺑이친 하루였다. ㅜㅜ ", "여기저리 다니느라 조금 바쁜 하루였음.", "그래도 꽤 돌아다녀서 좀 바쁜 하루였다."};
+    public String [] dailysummary_lessbusy_kr ={"약간 바쁜 하루였음. ", "오늘은 조금 바쁜 하루였다", "바쁜 스케쥴 덕분에 살짝 힘든 하루였다. ㅜㅜ ", "여기저리 다니느라 조금 바쁜 하루였음.", "그래도 꽤 돌아다녀서 좀 바쁜 하루였다."};
     public String [] dailysummary_busy_kr ={"오늘은 무지 바쁜 하루였음.","아 겁나 바쁜 하루였음.","여기저기 다니느라 겁나 지치고 힘들었다.", "아 오늘은 너무 바빴네. 주말에는 푹 쉬어야겠다." , "도데체 몇군데나 돌아다닌 건지..꽤 바쁜 하루 였다.", "오늘 여기저기 많이 돌아다녔고 꽤 바쁜 하루 였다.", "오늘은 여기저기 다니느라 너무 바빴다." };
     public String [] dailysummary_nopoi_kr ={"오늘은 별 특별한 일이 없었다. 조금은 지루한 하루 였다. 내일은 어디라도 가야지. ","오늘은 하루 종일 집에만 있었다. 간만에 푹 쉬긴 했네", "결국 하루 종일 집에서 시간을 보냈다... 주말엔 어디든 나가봐야겠다. ", "결국 하루 종일 집에 있었다...주말엔 좀 나가봐야겠다"};
 
@@ -713,7 +713,7 @@ public class DnnModel {
     }
 
 
-    public String POIbasedSentence(Integer [] uniqKeysArray,ArrayList DNN_result_in, String [] poiList_nooverlap, ArrayList poiList, String hash_string){
+    public String POIbasedSentence(Integer [] uniqKeysArray,ArrayList DNN_result_in, String [] poiList_nooverlap, ArrayList poiList, String hash_string, int weekend_days){
 
             DNN_result=DNN_result_in;
             String poicat = "";
@@ -749,7 +749,33 @@ public class DnnModel {
                     DNN_result.add(String.format("#%s", Hash_POI_onlyhome[n]));
 
                 }else{
-                    hash_string = hash_string + String.format("%s %s %s. ", "오늘은 주로 ", poiList_nooverlap[0], " 에만 있었다");
+
+                    ArrayList<String> singlePoiList = new ArrayList<>();
+
+                    if(weekend_days==0) // Weekdays
+                    {
+                        singlePoiList.add(String.format("%s %s %s. ", "오늘은 주로 ", poiList_nooverlap[0], " 에 있었다"));
+                        singlePoiList.add(String.format("%s %s %s. ", "대부분 시간을", poiList_nooverlap[0], " 에서 보냈다"));
+                        singlePoiList.add(String.format("%s %s %s. ",  poiList_nooverlap[0], "에서 대부분의 시간을 보낸", " 하루였다"));
+                        singlePoiList.add(String.format("%s %s %s. ", "조금 심심하게도 오늘은 ", poiList_nooverlap[0], " 에만 있었다"));
+                    }
+                    else{  // Weekend
+                        singlePoiList.add(String.format("%s %s %s. ", "이번 주말은 주로 ", poiList_nooverlap[0], " 에 있었다"));
+                        singlePoiList.add(String.format("%s %s %s. ", "이번 주말은 ", poiList_nooverlap[0], " 에서 대부분의 시간을 보냈다"));
+                        singlePoiList.add(String.format("%s %s %s. ",  poiList_nooverlap[0], "에서 대부분의 시간을 보낸", " 즐거운 주말이었다."));
+                        singlePoiList.add(String.format("%s %s %s. ",  poiList_nooverlap[0], "에서 즐거운 주말을", " 보냈다."));
+                        singlePoiList.add(String.format("%s %s %s. ",  poiList_nooverlap[0], "에서 한가한 주말을", " 보냈다."));
+                        singlePoiList.add(String.format("%s %s %s. ",  poiList_nooverlap[0], "에서 조용한 주말을", " 보냈다."));
+                    }
+
+                    // 주말 주중 구분
+                    n=generator.nextInt(singlePoiList.size());
+                    hash_string = hash_string + singlePoiList.get(n).toString();
+
+//                    hash_string = hash_string + String.format("%s %s %s. ", "오늘은 주로 ", poiList_nooverlap[0], " 에만 있었다");
+
+
+
                 }
 
             } else if(poiList_nooverlap.length==2){

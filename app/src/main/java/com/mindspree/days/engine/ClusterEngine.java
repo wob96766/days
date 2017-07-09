@@ -43,7 +43,7 @@ public class ClusterEngine {
 // For loop
 
         /////////////////////////////////////////////////////////
-            /*                Image file reading                   */
+        /*                Image file reading                   */
         /////////////////////////////////////////////////////////
         PhotosTableModel fileParrayList= (PhotosTableModel)fileArrayList.get(i);
         String fname = (String) fileParrayList.getFile_location();
@@ -413,7 +413,7 @@ public class ClusterEngine {
         }
         try {
             Bitmap bmRotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-            bitmap.recycle();
+            //bitmap.recycle();
             return bmRotated;
         }
         catch (OutOfMemoryError e) {
@@ -547,7 +547,7 @@ public class ClusterEngine {
 
 
         Bitmap bMap = Bitmap.createBitmap(bMap_temp, bMap_temp.getWidth() / 6, bMap_temp.getHeight() / 6, bMap_temp.getWidth() / 6 * 5, bMap_temp.getHeight() / 6*5);
-        bMap_temp.recycle();
+        //bMap_temp.recycle();
         /////////////////////////////////////////////////////////
         /*          Get image orientation and rerotation       */
         /////////////////////////////////////////////////////////
@@ -566,7 +566,7 @@ public class ClusterEngine {
             orientation = ExifInterface.ORIENTATION_NORMAL;
         }
         Bitmap bmRotated = rotateBitmap(bMap, orientation);
-        bMap.recycle();
+        //bMap.recycle();
         ///////////////////////////////////////////////////////////////
         /*             Edge detection for quality score              */
         ///////////////////////////////////////////////////////////////
@@ -783,8 +783,8 @@ public class ClusterEngine {
         }
 
 
-        bMap2.recycle();
-        bmRotated.recycle();
+        //bMap2.recycle();
+        //bmRotated.recycle();
 
         return garray_row;
     }

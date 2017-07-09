@@ -118,10 +118,9 @@ public class AppConfig {
         public static final String DATELINE 				= "DATELINE";
         public static final String DATE 					= "DATE";
 
-        public static final String TIMELINE_MODE 					= "TIMELINE_MODE"; //newrly added by mindspree
-
+        public static final String TIMELINE_MODE 			= "TIMELINE_MODE"; //newrly added by mindspree
         public static final String START 					= "START";
-        public static final String END 					= "END";
+        public static final String END 					    = "END";
 
     }
 
