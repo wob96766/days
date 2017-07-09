@@ -18,6 +18,7 @@ import android.text.TextUtils;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -77,6 +78,7 @@ public class TodayFragment extends BaseFragment{
 
     private ArrayList<TimelineModel> mDataList;
     private TextView mTextSentence;
+    private ImageView mImagePhotoCount;
     private TextView mTextLocationcount;
     private TextView mTextPhotocount;
     private ImageView mImageWeather;
@@ -247,7 +249,9 @@ public class TodayFragment extends BaseFragment{
                 mRefreshLayout.setRefreshing(false);
             }
         });
+
         mTextSentence = aq.id(R.id.text_sentence).getTextView();
+        mImagePhotoCount = aq.id(R.id.imagePhotocount).getImageView();
         mTextPhotocount= aq.id(R.id.textPhotocount).getTextView();
         mTextLocationcount= aq.id(R.id.textLocationcount).getTextView();
         mImageWeather =aq.id(R.id.imageWeather).getImageView();
@@ -257,6 +261,16 @@ public class TodayFragment extends BaseFragment{
         mTextDate = aq.id(R.id.text_date).getTextView();
         mTextDaysbot = aq.id(R.id.textDaysbot).getTextView();
         aq.dismiss();
+
+        mImagePhotoCount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e("Kei","onClick");
+                Context context = getContext();
+                Intent intent = new Intent(context, ImageUploadActivity.class);
+                context.startActivity(intent);
+            }
+        });
     }
 
     public void requestTimeline() {
