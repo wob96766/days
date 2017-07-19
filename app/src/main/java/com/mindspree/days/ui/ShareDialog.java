@@ -215,6 +215,7 @@ public class ShareDialog extends Dialog {
                                                     KakaoLink kakaoLink = KakaoLink.getKakaoLink(mActivity);
 
                                                     final KakaoTalkLinkMessageBuilder kakaoTalkLinkMessageBuilder = kakaoLink.createKakaoTalkLinkMessageBuilder();
+
                                                     kakaoTalkLinkMessageBuilder
                                                             .addText(mDateline.getSummarize("hash"))
                                                             .addImage(stringUrl, width, height);
