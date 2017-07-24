@@ -1,5 +1,6 @@
 package com.mindspree.days.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -105,8 +106,13 @@ public class DatelineAdapter extends RecyclerView.Adapter<DatelineAdapter.MyView
 
         mDataSource.get(position).getSummarize("sentence", new DatelineModel.GetSummarizeAsyncTask.GetSummarizeListener() {
             @Override
-            public void onCompleted(String result) {
-                holder.mTextContent.setText(result);
+            public void onCompleted(final String result) {
+                ((Activity)mContext).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        holder.mTextContent_hash.setText(result);
+                    }
+                });
             }
 
             @Override
@@ -126,8 +132,14 @@ public class DatelineAdapter extends RecyclerView.Adapter<DatelineAdapter.MyView
 
         mDataSource.get(position).getSummarize("hash", new DatelineModel.GetSummarizeAsyncTask.GetSummarizeListener() {
             @Override
-            public void onCompleted(String result) {
-                holder.mTextContent_hash.setText(result);
+            public void onCompleted(final String result) {
+
+                ((Activity)mContext).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        holder.mTextContent_hash.setText(result);
+                    }
+                });
             }
 
             @Override
