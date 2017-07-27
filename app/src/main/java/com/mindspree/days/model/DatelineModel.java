@@ -56,6 +56,7 @@ import static android.content.ContentValues.TAG;
  */
 public class DatelineModel implements Parcelable {
 
+
     private String mWeather = "";
     public String mMood = "";
     public String mCreated= "";
@@ -90,6 +91,7 @@ public class DatelineModel implements Parcelable {
     public ArrayList DNN_result_in;
     public ArrayList DNN_result;
     public String hashString_DNN="";
+
 
     public DatelineModel(){
     }
@@ -370,7 +372,47 @@ public class DatelineModel implements Parcelable {
     // sentence_mode
     // hash --> return only hash
     // return --> only sentence
+
+    public static class GetSummarizeAsyncTask extends AsyncTask {
+
+        public String sentence_mode;
+        public DatelineModel model;
+        public GetSummarizeListener listener = null;
+
+        public static abstract class GetSummarizeListener {
+            public abstract void onCompleted(String result);
+            public abstract void onBegined();
+            public abstract void onEnded();
+        }
+
+        public GetSummarizeAsyncTask() {
+
+        }
+
+        public void start() {
+            execute();
+        }
+
+        @Override
+        protected Void doInBackground(Object[] objects) {
+            listener.onBegined();
+            String result =  model.getSummarize(sentence_mode);
+            listener.onCompleted(result);
+            listener.onEnded();
+            return null;
+        }
+    }
+
+    public void getSummarize(String sentence_mode, GetSummarizeAsyncTask.GetSummarizeListener listener) {
+        GetSummarizeAsyncTask task = new GetSummarizeAsyncTask();
+        task.sentence_mode = sentence_mode;
+        task.listener = listener;
+        task.model = this;
+    }
+
+
     public String getSummarize(String sentence_mode) {
+
         dnnModel = new DnnModel();
         String DateInMomeent= getDate();
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -457,7 +499,6 @@ public class DatelineModel implements Parcelable {
                 PhotoInfoModel[] photoinfos=null;
                 Integer[] PhotoPoi_mapping_index=null;   // This contains POI index for each photo element
 
-
                 if(photoID_size==0){
 
                     //1. Only POI based sentence. There is no photo
@@ -540,7 +581,6 @@ public class DatelineModel implements Parcelable {
                 }
                 hash_string = hash_string + String.format("\n\n%s", "");
 
-
                 // 5. Measure how busy user was
                 if(poiList.size() < 4) {
                     int n = generator.nextInt(dnnModel.dailysummary_nobusy.length);
@@ -556,8 +596,6 @@ public class DatelineModel implements Parcelable {
                     hash_string = hash_string + String.format("%s ", dnnModel.dailysummary_busy[n]);
                     DNN_result.add(String.format("#%s#%s","바쁨","피곤"));
                 }
-
-
 
                 if(DNN_result.size()>0){
                     // Get the unique hash result,  remove overlapping
@@ -593,13 +631,10 @@ public class DatelineModel implements Parcelable {
                 for(int i=1;i<sentenceHash.size();i++)
                     hashOnly = hashOnly + "#" + sentenceHash.get(i).toString();
 
-
                 ShortSentence = ShortSentence + "#" + sentenceHash.get(1).toString();
                 for(int i=2;i<sentenceHash.size();i++)
                     ShortSentence = ShortSentence + "," + sentenceHash.get(i).toString();
             }
-
-
 
             if (sentence_mode.equals("sentence")) {
                 return sentenceOnly;
@@ -610,13 +645,9 @@ public class DatelineModel implements Parcelable {
             }else {
                 return hashOnly;
             }
-
-
         }
-
-
-
     }
+
 
 
 

@@ -266,9 +266,16 @@ public class TodayFragment extends BaseFragment{
             @Override
             public void onClick(View v) {
                 Log.e("Kei","onClick");
+
+
+
+
+
+                /*
                 Context context = getContext();
                 Intent intent = new Intent(context, ImageUploadActivity.class);
                 context.startActivity(intent);
+                */
             }
         });
     }
