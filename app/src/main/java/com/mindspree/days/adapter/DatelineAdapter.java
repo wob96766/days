@@ -1,10 +1,12 @@
 package com.mindspree.days.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,7 +46,7 @@ public class DatelineAdapter extends RecyclerView.Adapter<DatelineAdapter.MyView
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolders holder, int position) {
+    public void onBindViewHolder(final MyViewHolders holder, int position) {
         ArrayList<String> files = mDataSource.get(position).getPhotoList();
         Glide.with(mContext).load("").centerCrop().into(holder.mThumnail1);
         Glide.with(mContext).load("").centerCrop().into(holder.mThumnail2);
@@ -102,12 +104,57 @@ public class DatelineAdapter extends RecyclerView.Adapter<DatelineAdapter.MyView
             // for default image
             /*Picasso.with(mContext).load(R.drawable.background_white_round).into(holder.mThumnail);*/
         }
-        holder.mTextContent.setText(mDataSource.get(position).getSummarize("sentence"));
+
+        Log.e("Jupiter","GetSummarize start");
+        mDataSource.get(position).getSummarize("sentence", new DatelineModel.GetSummarizeAsyncTask.GetSummarizeListener() {
+            @Override
+            public void onCompleted(final String result) {
+                ((Activity)mContext).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.e("Jupiter","onCompleted, Type : sentence");
+                        holder.mTextContent_hash.setText(result);
+                    }
+                });
+            }
+
+            @Override
+            public void onBegined() {
+
+            }
+
+            @Override
+            public void onEnded() {
+
+            }
+        });
         holder.mTextContent.setTypeface(MainActivity.mTypeface);
         holder.mTextContent.setTypeface(holder.mTextContent.getTypeface(),Typeface.BOLD);
 
 
-        holder.mTextContent_hash.setText(mDataSource.get(position).getSummarize("hash"));
+        mDataSource.get(position).getSummarize("hash", new DatelineModel.GetSummarizeAsyncTask.GetSummarizeListener() {
+            @Override
+            public void onCompleted(final String result) {
+
+                ((Activity)mContext).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.e("Jupiter","onCompleted, Type : hash");
+                        holder.mTextContent_hash.setText(result);
+                    }
+                });
+            }
+
+            @Override
+            public void onBegined() {
+
+            }
+
+            @Override
+            public void onEnded() {
+
+            }
+        });
         holder.mTextContent_hash.setTypeface(MainActivity.mTypeface);
         holder.mTextContent_hash.setTypeface(holder.mTextContent_hash.getTypeface(),Typeface.BOLD);
 

@@ -354,6 +354,7 @@ public class DatelineModel implements Parcelable {
 
         @Override
         protected Void doInBackground(Object[] objects) {
+            Log.e("Jupiter","getSummarize background");
             listener.onBegined();
             String result =  model.getSummarize(sentence_mode);
             listener.onCompleted(result);
@@ -363,51 +364,12 @@ public class DatelineModel implements Parcelable {
     }
 
     public void getSummarize(String sentence_mode, GetSummarizeAsyncTask.GetSummarizeListener listener) {
+        Log.e("Jupiter","getSummarize");
         GetSummarizeAsyncTask task = new GetSummarizeAsyncTask();
         task.sentence_mode = sentence_mode;
         task.listener = listener;
         task.model = this;
-    }
-
-    // sentence_mode
-    // hash --> return only hash
-    // return --> only sentence
-
-    public static class GetSummarizeAsyncTask extends AsyncTask {
-
-        public String sentence_mode;
-        public DatelineModel model;
-        public GetSummarizeListener listener = null;
-
-        public static abstract class GetSummarizeListener {
-            public abstract void onCompleted(String result);
-            public abstract void onBegined();
-            public abstract void onEnded();
-        }
-
-        public GetSummarizeAsyncTask() {
-
-        }
-
-        public void start() {
-            execute();
-        }
-
-        @Override
-        protected Void doInBackground(Object[] objects) {
-            listener.onBegined();
-            String result =  model.getSummarize(sentence_mode);
-            listener.onCompleted(result);
-            listener.onEnded();
-            return null;
-        }
-    }
-
-    public void getSummarize(String sentence_mode, GetSummarizeAsyncTask.GetSummarizeListener listener) {
-        GetSummarizeAsyncTask task = new GetSummarizeAsyncTask();
-        task.sentence_mode = sentence_mode;
-        task.listener = listener;
-        task.model = this;
+        task.start();
     }
 
 
